@@ -5,13 +5,14 @@ import { RiRobot2Fill } from "react-icons/ri";
 import { FaChartSimple } from "react-icons/fa6";
 import { MdOutlineSecurity } from "react-icons/md";
 import { IoSettings } from "react-icons/io5";
+import logo from '../assets/logo.webp';
 
 const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="logo">
         <img 
-          src="/assets/logo.png" 
+          src={logo} 
           alt="DETA Genix Logo" 
           style={{ 
             width: '120px', 

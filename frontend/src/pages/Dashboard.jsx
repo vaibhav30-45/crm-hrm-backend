@@ -2,8 +2,15 @@ import React from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import StatCard from "../components/StatCard";
-import AlertCard from "../components/AlertCard";
-import DashboardLayout from "../components/DashboardLayout";
+import AlertCard from "../components/DashboardComponents/AlertCard";
+import DashboardLayout from "../components/DashboardComponents/DashboardLayout";
+
+
+import DownloadReports from "../components/DashboardComponents/DownloadReports";  
+
+import RiskAnomalyCard from "../components/DashboardComponents/RiskAnomalyCard";
+import SecurityAlerts from "../components/DashboardComponents/SecurityAlerts";
+
 
 export default function Dashboard() {
   return (
@@ -15,6 +22,12 @@ export default function Dashboard() {
           box-sizing: border-box;
           font-family: Arial, sans-serif;
         }
+.bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
 
         .layout {
           display: flex;
@@ -222,7 +235,9 @@ export default function Dashboard() {
 
         {/* Bottom Section */}
         <div className="bottom-grid">
-          <div className="chart-placeholder">
+          
+
+           <div className="chart-placeholder">
             <h3>Monthly Revenue</h3>
             <div className="chart-box">Chart Placeholder</div>
           </div>
@@ -231,8 +246,36 @@ export default function Dashboard() {
             <h3>Sales Funnel</h3>
             <div className="chart-box">Chart Placeholder</div>
           </div>
+           <div className="chart-placeholder">
+            <h3>Attendance Trend</h3>
+            <div className="chart-box">Chart Placeholder</div>
+          </div>
+
+          <div className="chart-placeholder">
+            <h3>Employee growth</h3>
+            <div className="chart-box">Chart Placeholder</div>
+          </div>
+
+ 
+  {/* Risk & Security Alerts Section */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '1fr 2fr', 
+          gap: '0px', 
+          marginTop: '20px',
+          width: '100%'
+        }}>
+          <RiskAnomalyCard />
+          <SecurityAlerts />
         </div>
-      </div>
+
+        {/* Download Reports Section */}
+        <div style={{ marginTop: '20px' }}>
+          <DownloadReports />
+        </div>
+
+        </div>
+   
     </DashboardLayout>
   );
 }

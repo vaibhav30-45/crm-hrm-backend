@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import loginBg from '../assets/Rectangle906.png';
-
+import logo from '../assets/logo.webp';
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
 
@@ -47,6 +47,16 @@ const ForgotPassword = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+    },
+     logoContainer: {
+      alignSelf: 'flex-start', // LEFT aligned like the heading
+      marginBottom: '1rem',
+      display: 'flex'
+    },
+    logo: {
+      width: '150px',
+      height: 'auto',
+      maxHeight: '110px'
     },
     loginForm: {
       width: '550px',
@@ -137,6 +147,13 @@ const ForgotPassword = () => {
         {/* Right Panel - Forgot Password Form */}
         <div style={styles.rightPanel}>
           <div style={styles.loginForm}>
+            <div style={styles.logoContainer}>
+                         <img 
+                           src={logo} 
+                           alt="Logo"
+                           style={styles.logo}
+                         />
+                       </div>
             <h1 style={styles.title}>Forgot Password?</h1>
             <p style={styles.subtitle}>Enter your Email to receive a verification code.</p>
             
