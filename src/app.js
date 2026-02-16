@@ -27,7 +27,7 @@ app.use("/api/users", userRoutes);
 // Dashboard
 app.use("/api/dashboard", dashboardRoutes);
 
-// CRM
+// CRM routes
 app.use("/api/crm/leads", leadRoutes);
 app.use("/api/crm/customers", customerRoutes);
 app.use("/api/crm/activities", activityRoutes);
@@ -35,4 +35,3 @@ app.use("/api/crm/deals", dealRoutes);
 app.use("/api/crm/reports", reportRoutes);
 
 module.exports = app;
-
