@@ -1,4 +1,13 @@
 import React from 'react';
+import { Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AttendanceTrend = () => {
   // Hardcoded attendance data
@@ -11,55 +20,46 @@ const AttendanceTrend = () => {
     percentage: 78.9
   };
 
-  // Calculate angles for circular segments
-  const calculateSegment = (value, total, startAngle) => {
-    const percentage = (value / total) * 100;
-    const angle = (percentage / 100) * 360;
-    const endAngle = startAngle + angle;
-    
-    const startAngleRad = (startAngle * Math.PI) / 180;
-    const endAngleRad = (endAngle * Math.PI) / 180;
-    
-    const x1 = 50 + 40 * Math.cos(startAngleRad);
-    const y1 = 50 + 40 * Math.sin(startAngleRad);
-    const x2 = 50 + 40 * Math.cos(endAngleRad);
-    const y2 = 50 + 40 * Math.sin(endAngleRad);
-    
-    const largeArcFlag = angle > 180 ? 1 : 0;
-    
-    return {
-      path: `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`,
-      percentage: percentage.toFixed(1)
-    };
+  const chartData = {
+    labels: ['Present', 'Absent', 'Late', 'On Leave'],
+    datasets: [
+      {
+        data: [attendanceData.present, attendanceData.absent, attendanceData.late, attendanceData.onLeave],
+        backgroundColor: [
+          '#0ea5e9', 
+          '#38bdf8', 
+          '#7dd3fc', 
+          '#bae6fd'  
+        ],
+        borderColor: '#ffffff',
+        borderWidth: 2,
+        hoverOffset: 4
+      }
+    ]
   };
 
-  // Create segments for the circular chart
-  const segments = [
-    { 
-      ...calculateSegment(attendanceData.present, attendanceData.total, -90), 
-      color: '#0ea5e9', // Sky blue
-      label: 'Present',
-      value: attendanceData.present 
+const options = {
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '70%',
+  plugins: {
+    legend: {
+      display: false  
     },
-    { 
-      ...calculateSegment(attendanceData.absent, attendanceData.total, -90 + (attendanceData.present / attendanceData.total) * 360), 
-      color: '#38bdf8', // Light sky blue
-      label: 'Absent',
-      value: attendanceData.absent 
-    },
-    { 
-      ...calculateSegment(attendanceData.late, attendanceData.total, -90 + ((attendanceData.present + attendanceData.absent) / attendanceData.total) * 360), 
-      color: '#7dd3fc', // Lighter sky blue
-      label: 'Late',
-      value: attendanceData.late 
-    },
-    { 
-      ...calculateSegment(attendanceData.onLeave, attendanceData.total, -90 + ((attendanceData.present + attendanceData.absent + attendanceData.late) / attendanceData.total) * 360), 
-      color: '#bae6fd', // Very light sky blue
-      label: 'On Leave',
-      value: attendanceData.onLeave 
+    tooltip: {
+      backgroundColor: 'rgba(0,0,0,0.8)',
+      padding: 10,
+      callbacks: {
+        label: function (context) {
+          const value = context.parsed;
+          const total = context.dataset.data.reduce((a, b) => a + b, 0);
+          const percentage = ((value / total) * 100).toFixed(1);
+          return `${context.label}: ${value} (${percentage}%)`;
+        }
+      }
     }
-  ];
+  }
+};
 
   const styles = {
     card: {
@@ -68,19 +68,18 @@ const AttendanceTrend = () => {
       padding: '20px',
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
       width: '100%',
-      maxWidth: '400px'
+      maxWidth: '500px'
     },
     header: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: '24px'
+      marginBottom: '20px'
     },
     title: {
       fontSize: '18px',
       fontWeight: '600',
       color: '#000000',
-      margin: 0
     },
     date: {
       fontSize: '14px',
@@ -97,11 +96,6 @@ const AttendanceTrend = () => {
       width: '120px',
       height: '120px'
     },
-    svg: {
-      width: '100%',
-      height: '100%',
-      transform: 'rotate(-90deg)'
-    },
     centerText: {
       position: 'absolute',
       top: '50%',
@@ -113,37 +107,12 @@ const AttendanceTrend = () => {
       fontSize: '24px',
       fontWeight: 'bold',
       color: '#000000',
-      margin: 0
+      margin: '0 0 4px 0'
     },
     percentageLabel: {
       fontSize: '12px',
       color: '#6b7280',
       margin: 0
-    },
-    legend: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px'
-    },
-    legendItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px'
-    },
-    legendColor: {
-      width: '12px',
-      height: '12px',
-      borderRadius: '2px'
-    },
-    legendText: {
-      fontSize: '14px',
-      color: '#374151'
-    },
-    legendValue: {
-      fontSize: '14px',
-      fontWeight: '600',
-      color: '#000000',
-      marginLeft: '4px'
     }
   };
 
@@ -155,21 +124,11 @@ const AttendanceTrend = () => {
       </div>
       
       <div style={styles.content}>
-        {/* Circular Chart */}
+       
         <div style={styles.chartContainer}>
-          <svg style={styles.svg} viewBox="0 0 100 100">
-            {segments.map((segment, index) => (
-              <path
-                key={index}
-                d={segment.path}
-                fill={segment.color}
-                stroke="white"
-                strokeWidth="2"
-              />
-            ))}
-          </svg>
+          <Doughnut data={chartData} options={options} />
           
-          {/* Center Text */}
+          
           <div style={styles.centerText}>
             <p style={styles.percentage}>{attendanceData.percentage}%</p>
             <p style={styles.percentageLabel}>Present</p>
@@ -177,20 +136,28 @@ const AttendanceTrend = () => {
         </div>
         
         {/* Legend */}
-        <div style={styles.legend}>
-          {segments.map((segment, index) => (
-            <div key={index} style={styles.legendItem}>
-              <div 
-                style={{ 
-                  ...styles.legendColor, 
-                  backgroundColor: segment.color 
-                }} 
-              />
-              <span style={styles.legendText}>
-                {segment.label}
-              </span>
-              <span style={styles.legendValue}>
-                {segment.value}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px'
+        }}>
+          {chartData.labels.map((label, index) => (
+            <div key={index} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <div style={{
+                width: '12px',
+                height: '12px',
+                borderRadius: '2px',
+                backgroundColor: chartData.datasets[0].backgroundColor[index]
+              }} />
+              <span style={{
+                fontSize: '14px',
+                color: '#374151'
+              }}>
+                {label}: {chartData.datasets[0].data[index]}
               </span>
             </div>
           ))}

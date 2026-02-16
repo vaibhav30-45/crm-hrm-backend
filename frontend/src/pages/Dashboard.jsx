@@ -4,8 +4,9 @@ import Navbar from "../components/Navbar";
 import StatCard from "../components/StatCard";
 import AlertCard from "../components/DashboardComponents/AlertCard";
 import DashboardLayout from "../components/DashboardComponents/DashboardLayout";
-
-
+import AttendanceTrend from "../components/DashboardComponents/AttendanceTrend";
+import EmployeeGrowthTrend from "../components/DashboardComponents/EmployeeGrowthTrend";
+import MonthlyRevenueChart from "../components/DashboardComponents/MonthlyRevenueChart";
 import DownloadReports from "../components/DashboardComponents/DownloadReports";  
 
 import RiskAnomalyCard from "../components/DashboardComponents/RiskAnomalyCard";
@@ -235,26 +236,22 @@ export default function Dashboard() {
 
         {/* Bottom Section */}
         <div className="bottom-grid">
-  <div className="chart-placeholder">
-    <h3>Monthly Revenue</h3>
-    <div className="chart-box">Chart Placeholder</div>
-  </div>
+      <MonthlyRevenueChart/>
 
   <div className="chart-placeholder">
     <h3>Sales Funnel</h3>
     <div className="chart-box">Chart Placeholder</div>
   </div>
 
-  <div className="chart-placeholder">
+  {/* <div className="chart-placeholder">
     <h3>Attendance Trend</h3>
     <div className="chart-box">Chart Placeholder</div>
-  </div>
+  </div> */}
+  <AttendanceTrend />
 
-  <div className="chart-placeholder">
-    <h3>Employee Growth</h3>
-    <div className="chart-box">Chart Placeholder</div>
-  </div>
-</div> {/* ✅ CLOSE bottom-grid HERE */}
+  <EmployeeGrowthTrend />
+  
+</div> 
 
 
         <div style={{ 
@@ -272,9 +269,7 @@ export default function Dashboard() {
         <div style={{ marginTop: '20px' }}>
           <DownloadReports />
         </div>
-
       
-   
     </DashboardLayout>
   );
 }

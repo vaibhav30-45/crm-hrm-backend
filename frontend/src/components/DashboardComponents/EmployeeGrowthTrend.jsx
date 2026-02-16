@@ -1,19 +1,119 @@
 import React from 'react';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const EmployeeGrowthTrend = () => {
-  // Hardcoded employee growth data
+  
   const employeeGrowthData = {
     current: 182,
     previous: 173,
     growth: 9,
     growthPercentage: 5.2,
     stages: [
-      { label: "Applications", value: "450" },
-      { label: "Screened", value: "280" },
-      { label: "Interviewed", value: "120" },
-      { label: "Selected", value: "45" },
-      { label: "Onboarded", value: "182" },
+      { label: "Applications", value: 450 },
+      { label: "Screened", value: 280 },
+      { label: "Interviewed", value: 120 },
+      { label: "Selected", value: 45 },
+      { label: "Onboarded", value: 182 },
     ]
+  };
+
+  const chartData = {
+    labels: employeeGrowthData.stages.map(stage => stage.label),
+    datasets: [
+      {
+        label: 'Candidates',
+        data: employeeGrowthData.stages.map(stage => stage.value),
+        backgroundColor: [
+          '#0ea5e9', 
+          '#38bdf8', 
+          '#7dd3fc', 
+          '#bae6fd',
+          '#e0f2fe' 
+        ],
+        borderColor: '#ffffff',
+        borderWidth: 2,
+        borderRadius: 8,
+        barThickness: 40
+      }
+    ]
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      title: {
+        display: true,
+        text: 'Recruitment Funnel',
+        font: {
+          size: 16,
+          weight: '600'
+        },
+        color: '#000000',
+        padding: {
+          bottom: 20
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: '#ffffff',
+        bodyColor: '#ffffff',
+        borderColor: '#0ea5e9',
+        borderWidth: 1,
+        padding: 12,
+        displayColors: false,
+        callbacks: {
+          label: function(context) {
+            return `Candidates: ${context.parsed.y}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          color: '#6b7280',
+          font: {
+            size: 12
+          }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: '#e5e7eb',
+          drawBorder: false
+        },
+        ticks: {
+          color: '#6b7280',
+          font: {
+            size: 12
+          }
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
   };
 
   const styles = {
@@ -23,7 +123,9 @@ const EmployeeGrowthTrend = () => {
       padding: '20px',
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
       width: '100%',
-      maxWidth: '400px'
+      maxWidth: '800px',
+      height: '100%',
+      height: '500px'
     },
     header: {
       display: 'flex',
@@ -48,7 +150,8 @@ const EmployeeGrowthTrend = () => {
       marginBottom: '24px'
     },
     statItem: {
-      textAlign: 'center'
+      textAlign: 'center',
+      flex: 1
     },
     statValue: {
       fontSize: '24px',
@@ -61,51 +164,24 @@ const EmployeeGrowthTrend = () => {
       color: '#6b7280',
       margin: 0
     },
+    chartContainer: {
+      position: 'relative',
+      height: '300px',
+      width: '100%'
+    },
     growthIndicator: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-      gap: '4px',
-      marginTop: '8px'
-    },
-    growthArrow: {
-      fontSize: '16px',
-      color: '#10b981'
+      gap: '8px',
+      padding: '8px 12px',
+      backgroundColor: '#f0fdf4',
+      borderRadius: '8px',
+      border: '1px solid #bbf7d0'
     },
     growthText: {
       fontSize: '14px',
-      color: '#10b981',
-      fontWeight: '500'
-    },
-    funnel: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '8px'
-    },
-    funnelStep: {
-      backgroundColor: '#f8fafc',
-      padding: '16px',
-      borderRadius: '8px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      borderLeft: '4px solid #0ea5e9',
-      transition: 'all 0.2s ease'
-    },
-    funnelStepHover: {
-      backgroundColor: '#f1f5f9',
-      transform: 'translateX(4px)'
-    },
-    stepValue: {
-      fontSize: '18px',
-      fontWeight: 'bold',
-      color: '#000000',
-      margin: 0
-    },
-    stepLabel: {
-      fontSize: '14px',
-      color: '#6b7280',
-      margin: 0
+      fontWeight: '600',
+      color: '#16a34a'
     }
   };
 
@@ -113,9 +189,10 @@ const EmployeeGrowthTrend = () => {
     <div style={styles.card}>
       <div style={styles.header}>
         <h3 style={styles.title}>Employee Growth Trend</h3>
-        <p style={styles.date}>Last 6 months</p>
+        <p style={styles.date}>February 2025</p>
       </div>
       
+      {/* Stats Summary */}
       <div style={styles.statsContainer}>
         <div style={styles.statItem}>
           <p style={styles.statValue}>{employeeGrowthData.current}</p>
@@ -126,46 +203,19 @@ const EmployeeGrowthTrend = () => {
           <p style={styles.statLabel}>Previous</p>
         </div>
         <div style={styles.statItem}>
-          <p style={styles.statValue}>+{employeeGrowthData.growth}</p>
-          <p style={styles.statLabel}>New Hires</p>
           <div style={styles.growthIndicator}>
-            <span style={styles.growthArrow}>↑</span>
-            <span style={styles.growthText}>{employeeGrowthData.growthPercentage}%</span>
+            <span style={styles.growthText}>+{employeeGrowthData.growth} ({employeeGrowthData.growthPercentage}%)</span>
           </div>
+          <p style={styles.statLabel}>Growth</p>
         </div>
       </div>
 
-      {/* Funnel Placeholder */}
-      <div style={styles.funnel}>
-        {employeeGrowthData.stages.map((stage, index) => (
-          <div
-            key={index}
-            style={{
-              ...styles.funnelStep,
-              borderLeftColor: [
-                '#0ea5e9', // Sky blue
-                '#38bdf8', // Light sky blue
-                '#7dd3fc', // Lighter sky blue
-                '#bae6fd', // Very light sky blue
-                '#e0f2fe'  // Ultra light sky blue
-              ][index],
-              opacity: 1 - (index * 0.15)
-            }}
-            onMouseEnter={(e) => {
-              Object.assign(e.target.style, styles.funnelStepHover);
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = '#f8fafc';
-              e.target.style.transform = 'translateX(0)';
-            }}
-          >
-            <strong style={styles.stepValue}>{stage.value}</strong>
-            <p style={styles.stepLabel}>{stage.label}</p>
-          </div>
-        ))}
+        {/* Funnel Chart */}
+        <div style={styles.chartContainer}>
+          <Bar data={chartData} options={options} />
+        </div>
       </div>
-    </div>
-  );
-};
-
-export default EmployeeGrowthTrend;
+    );
+  };
+  
+  export default EmployeeGrowthTrend;
