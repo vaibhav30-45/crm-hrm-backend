@@ -1,4 +1,4 @@
-const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerJsdoc = require("swagger-jsdoc");
 
 const options = {
   definition: {
@@ -6,29 +6,27 @@ const options = {
     info: {
       title: "CRM + HRM API",
       version: "1.0.0",
-      description: "CRM & HRM Backend APIs"
+      description: "CRM & HRM Backend APIs",
     },
     servers: [
       {
-        url: "http://localhost:5000/api"
-      }
+        url: "http://localhost:5000/api",
+      },
     ],
     components: {
       securitySchemes: {
         bearerAuth: {
           type: "http",
           scheme: "bearer",
-          bearerFormat: "JWT"
-        }
-      }
+          bearerFormat: "JWT",
+        },
+      },
     },
-    security: [
-      {
-        bearerAuth: []
-      }
-    ]
+    security: [{ bearerAuth: [] }],
   },
-  apis: ["./src/modules/**/*.js"]
+
+  // 🔥 THIS IS THE KEY FIX
+  apis: ["./src/modules/**/*.js"], // routes + controllers
 };
 
-module.exports = swaggerJSDoc(options);
+module.exports = swaggerJsdoc(options);

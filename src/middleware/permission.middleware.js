@@ -5,5 +5,5 @@ module.exports = (moduleName) => {
       return res.status(403).json({ message: `Access to ${moduleName} denied` });
     }
     next();
-  }
+  };
 };
