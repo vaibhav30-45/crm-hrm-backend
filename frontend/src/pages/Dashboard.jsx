@@ -170,7 +170,7 @@ export default function Dashboard() {
           color: #64748b;
         }
       `}</style>
-      <div className="content">
+      
         <h1 className="page-title">Dashboard</h1>
 
         {/* Top Stats */}
@@ -235,33 +235,32 @@ export default function Dashboard() {
 
         {/* Bottom Section */}
         <div className="bottom-grid">
-          
+  <div className="chart-placeholder">
+    <h3>Monthly Revenue</h3>
+    <div className="chart-box">Chart Placeholder</div>
+  </div>
 
-           <div className="chart-placeholder">
-            <h3>Monthly Revenue</h3>
-            <div className="chart-box">Chart Placeholder</div>
-          </div>
+  <div className="chart-placeholder">
+    <h3>Sales Funnel</h3>
+    <div className="chart-box">Chart Placeholder</div>
+  </div>
 
-          <div className="chart-placeholder">
-            <h3>Sales Funnel</h3>
-            <div className="chart-box">Chart Placeholder</div>
-          </div>
-           <div className="chart-placeholder">
-            <h3>Attendance Trend</h3>
-            <div className="chart-box">Chart Placeholder</div>
-          </div>
+  <div className="chart-placeholder">
+    <h3>Attendance Trend</h3>
+    <div className="chart-box">Chart Placeholder</div>
+  </div>
 
-          <div className="chart-placeholder">
-            <h3>Employee growth</h3>
-            <div className="chart-box">Chart Placeholder</div>
-          </div>
+  <div className="chart-placeholder">
+    <h3>Employee Growth</h3>
+    <div className="chart-box">Chart Placeholder</div>
+  </div>
+</div> {/* ✅ CLOSE bottom-grid HERE */}
 
- 
-  {/* Risk & Security Alerts Section */}
+
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: '1fr 2fr', 
-          gap: '0px', 
+          gap: '8px', 
           marginTop: '20px',
           width: '100%'
         }}>
@@ -274,7 +273,7 @@ export default function Dashboard() {
           <DownloadReports />
         </div>
 
-        </div>
+      
    
     </DashboardLayout>
   );
