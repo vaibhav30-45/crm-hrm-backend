@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import loginBg from '../assets/Rectangle906.png';
 import Glogo from '../assets/google.jpg';
+import logo from '../assets/logo.webp';
 
 const Login = () => {
   const { login } = useAuth();
@@ -143,6 +144,16 @@ const Login = () => {
       marginBottom: '1rem',
       transition: 'all 0.2s ease',
       boxShadow: '0 4px 12px rgba(23, 161, 203, 0.3)'
+    }, 
+    logoContainer: {
+      alignSelf: 'flex-start',
+      marginBottom: '1rem',
+      display: 'flex'
+    },
+    logo: {
+      width: '150px',
+      height: 'auto',
+      maxHeight: '110px'
     },
     loginBtnHover: {
       transform: 'translateY(-1px)',
@@ -227,6 +238,13 @@ const Login = () => {
         {/* Right Panel - Login Form */}
         <div style={styles.rightPanel}>
           <div style={styles.loginForm}>
+              <div style={styles.logoContainer}>
+             <img 
+               src={logo} 
+               alt="Logo"
+               style={styles.logo}
+             />
+           </div>
             <h1 style={styles.title}>Log in</h1>
             <p style={styles.subtitle}>Welcome back! Please enter your details.</p>
             
