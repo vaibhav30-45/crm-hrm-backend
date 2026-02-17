@@ -7,6 +7,12 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
+import Users from './components/Users';
+import LeadsManagement from './components/CRMconponents/LeadsManagement';
+import SalesActivities from './components/CRMconponents/SalesActivities';
+import SalesPipeline from './components/CRMconponents/SalesPipeline';
+
+import CustomerManagement from './components/CRMconponents/CustomerManagement';
 import './App.css';
 
 function App() {
@@ -35,6 +41,31 @@ function App() {
           <Route path="/dashboard" element={
             <PrivateRoutes>
               <Dashboard />
+            </PrivateRoutes>
+          } />
+          <Route path="/users" element={
+            <PrivateRoutes>
+              <Users />
+            </PrivateRoutes>
+          } />
+          <Route path="/leads-management" element={
+            <PrivateRoutes>
+              <LeadsManagement />
+            </PrivateRoutes>
+          } />
+          <Route path="/sales-activities" element={
+            <PrivateRoutes>
+              <SalesActivities />
+            </PrivateRoutes>
+          } />
+          <Route path="/sales-pipeline" element={
+            <PrivateRoutes>
+              <SalesPipeline />
+            </PrivateRoutes>
+          } />
+          <Route path="/customer-management" element={
+            <PrivateRoutes>
+              <CustomerManagement />
             </PrivateRoutes>
           } />
           
