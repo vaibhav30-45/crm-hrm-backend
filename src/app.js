@@ -10,6 +10,11 @@ const customerRoutes = require("./modules/crm/routes/customerRoutes");
 const activityRoutes = require("./modules/crm/routes/activityRoutes");
 const dealRoutes = require("./modules/crm/routes/dealRoutes");
 const reportRoutes = require("./modules/crm/routes/reportRoutes");
+const leaveRoutes = require("./modules/leave/leave.routes");
+const attendanceRoutes = require("./modules/attendance/attendance.routes");
+const payrollRoutes = require("./modules/payroll/payroll.routes");
+const reviewRoutes = require("./modules/performance/performance.routes");
+const profileRoutes = require("./modules/profile/profile.routes");
 
 const app = express();
 
@@ -27,12 +32,208 @@ app.use("/api/users", userRoutes);
 // Dashboard
 app.use("/api/dashboard", dashboardRoutes);
 
-// CRM
+// CRM routes
 app.use("/api/crm/leads", leadRoutes);
 app.use("/api/crm/customers", customerRoutes);
 app.use("/api/crm/activities", activityRoutes);
 app.use("/api/crm/deals", dealRoutes);
 app.use("/api/crm/reports", reportRoutes);
+//hrm 
+app.use("/api/hrm/leaves", leaveRoutes);
+app.use("/api/hrm/attendance", attendanceRoutes);
+app.use("/api/hrm/payroll", payrollRoutes);
+app.use("/api/hrm/review", reviewRoutes);
 
+
+app.use("/api/hrm/profile", profileRoutes);
 module.exports = app;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
