@@ -10,6 +10,8 @@
   background: #000000;
   color: white;
   padding: 20px;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .logo {

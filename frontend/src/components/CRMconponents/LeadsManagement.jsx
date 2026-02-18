@@ -144,7 +144,9 @@ const LeadsManagement = () => {
           minHeight: "100vh",
         }}
       >
-        {/* STATS CARDS */}
+    <h2 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "16px" }}>
+          CRM / Leads Management
+        </h2>
         <div
           style={{
             display: "grid",

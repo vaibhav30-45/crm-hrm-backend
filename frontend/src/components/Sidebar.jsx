@@ -7,22 +7,38 @@ import { MdOutlineSecurity } from "react-icons/md";
 import { IoSettings } from "react-icons/io5";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import logo from '../assets/logo.webp';
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useEffect } from 'react';
 
 const Sidebar = () => {
-  const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
-  const [isCrmOpen, setIsCrmOpen] = useState(false);
+  const { 
+    isUserManagementOpen, 
+    isCrmOpen, 
+    toggleUserManagement, 
+    toggleCrm,
+    setIsCrmOpen,
+    setIsUserManagementOpen,
+    logout
+  } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const toggleUserManagement = () => {
-    setIsUserManagementOpen(!isUserManagementOpen);
-  };
+useEffect(() => {
+  const crmPages = [
+    '/leads-management', 
+    '/sales-activities', 
+    '/sales-pipeline', 
+    '/forecast', 
+    '/customer-management'
+  ];
 
-  const toggleCrm = () => {
-    setIsCrmOpen(!isCrmOpen);
-  };
+  if (crmPages.includes(location.pathname)) {
+    setIsCrmOpen(true);
+    setIsUserManagementOpen(false);
+  }
+}, [location.pathname]);
+
 
   const handleUsersClick = () => {
     navigate('/users');
@@ -116,7 +132,8 @@ const Sidebar = () => {
         <li 
           onClick={toggleCrm}
           style={{ 
-            backgroundColor: isCrmOpen || isActive('/leads-management') || isActive('/sales-activities') || isActive('/sales-pipeline') || isActive('/forecast') || isActive('/customer-management') ? '#0ea5e9' : 'transparent',
+        backgroundColor: isCrmOpen ? '#0ea5e9' : 'transparent',
+
             cursor: 'pointer',
             display: 'flex',
             justifyContent: 'space-between',
@@ -133,64 +150,82 @@ const Sidebar = () => {
             <FaChevronRight size={12} color="#ffffff" />
           )}
         </li>
-        {(isCrmOpen || isActive('/leads-management') || isActive('/sales-activities') || isActive('/sales-pipeline') || isActive('/forecast') || isActive('/customer-management')) && (
-          <>
-            <li 
-              onClick={handleLeadsManagementClick}
-              style={{ 
-                paddingLeft: '45px',
-                backgroundColor: 'transparent',
-                color: isActive('/leads-management') ? '#0ea5e9' : '#ffffff',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}
-            >
-              Leads Management
-            </li>
-            <li 
-              onClick={handleSalesActivitiesClick}
-              style={{ 
-                paddingLeft: '45px',
-                backgroundColor: 'transparent',
-                color: isActive('/sales-activities') ? '#0ea5e9' : '#ffffff',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}
-            >
-              Sales Activities
-            </li>
-            <li 
-              onClick={handleSalesPipelineClick}
-              style={{ 
-                paddingLeft: '45px',
-                backgroundColor: 'transparent',
-                color: isActive('/sales-pipeline') ? '#0ea5e9' : '#ffffff',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}
-            >
-              Sales Pipeline & Forecast
-            </li>
-            <li 
-              onClick={handleCustomerManagementClick}
-              style={{ 
-                paddingLeft: '45px',
-                backgroundColor: 'transparent',
-                color: isActive('/customer-management') ? '#0ea5e9' : '#ffffff',
-                fontSize: '14px',
-                cursor: 'pointer'
-              }}
-            >
-              Customer Management
-            </li>
-          </>
-        )}
+       {isCrmOpen && (
+  <>
+    <li 
+      onClick={handleLeadsManagementClick}
+      style={{ 
+        paddingLeft: '45px',
+        color: isActive('/leads-management') ? '#0ea5e9' : '#ffffff',
+        fontSize: '14px',
+        cursor: 'pointer'
+      }}
+    >
+      Leads Management
+    </li>
+
+    <li 
+      onClick={handleSalesActivitiesClick}
+      style={{ 
+        paddingLeft: '45px',
+        color: isActive('/sales-activities') ? '#0ea5e9' : '#ffffff',
+        fontSize: '14px',
+        cursor: 'pointer'
+      }}
+    >
+      Sales Activities
+    </li>
+
+    <li 
+      onClick={handleSalesPipelineClick}
+      style={{ 
+        paddingLeft: '45px',
+        color: isActive('/sales-pipeline') ? '#0ea5e9' : '#ffffff',
+        fontSize: '14px',
+        cursor: 'pointer'
+      }}
+    >
+      Sales Pipeline & Forecast
+    </li>
+
+    <li 
+      onClick={handleCustomerManagementClick}
+      style={{ 
+        paddingLeft: '45px',
+        color: isActive('/customer-management') ? '#0ea5e9' : '#ffffff',
+        fontSize: '14px',
+        cursor: 'pointer'
+      }}
+    >
+      Customer Management
+    </li>
+  </>
+)}
+
         <li><GiHandBag size={16} color="#ffffff" /> HRMS</li>
         <li><RiRobot2Fill size={16} color="#ffffff" /> AI Center</li>
         <li><FaChartSimple size={16} color="#ffffff" /> Reports</li>
         <li><MdOutlineSecurity size={16} color="#ffffff" /> Security</li>
         <li><IoSettings size={16} color="#ffffff" /> Settings</li>
-        <li className="logout">Logout</li>
+        <li 
+          className="logout"
+          style={{
+            marginTop: '30px',
+            color: '#f87171',
+            cursor: 'pointer',
+            padding: '12px',
+            borderRadius: '6px',
+            backgroundColor: 'transparent',
+            border: 'none',
+            fontSize: '14px'
+          }}
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
+        >
+          Logout
+        </li>
       </ul>
     </div>
   );
