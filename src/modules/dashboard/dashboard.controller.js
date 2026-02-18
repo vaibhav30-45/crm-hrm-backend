@@ -1,12 +1,21 @@
-exports.getDashboard = (req, res) => {
+exports.employeeDashboard = (req, res) => {
   const role = req.user.role;
   const perms = req.user.permissions || {};
 
   let dashboard = {};
 
-  if (role === "ADMIN") dashboard = { CRM: true, HRM: true, Users: true };
-  else dashboard = perms;
+  if (role === "ADMIN") {
+    dashboard = {
+      CRM: true,
+      HRM: true,
+      Users: true,
+    };
+  } else {
+    dashboard = perms;
+  }
 
-  res.json({ dashboard });
+  res.json({
+    success: true,
+    dashboard,
+  });
 };
-                                                                                                    
