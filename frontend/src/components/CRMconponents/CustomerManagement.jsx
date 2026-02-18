@@ -1,144 +1,141 @@
 import { useState } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
-import "../../styles/layout.css";
 
 const CustomerManagement = () => {
-  const [customers] = useState([
-    {
-      id: 1,
-      customerName: "Rahul Patel",
-      email: "rahul.patel@example.com",
-      phone: "+91 98765 43210",
-      address: "123, MG Road, Bangalore, Karnataka 560001",
-      status: "Active",
-    },
-    {
-      id: 2,
-      customerName: "Neha Shah",
-      email: "neha.shah@example.com",
-      phone: "+91 98765 43211",
-      address: "456, Park Street, Kolkata, West Bengal 700016",
-      status: "Active",
-    },
-    {
-      id: 3,
-      customerName: "Pooja Patel",
-      email: "pooja.patel@example.com",
-      phone: "+91 98765 43212",
-      address: "789, Connaught Place, New Delhi 110001",
-      status: "Inactive",
-    },
-    {
-      id: 4,
-      customerName: "Amit Kumar",
-      email: "amit.kumar@example.com",
-      phone: "+91 98765 43213",
-      address: "321, Marine Drive, Mumbai, Maharashtra 400020",
-      status: "Active",
-    },
-    {
-      id: 5,
-      customerName: "Sneha Reddy",
-      email: "sneha.reddy@example.com",
-      phone: "+91 98765 43214",
-      address: "656, Jubilee Hills, Hyderabad, Telangana 500033",
-      status: "Active",
-    },
-    {
-      id: 6,
-      customerName: "Vikram Singh",
-      email: "vikram.singh@example.com",
-      phone: "+91 98765 43215",
-      address: "987, Brigade Road, Bangalore, Karnataka 560025",
-      status: "Active",
-    },
-    {
-      id: 7,
-      customerName: "Anjali Gupta",
-      email: "anjali.gupta@example.com",
-      phone: "+91 98765 43216",
-      address: "147, Anna Salai, Chennai, Tamil Nadu 600002",
-      status: "Inactive",
-    },
-    {
-      id: 8,
-      customerName: "Rajesh Kumar",
-      email: "rajesh.kumar@example.com",
-      phone: "+91 98765 43217",
-      address: "258, Bandra West, Mumbai, Maharashtra 400050",
-      status: "Active",
-    },
-    {
-      id: 9,
-      customerName: "Priya Sharma",
-      email: "priya.sharma@example.com",
-      phone: "+91 98765 43218",
-      address: "369, Sector 17, Chandigarh 160017",
-      status: "Active",
-    },
-    {
-      id: 10,
-      customerName: "Karthik Nair",
-      email: "karthik.nair@example.com",
-      phone: "+91 98765 43219",
-      address: "741, MG Road, Pune, Maharashtra 411001",
-      status: "Active",
-    },
-    {
-      id: 11,
-      customerName: "Divya Menon",
-      email: "divya.menon@example.com",
-      phone: "+91 98765 43220",
-      address: "852, Residency Road, Bangalore, Karnataka 560025",
-      status: "Inactive",
-    },
-    {
-      id: 12,
-      customerName: "Arjun Verma",
-      email: "arjun.verma@example.com",
-      phone: "+91 98765 43221",
-      address: "963, Nehru Place, New Delhi 110019",
-      status: "Active",
-    },
-  ]);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const [customersPerPage] = useState(6);
+  const [itemsPerPage] = useState(5);
+
+  const customers = [
+    {
+      company: "Acme Corp",
+      renewal: "78% Likely to Renew",
+      health: "8.9 Excellent",
+      lastInteraction: "2 Days Ago",
+      churn: "Low",
+    },
+    {
+      company: "Beta Solution",
+      renewal: "65% Moderate",
+      health: "7.4 Good",
+      lastInteraction: "4 Days Ago",
+      churn: "High",
+    },
+    {
+      company: "Global Tech",
+      renewal: "85% Very Likely",
+      health: "9.2 Strong",
+      lastInteraction: "Today",
+      churn: "High",
+    },
+    {
+      company: "Innovatech INC",
+      renewal: "58% At Risk",
+      health: "6.5 Fair",
+      lastInteraction: "5 Days Ago",
+      churn: "Low",
+    },
+    {
+      company: "Starlight Media",
+      renewal: "90% Very Likely",
+      health: "8.5 Good",
+      lastInteraction: "1 Week Ago",
+      churn: "Low",
+    },
+    {
+      company: "Global Tech",
+      renewal: "80% Moderate",
+      health: "9.0 Excellent",
+      lastInteraction: "3 Days Ago",
+      churn: "Medium",
+    },
+    {
+      company: "Tech Solutions",
+      renewal: "72% Likely to Renew",
+      health: "8.1 Good",
+      lastInteraction: "1 Day Ago",
+      churn: "Low",
+    },
+    {
+      company: "Digital Innovations",
+      renewal: "88% Very Likely",
+      health: "9.5 Excellent",
+      lastInteraction: "2 Days Ago",
+      churn: "Medium",
+    },
+    {
+      company: "Smart Systems",
+      renewal: "45% At Risk",
+      health: "5.8 Poor",
+      lastInteraction: "1 Week Ago",
+      churn: "High",
+    },
+    {
+      company: "Future Tech",
+      renewal: "92% Very Likely",
+      health: "9.8 Excellent",
+      lastInteraction: "Today",
+      churn: "Low",
+    },
+  ];
 
   // Pagination logic
-  const indexOfLastCustomer = currentPage * customersPerPage;
-  const indexOfFirstCustomer = indexOfLastCustomer - customersPerPage;
-  const currentCustomers = customers.slice(indexOfFirstCustomer, indexOfLastCustomer);
-  const totalPages = Math.ceil(customers.length / customersPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = customers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(customers.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
 
-  const getBadgeStyle = (status) => {
-    const styles = {
-      Active: { bg: "#ecfdf5", color: "#16a34a", border: "#bbf7d0" },
-      Inactive: { bg: "#fef2f2", color: "#dc2626", border: "#fecaca" },
-    };
-
-    return (
-      styles[status] || {
-        bg: "#f3f4f6",
-        color: "#6b7280",
-        border: "#e5e7eb",
-      }
-    );
+  const getChurnColor = (value) => {
+    if (value === "Low") return "#16a34a";
+    if (value === "Medium") return "#f97316";
+    if (value === "High") return "#dc2626";
+    return "#6b7280";
   };
 
   return (
     <DashboardLayout>
-      <div
-        style={{
-          padding: "24px",
-          backgroundColor: "#f3f4f6",
-          minHeight: "100vh",
-        }}
-      >
+      <div style={{ padding: "24px", background: "#f3f4f6", minHeight: "100vh" }}>
+        
+       
+        <h2 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "16px" }}>
+          CRM / Customer Management
+        </h2>
+
+     
+        <div
+          style={{
+            background: "#ffffff",
+            padding: "16px",
+            borderRadius: "10px",
+            border: "1px solid #e5e7eb",
+            display: "flex",
+            gap: "12px",
+            marginBottom: "20px",
+          }}
+        >
+          {["CRM Insights", "Support Insights", "Finance Insights"].map(
+            (btn, index) => (
+              <button
+                key={index}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: "8px",
+                  border: "1px solid #e5e7eb",
+                  background: "#f9fafb",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                }}
+              >
+                {btn} ▾
+              </button>
+            )
+          )}
+        </div>
+
+       
         <div
           style={{
             background: "#ffffff",
@@ -147,16 +144,15 @@ const CustomerManagement = () => {
             overflow: "hidden",
           }}
         >
-          {/* TABLE */}
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead style={{ background: "#f9fafb" }}>
               <tr>
                 {[
-                  "Customer Name",
-                  "Email",
-                  "Phone",
-                  "Address",
-                  "Status",
+                  "Company",
+                  "Renewal Probability",
+                  "Health Score",
+                  "Last Interaction",
+                  "Churn Risk",
                   "Action",
                 ].map((heading) => (
                   <th
@@ -165,7 +161,7 @@ const CustomerManagement = () => {
                       padding: "14px 16px",
                       textAlign: "left",
                       fontSize: "12px",
-                      fontWeight: "600",
+                      fontWeight: 600,
                       color: "#6b7280",
                       borderBottom: "1px solid #e5e7eb",
                     }}
@@ -177,66 +173,53 @@ const CustomerManagement = () => {
             </thead>
 
             <tbody>
-              {currentCustomers.map((customer) => {
-                const statusStyle = getBadgeStyle(customer.status);
+              {currentItems.map((item, index) => (
+                <tr key={index} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                  <td style={{ padding: "14px 16px", fontWeight: 500 }}>
+                    {item.company}
+                  </td>
 
-                return (
-                  <tr
-                    key={customer.id}
-                    style={{ borderBottom: "1px solid #f3f4f6" }}
+                  <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                    {item.renewal}
+                  </td>
+
+                  <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                    {item.health}
+                  </td>
+
+                  <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                    {item.lastInteraction}
+                  </td>
+
+                  <td
+                    style={{
+                      padding: "14px 16px",
+                      fontWeight: 500,
+                      color: getChurnColor(item.churn),
+                    }}
                   >
-                    <td style={{ padding: "14px 16px", fontWeight: 500 }}>
-                      {customer.customerName}
-                    </td>
+                    {item.churn}
+                  </td>
 
-                    <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                      {customer.email}
-                    </td>
-
-                    <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                      {customer.phone}
-                    </td>
-
-                    <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                      {customer.address}
-                    </td>
-
-                    <td style={{ padding: "14px 16px" }}>
-                      <span
-                        style={{
-                          padding: "4px 10px",
-                          fontSize: "12px",
-                          borderRadius: "6px",
-                          background: statusStyle.bg,
-                          color: statusStyle.color,
-                          border: `1px solid ${statusStyle.border}`,
-                          fontWeight: 500,
-                        }}
-                      >
-                        {customer.status}
-                      </span>
-                    </td>
-
-                    <td style={{ padding: "14px 16px" }}>
-                      <button
-                        style={{
-                          background: "none",
-                          border: "none",
-                          fontSize: "18px",
-                          cursor: "pointer",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        ⋯
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                  <td style={{ padding: "14px 16px" }}>
+                    <button
+                      style={{
+                        background: "none",
+                        border: "none",
+                        fontSize: "18px",
+                        cursor: "pointer",
+                        color: "#9ca3af",
+                      }}
+                    >
+                      ⋯
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
 
-          {/* PAGINATION */}
+        
           <div
             style={{
               display: "flex",

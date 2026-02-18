@@ -14,6 +14,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isCrmOpen, setIsCrmOpen] = useState(false);
+  const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
 
   useEffect(() => {
     // Check for token in localStorage on app load
@@ -41,12 +43,26 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const toggleCrm = () => {
+    setIsCrmOpen(!isCrmOpen);
+  };
+
+  const toggleUserManagement = () => {
+    setIsUserManagementOpen(!isUserManagementOpen);
+  };
+
   const value = {
     isAuthenticated,
     user,
     loading,
     login,
-    logout
+    logout,
+    isCrmOpen,
+    setIsCrmOpen,
+    toggleCrm,
+    isUserManagementOpen,
+    setIsUserManagementOpen,
+    toggleUserManagement
   };
 
   return (
