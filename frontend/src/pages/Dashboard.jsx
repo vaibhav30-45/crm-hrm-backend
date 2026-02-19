@@ -7,11 +7,10 @@ import DashboardLayout from "../components/DashboardComponents/DashboardLayout";
 import AttendanceTrend from "../components/DashboardComponents/AttendanceTrend";
 import EmployeeGrowthTrend from "../components/DashboardComponents/EmployeeGrowthTrend";
 import MonthlyRevenueChart from "../components/DashboardComponents/MonthlyRevenueChart";
-import DownloadReports from "../components/DashboardComponents/DownloadReports";  
+import DownloadReports from "../components/DashboardComponents/DownloadReports";
 
 import RiskAnomalyCard from "../components/DashboardComponents/RiskAnomalyCard";
 import SecurityAlerts from "../components/DashboardComponents/SecurityAlerts";
-
 
 export default function Dashboard() {
   return (
@@ -171,105 +170,104 @@ export default function Dashboard() {
           color: #64748b;
         }
       `}</style>
-      
-        <h1 className="page-title">Dashboard</h1>
 
-        {/* Top Stats */}
-        <div className="grid">
-          <StatCard
-            title="Total Leads"
-            value="8,420"
-            change="+12% from last month"
-            changeType="positive"
-            icon="✓"
-            color="#10b981"
-          />
-          <StatCard
-            title="Total Customers"
-            value="3,265"
-            change="+9% Growth"
-            changeType="positive"
-            icon="✓"
-            color="#3b82f6"
-          />
-          <StatCard
-            title="Total Employees"
-            value="182"
-            change="+5% new this month"
-            changeType="positive"
-            icon="✓"
-            color="#f59e0b"
-          />
-          <StatCard
-            title="Active Users"
-            value="1,024"
-            change="Online right now"
-            changeType="neutral"
-            icon="👥"
-            color="#8b5cf6"
-          />
+      <h1 className="page-title">Dashboard</h1>
+
+      {/* Top Stats */}
+      <div className="grid">
+        <StatCard
+          title="Total Leads"
+          value="8,420"
+          change="+12% from last month"
+          changeType="positive"
+          icon="✓"
+          color="#10b981"
+        />
+        <StatCard
+          title="Total Customers"
+          value="3,265"
+          change="+9% Growth"
+          changeType="positive"
+          icon="✓"
+          color="#10b981"
+        />
+        <StatCard
+          title="Total Employees"
+          value="182"
+          change="+5% new this month"
+          changeType="positive"
+          icon="✓"
+          color="#10b981"
+        />
+        <StatCard
+          title="Active Users"
+          value="1,024"
+          change="Online right now"
+          changeType="neutral"
+          icon="👥"
+          color="#10b981"
+        />
+      </div>
+
+      {/* Alerts */}
+      <div className="grid">
+        <AlertCard
+          title="AI Alerts"
+          value="5 New Alerts"
+          subtitle="Review Required"
+        />
+        <AlertCard
+          title="AI Credits Usage"
+          value="75% Credits Used"
+          subtitle="Upgrade Recommended"
+        />
+        <AlertCard
+          title="SLA Breaches"
+          value="6 Violations"
+          subtitle="Immediate Action Needed"
+        />
+        <AlertCard
+          title="System Health"
+          value="98% System Stable"
+          subtitle="All Services Running"
+        />
+      </div>
+
+      {/* Bottom Section */}
+      <div className="bottom-grid">
+        <MonthlyRevenueChart />
+
+        <div className="chart-placeholder">
+          <h3>Sales Funnel</h3>
+          <div className="chart-box">Chart Placeholder</div>
         </div>
 
-        {/* Alerts */}
-        <div className="grid">
-          <AlertCard 
-            title="AI Alerts"
-            value="5 New Alerts"
-            subtitle="Review Required"
-          />
-          <AlertCard 
-            title="AI Credits Usage"
-            value="75% Credits Used"
-            subtitle="Upgrade Recommended"
-          />
-          <AlertCard 
-            title="SLA Breaches"
-            value="6 Violations"
-            subtitle="Immediate Action Needed"
-          />
-          <AlertCard 
-            title="System Health"
-            value="98% System Stable"
-            subtitle="All Services Running"
-          />
-        </div>
-
-        {/* Bottom Section */}
-        <div className="bottom-grid">
-      <MonthlyRevenueChart/>
-
-  <div className="chart-placeholder">
-    <h3>Sales Funnel</h3>
-    <div className="chart-box">Chart Placeholder</div>
-  </div>
-
-  {/* <div className="chart-placeholder">
+        {/* <div className="chart-placeholder">
     <h3>Attendance Trend</h3>
     <div className="chart-box">Chart Placeholder</div>
   </div> */}
-  <AttendanceTrend />
+        <AttendanceTrend />
 
-  <EmployeeGrowthTrend />
-  
-</div> 
+        <EmployeeGrowthTrend />
+      </div>
 
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 2fr",
+          gap: "8px",
+          marginTop: "20px",
+          width: "100%",
+        }}
+      >
+        <RiskAnomalyCard />
+        <SecurityAlerts />
+      </div>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 2fr', 
-          gap: '8px', 
-          marginTop: '20px',
-          width: '100%'
-        }}>
-          <RiskAnomalyCard />
-          <SecurityAlerts />
-        </div>
-
-        {/* Download Reports Section */}
-        <div style={{ marginTop: '20px' }}>
-          <DownloadReports />
-        </div>
-      
+      {/* Download Reports Section */}
+      <div style={{ marginTop: "20px" }}>
+        <DownloadReports />
+      </div>
     </DashboardLayout>
   );
 }
