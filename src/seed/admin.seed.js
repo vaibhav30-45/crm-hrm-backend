@@ -9,13 +9,13 @@ const seedAdmin = async () => {
     return;
   }
 
-  // 🔥 CREATE FIRST TENANT
+  //  CREATE FIRST TENANT
   const tenant = await Tenant.create({
     companyName: "CRM HRM Root Company",
     companyCode: "ROOT"
   });
 
-  // 🔥 CREATE ADMIN
+  //  CREATE ADMIN
   const admin = await User.create({
     tenantId: tenant._id,
     name: "Super Admin",
@@ -26,7 +26,7 @@ const seedAdmin = async () => {
     isActive: true
   });
 
-  console.log("🔥 First ADMIN & TENANT created");
+  console.log("First ADMIN & TENANT created");
 };
 
 module.exports = seedAdmin;

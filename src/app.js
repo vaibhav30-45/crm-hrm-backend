@@ -15,6 +15,10 @@ const attendanceRoutes = require("./modules/attendance/attendance.routes");
 const payrollRoutes = require("./modules/payroll/payroll.routes");
 const reviewRoutes = require("./modules/performance/performance.routes");
 const profileRoutes = require("./modules/profile/profile.routes");
+const managerDashboardRoutes = require("./modules/dashboard/manager/manager.dashboard.routes");
+
+
+
 
 const app = express();
 
@@ -46,6 +50,7 @@ app.use("/api/hrm/review", reviewRoutes);
 
 
 app.use("/api/hrm/profile", profileRoutes);
+app.use("/api/manager/dashboard", managerDashboardRoutes);
 module.exports = app;
 
 
