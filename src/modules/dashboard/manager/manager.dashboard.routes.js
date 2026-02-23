@@ -19,7 +19,7 @@ const authorizeManager = (req, res, next) => {
     });
   }
   next();
-};
+};  
 
 // Routes
 router.get("/", protect, authorizeManager, getManagerDashboard);
@@ -27,4 +27,4 @@ router.get("/graph", protect, authorizeManager, getManagerGraph);
 router.get("/productivity", protect, authorizeManager, getProductivityScore);
 router.get("/risk", protect, authorizeManager, getRiskAnalysis);
 
-module.exports = router;
+module.exports = router;  
