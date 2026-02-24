@@ -14,8 +14,12 @@ import Users from "./components/Users";
 import LeadsManagement from "./components/CRMconponents/LeadsManagement";
 import SalesActivities from "./components/CRMconponents/SalesActivities";
 import SalesPipeline from "./components/CRMconponents/SalesPipeline";
-
+import AttendanceManagement from "./components/HRMSComponents/AttendanceManagement";
+import EmployeeProfile from "./components/HRMSComponents/EmployeesProfile";
+import LeaveManagement from "./components/HRMSComponents/LeaveManagement";
+import PayrollManagement from "./components/HRMSComponents/PayrollManagement";
 import CustomerManagement from "./components/CRMconponents/CustomerManagement";
+import EmployeesOnboarding from "./components/HRMSComponents/EmployeesOnboarding";
 import "./App.css";
 
 function App() {
@@ -122,6 +126,47 @@ function App() {
               </PrivateRoutes>
             }
           />
+          <Route
+            path="/hrms/attendance"
+            element={
+              <PrivateRoutes>
+                <AttendanceManagement />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+  path="/hrms/employees-onboarding"
+  element={
+    <PrivateRoutes>
+      <EmployeesOnboarding />
+    </PrivateRoutes>
+  }
+/>
+<Route
+  path="/hrms/employee-profile"
+  element={
+    <PrivateRoutes>
+      <EmployeeProfile />
+    </PrivateRoutes>
+  }
+/>
+<Route
+    path="/hrms/payroll-management"
+    element={
+      <PrivateRoutes>
+        <PayrollManagement />
+      </PrivateRoutes>
+    }
+  />
+  <Route
+  path="/hrms/leave-management"
+  element={
+    <PrivateRoutes>
+      <LeaveManagement />
+    </PrivateRoutes>
+  }
+/>
+
 
           {/* Catch all route */}
           <Route
