@@ -1,133 +1,66 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUser, FaEdit, FaTrash, FaPlus, FaSearch } from "react-icons/fa";
 import DashboardLayout from "./DashboardComponents/DashboardLayout";
+import { userService } from "../services/userService";
 
 const Users = () => {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      mobile: "+1 234-567-8901",
-      lastLogin: "2025-02-17 09:30 AM",
-      department: "IT",
-      role: "Admin",
-      status: "Active",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      mobile: "+1 234-567-8902",
-      lastLogin: "2025-02-17 08:45 AM",
-      department: "HR",
-      role: "Manager",
-      status: "Active",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike@example.com",
-      mobile: "+1 234-567-8903",
-      lastLogin: "2025-02-16 04:20 PM",
-      department: "Sales",
-      role: "Employee",
-      status: "Inactive",
-    },
-    {
-      id: 4,
-      name: "Sarah Wilson",
-      email: "sarah@example.com",
-      mobile: "+1 234-567-8904",
-      lastLogin: "2025-02-17 10:15 AM",
-      department: "IT",
-      role: "Employee",
-      status: "Active",
-    },
-    {
-      id: 5,
-      name: "Tom Brown",
-      email: "tom@example.com",
-      mobile: "+1 234-567-8905",
-      lastLogin: "2025-02-17 07:30 AM",
-      department: "HR",
-      role: "Manager",
-      status: "Active",
-    },
-    {
-      id: 6,
-      name: "Emily Davis",
-      email: "emily@example.com",
-      mobile: "+1 234-567-8906",
-      lastLogin: "2025-02-15 02:30 PM",
-      department: "Finance",
-      role: "Employee",
-      status: "Active",
-    },
-    {
-      id: 7,
-      name: "Chris Lee",
-      email: "chris@example.com",
-      mobile: "+1 234-567-8907",
-      lastLogin: "202 5-02-17 11:00 AM",
-      department: "IT",
-      role: "Employee",
-      status: "Active",
-    },
-    {
-      id: 8,
-      name: "Lisa Anderson",
-      email: "lisa@example.com",
-      mobile: "+1 234-567-8908",
-      lastLogin: "2025-02-14 09:15 AM",
-      department: "Sales",
-      role: "Employee",
-      status: "Inactive",
-    },
-  ]);
-  const [showModal, setShowModal] = useState(false);
-
-  const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    mobile: "",
-    department: "",
-    role: "",
-    status: "Active",
-  });
-
+  const [users, setUsers] = useState([]);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(6);
+  const [showModal, setShowModal] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "",
+    designation: "",
+    techStack: "",
+  });
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const filteredUsers = users.filter((user) => {
+  // Remove getAllUsers call as requested
+  // useEffect(() => {
+  //   fetchUsers();
+  // }, [currentPage, usersPerPage]);
+
+  // Filter users based on search
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Filter users based on department, role, and status
+  const filteredUsersWithDepartmentRoleStatus = filteredUsers.filter(user => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.mobile.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.department.toLowerCase().includes(searchTerm.toLowerCase());
+      user.role.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesDepartment =
-      !departmentFilter || user.department === departmentFilter;
+      !departmentFilter || user.designation === departmentFilter;
     const matchesRole = !roleFilter || user.role === roleFilter;
-    const matchesStatus = !statusFilter || user.status === statusFilter;
+    const matchesStatus = !statusFilter || (user.isActive ? "Active" : "Inactive") === statusFilter;
 
     return matchesSearch && matchesDepartment && matchesRole && matchesStatus;
   });
 
-  const departments = [...new Set(users.map((user) => user.department))];
   const roles = [...new Set(users.map((user) => user.role))];
-  const statuses = [...new Set(users.map((user) => user.status))];
+  const statuses = [...new Set(users.map((user) => user.isActive ? "Active" : "Inactive"))];
+  const departments = [...new Set(users.map((user) => user.designation).filter(Boolean))];
 
   // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const currentUsers = filteredUsersWithDepartmentRoleStatus.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsersWithDepartmentRoleStatus.length / usersPerPage);
 
   
   const handleFilterChange = () => {
@@ -146,27 +79,50 @@ const Users = () => {
     });
   };
 
-  const handleSaveUser = () => {
-    if (!newUser.name || !newUser.email) return;
+  const handleSaveUser = async () => {
+    if (!newUser.name || !newUser.email || !newUser.password || !newUser.role) {
+      alert("Please fill in all required fields: Name, Email, Password, and Role");
+      return;
+    }
 
-    const userToAdd = {
-      ...newUser,
-      id: users.length + 1,
-      lastLogin: new Date().toLocaleString(),
-    };
-
-    setUsers([...users, userToAdd]);
-
-    setNewUser({
-      name: "",
-      email: "",
-      mobile: "",
-      department: "",
-      role: "",
-      status: "Active",
-    });
-
-    setShowModal(false);
+    try {
+      setLoading(true);
+      
+      // Only include techStack if it has a value
+      const userDataToSend = { ...newUser };
+      if (!userDataToSend.techStack || userDataToSend.techStack.trim() === '') {
+        delete userDataToSend.techStack;
+      }
+      
+      const response = await userService.create(userDataToSend);
+      
+      // Show success popup
+      setSuccessMessage(`User "${newUser.name}" created successfully!`);
+      setShowSuccessPopup(true);
+      
+      // Reset form
+      setNewUser({
+        name: "",
+        email: "",
+        password: "",
+        role: "",
+        designation: "",
+        techStack: "",
+      });
+      
+      setShowModal(false);
+      
+      // Hide popup after 3 seconds
+      setTimeout(() => {
+        setShowSuccessPopup(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error creating user:', error);
+      alert(`Error creating user: ${error.message || 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -504,7 +460,7 @@ const Users = () => {
                     textTransform: "uppercase",
                   }}
                 >
-                  Mobile Number
+                  Designation
                 </th>
                 <th
                   style={{
@@ -516,7 +472,7 @@ const Users = () => {
                     textTransform: "uppercase",
                   }}
                 >
-                  Last Login
+                  Tech Stack
                 </th>
                 <th
                   style={{
@@ -528,7 +484,7 @@ const Users = () => {
                     textTransform: "uppercase",
                   }}
                 >
-                  Role
+                  Created At
                 </th>
                 <th
                   style={{
@@ -559,7 +515,7 @@ const Users = () => {
             <tbody>
               {currentUsers.map((user) => (
                 <tr
-                  key={user.id}
+                  key={user._id}
                   style={{
                     borderBottom: "1px solid #f1f5f9",
                     transition: "background-color 0.2s ease",
@@ -605,51 +561,36 @@ const Users = () => {
                   </td>
                   <td style={{ padding: "16px 12px" }}>
                     <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      {user.mobile}
+                      {user.designation || "-"}
                     </span>
                   </td>
                   <td style={{ padding: "16px 12px" }}>
                     <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      {user.lastLogin}
+                      {user.techStack || "-"}
                     </span>
                   </td>
                   <td style={{ padding: "16px 12px" }}>
-                    <span
-                      style={{
-                        padding: "4px 8px",
-                        borderRadius: "4px",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        backgroundColor:
-                          user.role === "Admin"
-                            ? "#fef3c7"
-                            : user.role === "Manager"
-                              ? "#dbeafe"
-                              : "#f3f4f6",
-                        color:
-                          user.role === "Admin"
-                            ? "#92400e"
-                            : user.role === "Manager"
-                              ? "#1e40af"
-                              : "#374151",
-                      }}
-                    >
+                    <span style={{ color: "#64748b", fontSize: "14px" }}>
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </span>
+                  </td>
+                  <td style={{ padding: "16px 12px" }}>
+                    <span style={{ color: "#64748b", fontSize: "14px" }}>
                       {user.role}
                     </span>
                   </td>
                   <td style={{ padding: "16px 12px" }}>
                     <span
                       style={{
+                        color: user.isActive ? "#10b981" : "#ef4444",
+                        fontSize: "14px",
+                        fontWeight: "500",
                         padding: "4px 8px",
                         borderRadius: "4px",
-                        fontSize: "12px",
-                        fontWeight: "500",
-                        backgroundColor:
-                          user.status === "Active" ? "#d1fae5" : "#fee2e2",
-                        color: user.status === "Active" ? "#065f46" : "#991b1b",
+                        backgroundColor: user.isActive ? "#ecfdf5" : "#fef2f2",
                       }}
                     >
-                      {user.status}
+                      {user.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
                   <td style={{ padding: "16px 12px" }}>
@@ -736,76 +677,115 @@ const Users = () => {
 
                 <input
                   name="name"
-                  placeholder="Full Name"
+                  type="text"
+                  placeholder="Full Name *"
                   value={newUser.name}
                   onChange={handleInputChange}
                   style={{
                     width: "100%",
-                    marginBottom: "10px",
-                    padding: "8px",
+                    marginBottom: "12px",
+                    padding: "10px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    fontSize: "14px",
                   }}
                 />
 
                 <input
                   name="email"
-                  placeholder="Email"
+                  type="email"
+                  placeholder="Email *"
                   value={newUser.email}
                   onChange={handleInputChange}
                   style={{
                     width: "100%",
-                    marginBottom: "10px",
-                    padding: "8px",
+                    marginBottom: "12px",
+                    padding: "10px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    fontSize: "14px",
                   }}
                 />
 
                 <input
-                  name="mobile"
-                  placeholder="Mobile"
-                  value={newUser.mobile}
+                  name="password"
+                  type="password"
+                  placeholder="Password *"
+                  value={newUser.password}
                   onChange={handleInputChange}
                   style={{
                     width: "100%",
-                    marginBottom: "10px",
-                    padding: "8px",
-                  }}
-                />
-
-                <input
-                  name="department"
-                  placeholder="Department"
-                  value={newUser.department}
-                  onChange={handleInputChange}
-                  style={{
-                    width: "100%",
-                    marginBottom: "10px",
-                    padding: "8px",
-                  }}
-                />
-
-                <input
-                  name="role"
-                  placeholder="Role"
-                  value={newUser.role}
-                  onChange={handleInputChange}
-                  style={{
-                    width: "100%",
-                    marginBottom: "10px",
-                    padding: "8px",
+                    marginBottom: "12px",
+                    padding: "10px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    fontSize: "14px",
                   }}
                 />
 
                 <select
-                  name="status"
-                  value={newUser.status}
+                  name="role"
+                  value={newUser.role}
                   onChange={handleInputChange}
                   style={{
                     width: "100%",
-                    marginBottom: "16px",
-                    padding: "8px",
+                    marginBottom: "12px",
+                    padding: "10px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    backgroundColor: "#ffffff",
                   }}
                 >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  <option value="">Select Role *</option>
+                  <option value="HR">HR</option>
+                  <option value="MANAGER">Manager</option>
+                  <option value="EMPLOYEE">Employee</option>
+                  <option value="BDE">Business Development Executive</option>
+                </select>
+
+                <select
+                  name="designation"
+                  value={newUser.designation}
+                  onChange={handleInputChange}
+                  style={{
+                    width: "100%",
+                    marginBottom: "12px",
+                    padding: "10px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    backgroundColor: "#ffffff",
+                  }}
+                >
+                  <option value="">Select Designation</option>
+                  <option value="Project Manager">Project Manager</option>
+                  <option value="Sales Manager">Sales Manager</option>
+                  <option value="Client Relationship Manager">Client Relationship Manager</option>
+                  <option value="Developer">Developer</option>
+                  <option value="Intern">Intern</option>
+                </select>
+
+                <select
+                  name="techStack"
+                  value={newUser.techStack}
+                  onChange={handleInputChange}
+                  style={{
+                    width: "100%",
+                    marginBottom: "20px",
+                    padding: "10px",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    backgroundColor: "#ffffff",
+                  }}
+                >
+                  <option value="">Select Tech Stack</option>
+                  <option value="MERN">MERN</option>
+                  <option value="Full Stack">Full Stack</option>
+                  <option value="AIML">AIML</option>
+                  <option value="Frontend">Frontend</option>
+                  <option value="Backend">Backend</option>
                 </select>
 
                 <div
@@ -824,15 +804,19 @@ const Users = () => {
 
                   <button
                     onClick={handleSaveUser}
+                    disabled={loading}
                     style={{
-                      padding: "8px 12px",
-                      backgroundColor: "#0ea5e9",
+                      padding: "10px 16px",
+                      backgroundColor: loading ? "#94a3b8" : "#0ea5e9",
                       color: "#fff",
                       border: "none",
                       borderRadius: "6px",
+                      cursor: loading ? "not-allowed" : "pointer",
+                      fontSize: "14px",
+                      fontWeight: "500",
                     }}
                   >
-                    Save
+                    {loading ? "Creating..." : "Create User"}
                   </button>
                 </div>
               </div>
@@ -957,6 +941,48 @@ const Users = () => {
           </div>
         )}
 
+        {/* Success Popup */}
+        {showSuccessPopup && (
+          <div
+            style={{
+              position: "fixed",
+              top: "20px",
+              right: "20px",
+              backgroundColor: "#10b981",
+              color: "#ffffff",
+              padding: "16px 20px",
+              borderRadius: "8px",
+              boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)",
+              zIndex: 10000,
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              animation: "slideIn 0.3s ease-out",
+            }}
+          >
+            <div
+              style={{
+                width: "24px",
+                height: "24px",
+                backgroundColor: "#ffffff",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#10b981",
+                fontWeight: "bold",
+                fontSize: "14px",
+              }}
+            >
+              ✓
+            </div>
+            <div>
+              <div style={{ fontWeight: "600", marginBottom: "2px" }}>Success!</div>
+              <div style={{ fontSize: "14px", opacity: 0.9 }}>{successMessage}</div>
+            </div>
+          </div>
+        )}
+
         {filteredUsers.length === 0 && (
           <div
             style={{
@@ -966,7 +992,7 @@ const Users = () => {
             }}
           >
             <FaUser size={48} style={{ marginBottom: "16px", opacity: 0.5 }} />
-            <p>No users found matching your search.</p>
+            <p>No users found. Click "Add User" to create a new user.</p>
           </div>
         )}
       </div>

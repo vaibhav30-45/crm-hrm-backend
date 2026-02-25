@@ -8,8 +8,8 @@ import logo from '../assets/logo.webp';
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('admin@crmhrm.com'); // Default admin email
+  const [password, setPassword] = useState('Admin@123'); // Default admin password
   const [rememberMe, setRememberMe] = useState(false);
 
   const styles = {
@@ -210,17 +210,34 @@ const Login = () => {
     e.target.style.backgroundColor = '#fafafa';
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Login attempt:', { email, password, rememberMe });
     
-    // Mock login - replace with actual API call
-    const mockToken = 'mock-jwt-token';
-    const mockUser = { id: 1, name: 'John Doe', email: email };
-    
-    // Login and navigate to dashboard
-    login(mockToken, mockUser);
-    navigate('/dashboard');
+    try {
+      // Call real API
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Update AuthContext and navigate
+        login(data.token, data.user);
+        navigate('/dashboard');
+      } else {
+        // Handle login error
+        alert(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('Login failed. Please try again.');
+    }
   };
 
   return (

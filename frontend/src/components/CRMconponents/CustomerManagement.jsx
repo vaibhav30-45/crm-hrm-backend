@@ -1,82 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
+import { crmService } from "../../services/crmService";
 
 const CustomerManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const customers = [
-    {
-      company: "Acme Corp",
-      renewal: "78% Likely to Renew",
-      health: "8.9 Excellent",
-      lastInteraction: "2 Days Ago",
-      churn: "Low",
-    },
-    {
-      company: "Beta Solution",
-      renewal: "65% Moderate",
-      health: "7.4 Good",
-      lastInteraction: "4 Days Ago",
-      churn: "High",
-    },
-    {
-      company: "Global Tech",
-      renewal: "85% Very Likely",
-      health: "9.2 Strong",
-      lastInteraction: "Today",
-      churn: "High",
-    },
-    {
-      company: "Innovatech INC",
-      renewal: "58% At Risk",
-      health: "6.5 Fair",
-      lastInteraction: "5 Days Ago",
-      churn: "Low",
-    },
-    {
-      company: "Starlight Media",
-      renewal: "90% Very Likely",
-      health: "8.5 Good",
-      lastInteraction: "1 Week Ago",
-      churn: "Low",
-    },
-    {
-      company: "Global Tech",
-      renewal: "80% Moderate",
-      health: "9.0 Excellent",
-      lastInteraction: "3 Days Ago",
-      churn: "Medium",
-    },
-    {
-      company: "Tech Solutions",
-      renewal: "72% Likely to Renew",
-      health: "8.1 Good",
-      lastInteraction: "1 Day Ago",
-      churn: "Low",
-    },
-    {
-      company: "Digital Innovations",
-      renewal: "88% Very Likely",
-      health: "9.5 Excellent",
-      lastInteraction: "2 Days Ago",
-      churn: "Medium",
-    },
-    {
-      company: "Smart Systems",
-      renewal: "45% At Risk",
-      health: "5.8 Poor",
-      lastInteraction: "1 Week Ago",
-      churn: "High",
-    },
-    {
-      company: "Future Tech",
-      renewal: "92% Very Likely",
-      health: "9.8 Excellent",
-      lastInteraction: "Today",
-      churn: "Low",
-    },
-  ];
+  // Fetch customers from API
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        setLoading(true);
+        const params = {
+          page: currentPage,
+          limit: itemsPerPage,
+        };
+        const response = await crmService.customers.getAll(params);
+        
+        if (response.success) {
+          setCustomers(response.data.customers || []);
+        }
+      } catch (err) {
+        setError(err.message);
+        // Fallback to mock data if API fails
+        setCustomers([
+          {
+            company: "Acme Corp",
+            renewal: "78% Likely to Renew",
+            health: "8.9 Excellent",
+            lastInteraction: "2 Days Ago",
+            churn: "Low",
+          },
+          {
+            company: "Beta Solution",
+            renewal: "65% Moderate",
+            health: "7.4 Good",
+            lastInteraction: "4 Days Ago",
+            churn: "High",
+          },
+          {
+            company: "Global Tech",
+            renewal: "85% Very Likely",
+            health: "9.2 Strong",
+            lastInteraction: "Today",
+            churn: "High",
+          },
+          {
+            company: "Innovatech INC",
+            renewal: "58% At Risk",
+            health: "6.5 Fair",
+            lastInteraction: "5 Days Ago",
+            churn: "Low",
+          },
+          {
+            company: "Starlight Media",
+            renewal: "90% Very Likely",
+            health: "8.5 Good",
+            lastInteraction: "1 Week Ago",
+            churn: "Low",
+          },
+          {
+            company: "Global Tech",
+            renewal: "80% Moderate",
+            health: "9.0 Excellent",
+            lastInteraction: "3 Days Ago",
+            churn: "Medium",
+          },
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, [currentPage, itemsPerPage]);
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -99,12 +99,12 @@ const CustomerManagement = () => {
     <DashboardLayout>
       <div style={{ padding: "24px", background: "#f3f4f6", minHeight: "100vh" }}>
         
-       
+        {/* PAGE TITLE */}
         <h2 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "16px" }}>
           CRM / Customer Management
         </h2>
 
-     
+        {/* FILTER BUTTONS */}
         <div
           style={{
             background: "#ffffff",
@@ -135,7 +135,7 @@ const CustomerManagement = () => {
           )}
         </div>
 
-       
+        {/* TABLE */}
         <div
           style={{
             background: "#ffffff",
@@ -144,92 +144,110 @@ const CustomerManagement = () => {
             overflow: "hidden",
           }}
         >
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead style={{ background: "#f9fafb" }}>
-              <tr>
-                {[
-                  "Company",
-                  "Renewal Probability",
-                  "Health Score",
-                  "Last Interaction",
-                  "Churn Risk",
-                  "Action",
-                ].map((heading) => (
-                  <th
-                    key={heading}
-                    style={{
-                      padding: "14px 16px",
-                      textAlign: "left",
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      color: "#6b7280",
-                      borderBottom: "1px solid #e5e7eb",
-                    }}
-                  >
-                    {heading}
-                  </th>
-                ))}
-              </tr>
-            </thead>
+          {loading ? (
+            <div style={{ 
+              padding: "40px", 
+              textAlign: "center", 
+              color: "#6b7280" 
+            }}>
+              Loading customers...
+            </div>
+          ) : error ? (
+            <div style={{ 
+              padding: "40px", 
+              textAlign: "center", 
+              color: "#dc2626" 
+            }}>
+              Error: {error}
+            </div>
+          ) : (
+            <>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead style={{ background: "#f9fafb" }}>
+                  <tr>
+                    {[
+                      "Company",
+                      "Renewal Probability",
+                      "Health Score",
+                      "Last Interaction",
+                      "Churn Risk",
+                      "Action",
+                    ].map((heading) => (
+                      <th
+                        key={heading}
+                        style={{
+                          padding: "14px 16px",
+                          textAlign: "left",
+                          fontSize: "12px",
+                          fontWeight: 600,
+                          color: "#6b7280",
+                          borderBottom: "1px solid #e5e7eb",
+                        }}
+                      >
+                        {heading}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
 
-            <tbody>
-              {currentItems.map((item, index) => (
-                <tr key={index} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                  <td style={{ padding: "14px 16px", fontWeight: 500 }}>
-                    {item.company}
-                  </td>
+                <tbody>
+                  {currentItems.map((item, index) => (
+                    <tr key={index} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                      <td style={{ padding: "14px 16px", fontWeight: 500 }}>
+                        {item.company}
+                      </td>
 
-                  <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                    {item.renewal}
-                  </td>
+                      <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                        {item.renewal}
+                      </td>
 
-                  <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                    {item.health}
-                  </td>
+                      <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                        {item.health}
+                      </td>
 
-                  <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                    {item.lastInteraction}
-                  </td>
+                      <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                        {item.lastInteraction}
+                      </td>
 
-                  <td
-                    style={{
-                      padding: "14px 16px",
-                      fontWeight: 500,
-                      color: getChurnColor(item.churn),
-                    }}
-                  >
-                    {item.churn}
-                  </td>
+                      <td
+                        style={{
+                          padding: "14px 16px",
+                          fontWeight: 500,
+                          color: getChurnColor(item.churn),
+                        }}
+                      >
+                        {item.churn}
+                      </td>
 
-                  <td style={{ padding: "14px 16px" }}>
-                    <button
-                      style={{
-                        background: "none",
-                        border: "none",
-                        fontSize: "18px",
-                        cursor: "pointer",
-                        color: "#9ca3af",
-                      }}
-                    >
-                      ⋯
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                      <td style={{ padding: "14px 16px" }}>
+                        <button
+                          style={{
+                            background: "none",
+                            border: "none",
+                            fontSize: "18px",
+                            cursor: "pointer",
+                            color: "#9ca3af",
+                          }}
+                        >
+                          ⋯
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-        
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: "16px",
-              background: "#f9fafb",
-              borderTop: "1px solid #e5e7eb",
-            }}
-          >
+              {/* PAGINATION */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "16px",
+                  background: "#f9fafb",
+                  borderTop: "1px solid #e5e7eb",
+                }}
+              >
             <button
               onClick={prevPage}
               disabled={currentPage === 1}
@@ -329,7 +347,9 @@ const CustomerManagement = () => {
             >
               Next
             </button>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </DashboardLayout>
