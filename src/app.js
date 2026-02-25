@@ -20,50 +20,65 @@ const reviewRoutes = require("./modules/performance/performance.routes");
 const profileRoutes = require("./modules/profile/profile.routes");
 const managerDashboardRoutes = require("./modules/dashboard/manager/manager.dashboard.routes");
 const projectRoutes = require("./modules/project/project.routes");
+
 const app = express();
 
-// 🌍 Global Middlewares
+// ========================================
+// 🌍 GLOBAL MIDDLEWARES
+// ========================================
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// 📘 Swagger Documentation
+// ========================================
+// 📘 SWAGGER DOCS
+// ========================================
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-// ============================
-// AUTH & USERS
-// ============================
+// ========================================
+// 🔐 AUTH & USERS
+// ========================================
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 
-
-// ============================
-// DASHBOARD
-// ============================
+// ========================================
+// 📊 DASHBOARD
+// ========================================
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/manager/dashboard", managerDashboardRoutes);
 
-// ============================
-// CRM MODULE
-// ============================
+// ========================================
+// 📈 CRM MODULE
+// ========================================
 app.use("/api/crm/leads", leadRoutes);
 app.use("/api/crm/customers", customerRoutes);
 app.use("/api/crm/activities", activityRoutes);
 app.use("/api/crm/deals", dealRoutes);
 app.use("/api/crm/reports", reportRoutes);
 
-// ============================
-// HRM MODULE
-// ============================
+// ========================================
+// 🏢 HRM MODULE
+// ========================================
 app.use("/api/hrm/leaves", leaveRoutes);
 app.use("/api/hrm/attendance", attendanceRoutes);
 app.use("/api/hrm/payroll", payrollRoutes);
 app.use("/api/hrm/review", reviewRoutes);
 app.use("/api/hrm/profile", profileRoutes);
 
-// ============================
-// 404 Handler
-// ============================
+// ========================================
+// 🛑 HEALTH CHECK (Optional but Recommended)
+// ========================================
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "CRM + HRM API running successfully",
+  });
+});
+
+// ========================================
+// 🚫 404 HANDLER
+// ========================================
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -71,26 +86,19 @@ app.use((req, res) => {
   });
 });
 
-// ============================
-// Global Error Handler
-// ============================
+// ========================================
+// 💥 GLOBAL ERROR HANDLER
+// ========================================
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
+  console.error("ERROR:", err.stack);
+
+  res.status(err.statusCode || 500).json({
     success: false,
-    message: "Server Error",
+    message: err.message || "Internal Server Error",
   });
 });
 
 module.exports = app;
-
-
-
-
-
-
-
-
 
 
 

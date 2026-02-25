@@ -2,11 +2,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../modules/users/user.model");
 const jwtConfig = require("../config/jwt");
 
+// ========================================
 // 🔐 PROTECT ROUTES
+// ========================================
 exports.protect = async (req, res, next) => {
   try {
     let token;
 
+    // Check Authorization header
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer ")
@@ -21,20 +24,29 @@ exports.protect = async (req, res, next) => {
       });
     }
 
+    // Verify Token
     const decoded = jwt.verify(token, jwtConfig.secret);
 
+    // Find User
     const user = await User.findById(decoded.id).select("-password");
 
-    if (!user || !user.isActive) {
+    if (!user) {
       return res.status(401).json({
         success: false,
-        message: "User not found or inactive",
+        message: "User not found",
       });
     }
 
-    // 🔥 Attach user + tenant info
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: "User account is inactive",
+      });
+    }
+
+    // Attach user & tenant
     req.user = user;
-    req.tenantId = user.tenantId;
+    req.tenantId = user.tenantId || null;
 
     next();
   } catch (error) {
@@ -45,7 +57,9 @@ exports.protect = async (req, res, next) => {
   }
 };
 
+// ========================================
 // 🔐 ROLE AUTHORIZATION
+// ========================================
 exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -58,7 +72,7 @@ exports.authorizeRoles = (...roles) => {
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `Access denied. Role ${req.user.role} not allowed`,
+        message: `Access denied. Role '${req.user.role}' not allowed`,
       });
     }
 
@@ -66,15 +80,43 @@ exports.authorizeRoles = (...roles) => {
   };
 };
 
-// 🔥 OPTIONAL: Designation based protection
+// ========================================
+// 🔐 DESIGNATION AUTHORIZATION (Optional)
+// ========================================
 exports.authorizeDesignation = (...designations) => {
   return (req, res, next) => {
+    if (!req.user.designation) {
+      return res.status(403).json({
+        success: false,
+        message: "No designation assigned",
+      });
+    }
+
     if (!designations.includes(req.user.designation)) {
       return res.status(403).json({
         success: false,
-        message: `Access denied. Designation ${req.user.designation} not allowed`,
+        message: `Access denied. Designation '${req.user.designation}' not allowed`,
       });
     }
+
     next();
   };
+};
+
+// ========================================
+// 🔐 TENANT PROTECTION (Multi-Tenant Safety)
+// ========================================
+exports.checkTenantAccess = (req, res, next) => {
+  if (req.user.role === "ADMIN") {
+    return next(); // Admin can access all
+  }
+
+  if (!req.tenantId) {
+    return res.status(403).json({
+      success: false,
+      message: "Tenant access denied",
+    });
+  }
+
+  next();
 };
