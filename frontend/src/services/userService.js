@@ -7,19 +7,19 @@ export const userService = {
     return await api.get(`/users${queryString ? `?${queryString}` : ''}`);
   },
   
-  getById: async (id) => {
-    return await api.get(`/users/${id}`);
-  },
+  // getById: async (id) => {
+  //   return await api.get(`/users/${id}`);
+  // },
   
   create: async (userData) => {
     return await api.post('/users', userData);
   },
   
-  update: async (id, userData) => {
-    return await api.put(`/users/${id}`, userData);
-  },
+  // update: async (id, userData) => {
+  //   return await api.put(`/users/${id}`, userData);
+  // },
   
-  delete: async (id) => {
-    return await api.delete(`/users/${id}`);
-  },
+  // delete: async (id) => {
+  //   return await api.delete(`/users/${id}`);
+  // },
 };
