@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService } from '../services/authService';
 
 const AuthContext = createContext();
 
@@ -18,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   const [isUserManagementOpen, setIsUserManagementOpen] = useState(false);
 
   useEffect(() => {
-    // Check for token in localStorage on app load
+    // Check for existing authentication on app load
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
@@ -29,16 +30,29 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (token, userData) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setIsAuthenticated(true);
-    setUser(userData);
+  const login = async (token, userData) => {
+    try {
+      // Handle direct token and user data from Login component
+      if (token && userData) {
+        setIsAuthenticated(true);
+        setUser(userData);
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(userData));
+        return { success: true };
+      } else {
+        // Handle credentials login via authService
+        const response = await authService.login(credentials);
+        setIsAuthenticated(true);
+        setUser(response.data.user);
+        return response;
+      }
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    authService.logout();
     setIsAuthenticated(false);
     setUser(null);
   };
