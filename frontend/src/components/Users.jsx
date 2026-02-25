@@ -25,6 +25,31 @@ const Users = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Fetch users from API
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await userService.getAll();
+      if (response.success && response.data) {
+        setUsers(response.data);
+      } else {
+        setUsers(response.data || []);
+      }
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setError('Failed to fetch users');
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch users on component mount
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
   // Remove getAllUsers call as requested
   // useEffect(() => {
   //   fetchUsers();
@@ -111,6 +136,9 @@ const Users = () => {
       });
       
       setShowModal(false);
+      
+      // Refresh users list after successful creation
+      await fetchUsers();
       
       // Hide popup after 3 seconds
       setTimeout(() => {
@@ -513,7 +541,41 @@ const Users = () => {
               </tr>
             </thead>
             <tbody>
-              {currentUsers.map((user) => (
+              {loading ? (
+                <tr>
+                  <td colSpan="8" style={{ 
+                    padding: "40px", 
+                    textAlign: "center", 
+                    color: "#64748b",
+                    fontSize: "16px"
+                  }}>
+                    Loading users...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan="8" style={{ 
+                    padding: "40px", 
+                    textAlign: "center", 
+                    color: "#ef4444",
+                    fontSize: "16px"
+                  }}>
+                    {error}
+                  </td>
+                </tr>
+              ) : currentUsers.length === 0 ? (
+                <tr>
+                  <td colSpan="8" style={{ 
+                    padding: "40px", 
+                    textAlign: "center", 
+                    color: "#64748b",
+                    fontSize: "16px"
+                  }}>
+                    No users found
+                  </td>
+                </tr>
+              ) : (
+                currentUsers.map((user) => (
                 <tr
                   key={user._id}
                   style={{
@@ -646,7 +708,7 @@ const Users = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
           {showModal && (
