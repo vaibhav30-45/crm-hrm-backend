@@ -11,14 +11,14 @@ import ForgotPassword from "./pages/ForgotPassword";
 import NewPassword from "./pages/NewPassword";
 import Dashboard from "./pages/Dashboard";
 import Users from "./components/Users";
-import LeadsManagement from "./components/CRMconponents/LeadsManagement";
-import SalesActivities from "./components/CRMconponents/SalesActivities";
-import SalesPipeline from "./components/CRMconponents/SalesPipeline";
+import LeadsManagement from "./components/CRMComponents/LeadsManagement";
+import SalesActivities from "./components/CRMComponents/SalesActivities";
+import SalesPipeline from "./components/CRMComponents/SalesPipeline";
 import AttendanceManagement from "./components/HRMSComponents/AttendanceManagement";
 import EmployeeProfile from "./components/HRMSComponents/EmployeesProfile";
 import LeaveManagement from "./components/HRMSComponents/LeaveManagement";
 import PayrollManagement from "./components/HRMSComponents/PayrollManagement";
-import CustomerManagement from "./components/CRMconponents/CustomerManagement";
+import CustomerManagement from "./components/CRMComponents/CustomerManagement";
 import EmployeesOnboarding from "./components/HRMSComponents/EmployeesOnboarding";
 import "./App.css";
 
