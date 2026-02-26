@@ -1,99 +1,72 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 import SalesActivityCard from "./SalesActivityCard";
+import { crmService } from "../../services/crmService";
 import "../../styles/layout.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const SalesActivities = () => {
-  const [activities] = useState([
-    {
-      id: 1,
-      date: "10 Jan 2026",
-      activity: "Email Opened",
-      customer: "Rahul Patel",
-      status: "Completed",
-    },
-    {
-      id: 2,
-      date: "12 Jan 2026",
-      activity: "Call Made",
-      customer: "Neha Shah",
-      status: "Completed",
-    },
-    {
-      id: 3,
-      date: "14 Jan 2026",
-      activity: "Meeting Scheduled",
-      customer: "Pooja Patel",
-      status: "Pending",
-    },
-    {
-      id: 4,
-      date: "15 Jan 2026",
-      activity: "Form Submitted",
-      customer: "Amit Kumar",
-      status: "Completed",
-    },
-    {
-      id: 5,
-      date: "16 Jan 2026",
-      activity: "Follow-Up Call",
-      customer: "Sneha Reddy",
-      status: "In Progress",
-    },
-    {
-      id: 6,
-      date: "20 Jan 2026",
-      activity: "Meeting Scheduled",
-      customer: "Vikram Singh",
-      status: "Pending",
-    },
-    {
-      id: 7,
-      date: "21 Jan 2026",
-      activity: "Email Opened",
-      customer: "Anjali Gupta",
-      status: "Completed",
-    },
-    {
-      id: 8,
-      date: "22 Jan 2026",
-      activity: "Call Made",
-      customer: "Rajesh Kumar",
-      status: "Completed",
-    },
-    {
-      id: 9,
-      date: "23 Jan 2026",
-      activity: "Meeting Scheduled",
-      customer: "Priya Sharma",
-      status: "Pending",
-    },
-    {
-      id: 10,
-      date: "24 Jan 2026",
-      activity: "Form Submitted",
-      customer: "Karthik Nair",
-      status: "In Progress",
-    },
-    {
-      id: 11,
-      date: "25 Jan 2026",
-      activity: "Email Opened",
-      customer: "Divya Menon",
-      status: "Completed",
-    },
-    {
-      id: 12,
-      date: "26 Jan 2026",
-      activity: "Call Made",
-      customer: "Arjun Verma",
-      status: "Completed",
-    },
-  ]);
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch activities from API
+  const fetchActivities = async () => {
+    try {
+      setLoading(true);
+      const response = await crmService.activities.getAll();
+      if (response.success && response.data) {
+        setActivities(response.data);
+      } else {
+        setActivities(response.data || []);
+      }
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+      setError('Failed to fetch activities');
+      setActivities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
+  useEffect(() => {
+    fetchActivities();
+  }, []);
+
+  
+  const getActivityCounts = () => {
+    const counts = {
+      Call: 0,
+      WhatsApp: 0,
+      Meeting: 0,
+      Email: 0,
+      Other: 0
+    };
+
+    activities.forEach(activity => {
+      const type = activity.type?.toLowerCase();
+      if (type === 'call') {
+        counts.Call++;
+      } else if (type === 'whatsapp') {
+        counts.WhatsApp++;
+      } else if (type === 'meeting') {
+        counts.Meeting++;
+      } else if (type === 'email') {
+        counts.Email++;
+      } else {
+        counts.Other++;
+      }
+    });
+
+    return counts;
+  };
+
+  const counts = getActivityCounts();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [activitiesPerPage] = useState(6);
@@ -107,6 +80,25 @@ const SalesActivities = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+
+  // Get badge style for activity type
+  const getActivityTypeStyle = (type) => {
+    const styles = {
+      Call: { bg: "#dbeafe", color: "#3b82f6", border: "#bfdbfe" },
+      WhatsApp: { bg: "#d1fae5", color: "#10b981", border: "#a7f3d0" },
+      Meeting: { bg: "#fef3c7", color: "#f59e0b", border: "#fde68a" },
+      Email: { bg: "#f3f4f6", color: "#6b7280", border: "#e5e7eb" },
+      Other: { bg: "#fce7f3", color: "#ec4899", border: "#fbcfe8" }
+    };
+
+    return (
+      styles[type] || {
+        bg: "#f3f4f6",
+        color: "#6b7280",
+        border: "#e5e7eb",
+      }
+    );
+  };
 
   const getBadgeStyle = (status) => {
     const styles = {
@@ -147,7 +139,7 @@ const SalesActivities = () => {
         >
           <SalesActivityCard
             title="Calls"
-            value="1,847"
+            value={counts.Call}
             change="+18% this week"
             changeType="positive"
             icon="phone"
@@ -156,7 +148,7 @@ const SalesActivities = () => {
 
           <SalesActivityCard
             title="Emails"
-            value="215"
+            value={counts.Email}
             change="+12% last week"
             changeType="positive"
             icon="email"
@@ -165,7 +157,7 @@ const SalesActivities = () => {
 
           <SalesActivityCard
             title="Whatsapp"
-            value="423"
+            value={counts.WhatsApp}
             change="+5% last week"
             changeType="positive"
             icon="whatsapp"
@@ -174,7 +166,7 @@ const SalesActivities = () => {
 
           <SalesActivityCard
             title="Meetings"
-            value="190"
+            value={counts.Meeting}
             change="-3% last week"
             changeType="negative"
             icon="calendar"
@@ -321,10 +313,11 @@ const SalesActivities = () => {
             <thead style={{ background: "#f9fafb" }}>
               <tr>
                 {[
+                  "Type",
+                  "Description",
                   "Date",
-                  "Activity",
-                  "Customer",
-                  "Status",
+                  "IP Address",
+                  "Created At",
                   "Action",
                 ].map((heading) => (
                   <th
@@ -345,58 +338,97 @@ const SalesActivities = () => {
             </thead>
 
             <tbody>
-              {currentActivities.map((activity) => {
-                const statusStyle = getBadgeStyle(activity.status);
+              {loading ? (
+                <tr>
+                  <td colSpan="6" style={{ 
+                    padding: "40px", 
+                    textAlign: "center", 
+                    color: "#64748b",
+                    fontSize: "16px"
+                  }}>
+                    Loading activities...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan="6" style={{ 
+                    padding: "40px", 
+                    textAlign: "center", 
+                    color: "#ef4444",
+                    fontSize: "16px"
+                  }}>
+                    {error}
+                  </td>
+                </tr>
+              ) : currentActivities.length === 0 ? (
+                <tr>
+                  <td colSpan="6" style={{ 
+                    padding: "40px", 
+                    textAlign: "center", 
+                    color: "#64748b",
+                    fontSize: "16px"
+                  }}>
+                    No activities found
+                  </td>
+                </tr>
+              ) : (
+                currentActivities.map((activity) => {
+                  const typeStyle = getActivityTypeStyle(activity.type);
 
-                return (
-                  <tr
-                    key={activity.id}
-                    style={{ borderBottom: "1px solid #f3f4f6" }}
-                  >
-                    <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                      {activity.date}
-                    </td>
+                  return (
+                    <tr
+                      key={activity._id}
+                      style={{ borderBottom: "1px solid #f3f4f6" }}
+                    >
+                      <td style={{ padding: "14px 16px" }}>
+                        <span
+                          style={{
+                            padding: "4px 10px",
+                            fontSize: "12px",
+                            borderRadius: "6px",
+                            background: typeStyle.bg,
+                            color: typeStyle.color,
+                            border: `1px solid ${typeStyle.border}`,
+                            fontWeight: 500,
+                          }}
+                        >
+                          {activity.type}
+                        </span>
+                      </td>
 
-                    <td style={{ padding: "14px 16px", fontWeight: 500 }}>
-                      {activity.activity}
-                    </td>
+                      <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                        {activity.description}
+                      </td>
 
-                    <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                      {activity.customer}
-                    </td>
+                      <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                        {new Date(activity.date).toLocaleDateString()}
+                      </td>
 
-                    <td style={{ padding: "14px 16px" }}>
-                      <span
-                        style={{
-                          padding: "4px 10px",
-                          fontSize: "12px",
-                          borderRadius: "6px",
-                          background: statusStyle.bg,
-                          color: statusStyle.color,
-                          border: `1px solid ${statusStyle.border}`,
-                          fontWeight: 500,
-                        }}
-                      >
-                        {activity.status}
-                      </span>
-                    </td>
+                      <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                        {activity.ipAddress || "N/A"}
+                      </td>
 
-                    <td style={{ padding: "14px 16px" }}>
-                      <button
-                        style={{
-                          background: "none",
-                          border: "none",
-                          fontSize: "18px",
-                          cursor: "pointer",
-                          color: "#9ca3af",
-                        }}
-                      >
-                        ⋯
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+                      <td style={{ padding: "14px 16px", color: "#6b7280" }}>
+                        {new Date(activity.createdAt).toLocaleDateString()}
+                      </td>
+
+                      <td style={{ padding: "14px 16px" }}>
+                        <button
+                          style={{
+                            background: "none",
+                            border: "none",
+                            fontSize: "18px",
+                            cursor: "pointer",
+                            color: "#9ca3af",
+                          }}
+                        >
+                          ⋯
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
 
