@@ -19,7 +19,7 @@ const { protect, authorizeRoles } = require("../../../middleware/auth.middleware
  */
 
 router.post("/", protect, authorizeRoles("Admin", "Manager", "BD"), createCustomer);
-router.get("/", protect, authorizeRoles("Admin", "Manager", "BD"), getCustomers);
+router.get("/", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), getCustomers);
 router.get("/:id", protect, authorizeRoles("Admin", "Manager", "BD"), getSingleCustomer);
 router.put("/:id", protect, authorizeRoles("Admin", "Manager", "BD"), updateCustomer);
 router.delete("/:id", protect, authorizeRoles("Admin", "Manager", "BD"), deleteCustomer);
