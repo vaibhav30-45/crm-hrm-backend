@@ -2,18 +2,59 @@ import React, { useState } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 
 const EmployeesOnboarding = () => {
-
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
   const employees = [
-    { id: "EM-001", name: "Rahul Patidar", dept: "IT", role: "Software Engineer", status: "Active" },
-    { id: "EM-002", name: "Neha Shah", dept: "Human Resources", role: "HR", status: "Inactive" },
-    { id: "EM-003", name: "Pooja Patel", dept: "Finance", role: "Accountant", status: "Inactive" },
-    { id: "EM-004", name: "Pooja Patel", dept: "Sales", role: "Sales", status: "Active" },
-    { id: "EM-005", name: "Pooja Patel", dept: "Sales", role: "Sales", status: "Active" },
-    { id: "EM-006", name: "Riya Sharma", dept: "IT", role: "Software Engineer", status: "Inactive" },
-    { id: "EM-007", name: "Karan Mehta", dept: "IT", role: "Developer", status: "Active" }
+    {
+      id: "EM-001",
+      name: "Rahul Patidar",
+      dept: "IT",
+      role: "Software Engineer",
+      status: "Active",
+    },
+    {
+      id: "EM-002",
+      name: "Neha Shah",
+      dept: "Human Resources",
+      role: "HR",
+      status: "Inactive",
+    },
+    {
+      id: "EM-003",
+      name: "Pooja Patel",
+      dept: "Finance",
+      role: "Accountant",
+      status: "Inactive",
+    },
+    {
+      id: "EM-004",
+      name: "Pooja Patel",
+      dept: "Sales",
+      role: "Sales",
+      status: "Active",
+    },
+    {
+      id: "EM-005",
+      name: "Pooja Patel",
+      dept: "Sales",
+      role: "Sales",
+      status: "Active",
+    },
+    {
+      id: "EM-006",
+      name: "Riya Sharma",
+      dept: "IT",
+      role: "Software Engineer",
+      status: "Inactive",
+    },
+    {
+      id: "EM-007",
+      name: "Karan Mehta",
+      dept: "IT",
+      role: "Developer",
+      status: "Active",
+    },
   ];
 
   const totalPages = Math.ceil(employees.length / rowsPerPage);
@@ -23,16 +64,14 @@ const EmployeesOnboarding = () => {
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "20px", background: "#f5f6fa", minHeight: "100vh" }}>
-
+      <div
+        style={{ padding: "20px", background: "#f5f6fa", minHeight: "100vh" }}
+      >
         {/* Heading */}
-        <h2 style={{ marginBottom: "20px" }}>
-          HRMS / Employees Onboarding
-        </h2>
+        <h2 style={{ marginBottom: "20px" }}>HRMS / Employees Onboarding</h2>
 
         {/* Top Cards */}
         <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-
           {/* Card 1 */}
           <div style={cardStyle}>
             <h4>Digital Onboarding</h4>
@@ -51,7 +90,9 @@ const EmployeesOnboarding = () => {
           <div style={cardStyle}>
             <h4>Digital Onboarding</h4>
 
-            <table style={{ width: "100%", fontSize: "14px", marginBottom: "10px" }}>
+            <table
+              style={{ width: "100%", fontSize: "14px", marginBottom: "10px" }}
+            >
               <tbody>
                 <tr>
                   <td>Basic Salary</td>
@@ -74,7 +115,6 @@ const EmployeesOnboarding = () => {
 
         {/* Employee Table */}
         <div style={tableCard}>
-
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#f8f9fb", textAlign: "left" }}>
@@ -95,7 +135,11 @@ const EmployeesOnboarding = () => {
                   <td style={tdStyle}>{emp.dept}</td>
                   <td style={tdStyle}>{emp.role}</td>
                   <td style={tdStyle}>
-                    <span style={emp.status === "Active" ? activeBadge : inactiveBadge}>
+                    <span
+                      style={
+                        emp.status === "Active" ? activeBadge : inactiveBadge
+                      }
+                    >
                       {emp.status}
                     </span>
                   </td>
@@ -115,14 +159,14 @@ const EmployeesOnboarding = () => {
               Previous
             </button>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
               <button
                 key={num}
                 onClick={() => setCurrentPage(num)}
                 style={{
                   ...pageBtn,
                   background: currentPage === num ? "#00bcd4" : "#fff",
-                  color: currentPage === num ? "#fff" : "#000"
+                  color: currentPage === num ? "#fff" : "#000",
                 }}
               >
                 {num}
@@ -137,7 +181,6 @@ const EmployeesOnboarding = () => {
               Next
             </button>
           </div>
-
         </div>
       </div>
     </DashboardLayout>
@@ -151,14 +194,14 @@ const cardStyle = {
   background: "#fff",
   padding: "20px",
   borderRadius: "12px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
 };
 
 const tableCard = {
   background: "#fff",
   padding: "20px",
   borderRadius: "12px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
 };
 
 const primaryBtn = {
@@ -168,19 +211,19 @@ const primaryBtn = {
   border: "none",
   background: "#00bcd4",
   color: "#fff",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 const thStyle = {
   padding: "12px",
   fontSize: "14px",
-  color: "#666"
+  color: "#666",
 };
 
 const tdStyle = {
   padding: "12px",
   borderBottom: "1px solid #eee",
-  fontSize: "14px"
+  fontSize: "14px",
 };
 
 const activeBadge = {
@@ -188,7 +231,7 @@ const activeBadge = {
   borderRadius: "20px",
   background: "#e8f5e9",
   color: "green",
-  fontSize: "12px"
+  fontSize: "12px",
 };
 
 const inactiveBadge = {
@@ -196,14 +239,14 @@ const inactiveBadge = {
   borderRadius: "20px",
   background: "#ffebee",
   color: "red",
-  fontSize: "12px"
+  fontSize: "12px",
 };
 
 const paginationContainer = {
   marginTop: "20px",
   display: "flex",
   justifyContent: "center",
-  gap: "8px"
+  gap: "8px",
 };
 
 const pageBtn = {
@@ -211,7 +254,7 @@ const pageBtn = {
   borderRadius: "6px",
   border: "1px solid #ddd",
   background: "#fff",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 export default EmployeesOnboarding;
