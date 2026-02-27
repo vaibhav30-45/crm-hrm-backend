@@ -18,10 +18,11 @@ const { protect, authorizeRoles } = require("../../../middleware/auth.middleware
  *   description: CRM Customer APIs
  */
 
-router.post("/", protect, authorizeRoles("Admin", "Manager", "BD"), createCustomer);
+router.post("/", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), createCustomer);
 router.get("/", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), getCustomers);
-router.get("/:id", protect, authorizeRoles("Admin", "Manager", "BD"), getSingleCustomer);
-router.put("/:id", protect, authorizeRoles("Admin", "Manager", "BD"), updateCustomer);
-router.delete("/:id", protect, authorizeRoles("Admin", "Manager", "BD"), deleteCustomer);
+router.get("/:id", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), getSingleCustomer);
+router.put("/:id", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), updateCustomer);
+router.delete("/:id", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), deleteCustomer);
+
 
 module.exports = router;

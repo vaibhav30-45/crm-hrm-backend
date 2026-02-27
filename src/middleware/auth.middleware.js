@@ -1,18 +1,18 @@
 const jwt = require("jsonwebtoken");
 const User = require("../modules/users/user.model");
-const jwtConfig = require("../config/jwt");
 
-// ========================================
-// 🔐 PROTECT ROUTES
-// ========================================
+/**
+ * 🔐 Protect Middleware
+ * Verifies JWT token and attaches user to req
+ */
 exports.protect = async (req, res, next) => {
   try {
     let token;
 
-    // Check Authorization header
+    // 1️⃣ Check Authorization header
     if (
       req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer ")
+      req.headers.authorization.startsWith("Bearer")
     ) {
       token = req.headers.authorization.split(" ")[1];
     }
@@ -20,36 +20,30 @@ exports.protect = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Not authorized, token missing",
+        message: "Not authorized. No token provided",
       });
     }
 
-    // Verify Token
-    const decoded = jwt.verify(token, jwtConfig.secret);
+    // 2️⃣ Verify Token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Find User
+    // 3️⃣ Check if user still exists
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "User not found",
+        message: "User no longer exists",
       });
     }
 
-    if (!user.isActive) {
-      return res.status(403).json({
-        success: false,
-        message: "User account is inactive",
-      });
-    }
-
-    // Attach user & tenant
+    // 4️⃣ Attach user to request
     req.user = user;
-    req.tenantId = user.tenantId || null;
 
     next();
   } catch (error) {
+    console.error("Auth Protect Error:", error.message);
+
     return res.status(401).json({
       success: false,
       message: "Invalid or expired token",
@@ -57,9 +51,10 @@ exports.protect = async (req, res, next) => {
   }
 };
 
-// ========================================
-// 🔐 ROLE AUTHORIZATION
-// ========================================
+/**
+ * 🛡 Role Authorization Middleware
+ * Usage: authorizeRoles("ADMIN", "MANAGER")
+ */
 exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -69,7 +64,10 @@ exports.authorizeRoles = (...roles) => {
       });
     }
 
-    if (!roles.includes(req.user.role)) {
+    const userRole = req.user.role?.toUpperCase();
+    const allowedRoles = roles.map((role) => role.toUpperCase());
+
+    if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({
         success: false,
         message: `Access denied. Role '${req.user.role}' not allowed`,
@@ -78,45 +76,4 @@ exports.authorizeRoles = (...roles) => {
 
     next();
   };
-};
-
-// ========================================
-// 🔐 DESIGNATION AUTHORIZATION (Optional)
-// ========================================
-exports.authorizeDesignation = (...designations) => {
-  return (req, res, next) => {
-    if (!req.user.designation) {
-      return res.status(403).json({
-        success: false,
-        message: "No designation assigned",
-      });
-    }
-
-    if (!designations.includes(req.user.designation)) {
-      return res.status(403).json({
-        success: false,
-        message: `Access denied. Designation '${req.user.designation}' not allowed`,
-      });
-    }
-
-    next();
-  };
-};
-
-// ========================================
-// 🔐 TENANT PROTECTION (Multi-Tenant Safety)
-// ========================================
-exports.checkTenantAccess = (req, res, next) => {
-  if (req.user.role === "ADMIN") {
-    return next(); // Admin can access all
-  }
-
-  if (!req.tenantId) {
-    return res.status(403).json({
-      success: false,
-      message: "Tenant access denied",
-    });
-  }
-
-  next();
 };
