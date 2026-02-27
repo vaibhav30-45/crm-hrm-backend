@@ -18,7 +18,7 @@ const { authorizeRoles } = require("../../../middleware/role.middleware");
 router.post("/", protect, createLead);
 
 // Get All Leads
-router.get("/", protect, authorizeRoles("Admin", "Manager","BDE"), getLeads);
+router.get("/", protect, authorizeRoles("ADMIN", "MANAGER", "BDE"), getLeads);
 
 // Get Single Lead
 router.get("/:id", protect, getSingleLead);
@@ -27,7 +27,7 @@ router.get("/:id", protect, getSingleLead);
 router.put("/:id", protect, updateLead);
 
 // Delete Lead
-router.delete("/:id", protect, authorizeRoles("Admin"), deleteLead);
+router.delete("/:id", protect, authorizeRoles("ADMIN"), deleteLead);
 
 module.exports = router;
 

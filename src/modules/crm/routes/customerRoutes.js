@@ -24,4 +24,5 @@ router.get("/:id", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), getSingleC
 router.put("/:id", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), updateCustomer);
 router.delete("/:id", protect, authorizeRoles("ADMIN", "MANAGER", "BD"), deleteCustomer);
 
+
 module.exports = router;
