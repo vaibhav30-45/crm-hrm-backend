@@ -1,82 +1,115 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
+import { attendanceService } from "../../services/attendanceService";
 
 const AttendanceManagement = () => {
-  // Pagination Logic
+  // State for attendance data
+  const [attendanceData, setAttendanceData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [punchingIn, setPunchingIn] = useState(false);
+  const [punchingOut, setPunchingOut] = useState(false);
+  const [todayAttendance, setTodayAttendance] = useState(null);
+
+  
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 4;
 
-  const employeeData = [
+ 
+  const handlePunchIn = async () => {
+    try {
+      setPunchingIn(true);
+      
+      // Call punch in API
+      const response = await attendanceService.punchIn();
+      
+      if (response) {
+        setTodayAttendance({ checkIn: new Date().toLocaleTimeString() });
+        alert('Punched in successfully!');
+      } else {
+        alert('Failed to punch in');
+      }
+    } catch (error) {
+      console.error('Punch in error:', error);
+      alert('Failed to punch in. Please try again.');
+    } finally {
+      setPunchingIn(false);
+    }
+  };
+
+  // Handle Punch Out
+  const handlePunchOut = async () => {
+    try {
+      setPunchingOut(true);
+      
+      // Call punch out API
+      const response = await attendanceService.punchOut();
+      
+      if (response) {
+        setTodayAttendance({ ...todayAttendance, checkOut: new Date().toLocaleTimeString() });
+        alert('Punched out successfully!');
+      } else {
+        alert('Failed to punch out');
+      }
+    } catch (error) {
+      console.error('Punch out error:', error);
+      alert('Failed to punch out. Please try again.');
+    } finally {
+      setPunchingOut(false);
+    }
+  };
+
+  // Use hardcoded data until APIs are available
+  const hardcodedData = [
     {
-      id: "EM-001",
-      name: "Rahul Patidar",
-      date: "10 Jan 2026",
-      checkIn: "09:00 AM",
-      checkOut: "05:00 PM",
+      _id: "1",
+      employee: { id: "EM-001", name: "Rahul Patidar" },
+      date: "2026-01-10T00:00:00.000Z",
+      checkIn: "2026-01-10T09:00:00.000Z",
+      checkOut: "2026-01-10T17:00:00.000Z",
       status: "Present",
     },
     {
-      id: "EM-002",
-      name: "Neha Shah",
-      date: "12 Jan 2026",
-      checkIn: "Mid Set",
-      checkOut: "05:00 PM",
+      _id: "2",
+      employee: { id: "EM-002", name: "Neha Shah" },
+      date: "2026-01-12T00:00:00.000Z",
+      checkIn: null,
+      checkOut: null,
       status: "Absent",
     },
     {
-      id: "EM-003",
-      name: "Pooja Patel",
-      date: "14 Jan 2026",
-      checkIn: "09:15 AM",
-      checkOut: "05:10 PM",
+      _id: "3",
+      employee: { id: "EM-003", name: "Pooja Patel" },
+      date: "2026-01-14T00:00:00.000Z",
+      checkIn: "2026-01-14T09:15:00.000Z",
+      checkOut: "2026-01-14T17:10:00.000Z",
       status: "Present",
     },
     {
-      id: "EM-004",
-      name: "Amit Verma",
-      date: "15 Jan 2026",
-      checkIn: "09:05 AM",
-      checkOut: "05:00 PM",
+      _id: "4",
+      employee: { id: "EM-004", name: "Amit Verma" },
+      date: "2026-01-15T00:00:00.000Z",
+      checkIn: "2026-01-15T09:05:00.000Z",
+      checkOut: null,
       status: "Absent",
-    },
-    {
-      id: "EM-005",
-      name: "Riya Sharma",
-      date: "16 Jan 2026",
-      checkIn: "09:00 AM",
-      checkOut: "05:00 PM",
-      status: "Present",
-    },
-    {
-      id: "EM-006",
-      name: "Karan Mehta",
-      date: "17 Jan 2026",
-      checkIn: "09:20 AM",
-      checkOut: "05:00 PM",
-      status: "Present",
-    },
-    {
-      id: "EM-005",
-      name: "Aditi Sharma",
-      date: "16 Jan 2026",
-      checkIn: "09:00 AM",
-      checkOut: "05:00 PM",
-      status: "Present",
-    },
-    {
-      id: "EM-006",
-      name: "Ansh Bhargav",
-      date: "17 Jan 2026",
-      checkIn: "09:15 AM",
-      checkOut: "05:00 PM",
-      status: "Present",
     },
   ];
 
-  const totalPages = Math.ceil(employeeData.length / rowsPerPage);
+  // Calculate statistics from hardcoded data
+  const calculateStats = () => {
+    const present = hardcodedData.filter(att => att.status === 'Present').length;
+    const absent = hardcodedData.filter(att => att.status === 'Absent').length;
+    const late = hardcodedData.filter(att => att.status === 'Late').length;
+    
+    return { present, absent, late };
+  };
+
+  const stats = calculateStats();
+
+  const totalPages = Math.ceil(hardcodedData.length / rowsPerPage);
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = employeeData.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = hardcodedData.slice(indexOfFirstRow, indexOfLastRow);
 
   return (
     <DashboardLayout>
@@ -100,22 +133,64 @@ const AttendanceManagement = () => {
           >
             <div style={cardStyle}>
               <h4 style={{ margin: 0, color: "#555" }}>Present</h4>
-              <h2 style={{ margin: "10px 0", color: "#000" }}>124</h2>
+              <h2 style={{ margin: "10px 0", color: "#000" }}>{stats.present}</h2>
               <span style={{ color: "green", fontSize: "14px" }}>
-                +5.8% this week
+                0% this week
               </span>
             </div>
 
             <div style={cardStyle}>
               <h4 style={{ margin: 0, color: "#555" }}>Absent</h4>
-              <h2 style={{ margin: "10px 0", color: "#000" }}>26</h2>
+              <h2 style={{ margin: "10px 0", color: "#000" }}>{stats.absent}</h2>
               <span style={{ color: "red", fontSize: "14px" }}>
-                -3.4% this week
+                0% this week
               </span>
+            </div>
+
+           
+            <div style={cardStyle}>
+              <h4 style={{ margin: 0, color: "#555", marginBottom: "15px" }}>Today's Status</h4>
+              <p style={{ margin: "10px 0", fontSize: "14px", color: "#666" }}>
+                Use Punch In/Out buttons to mark attendance
+              </p>
+              
+              <div style={{ marginTop: "15px", display: "flex", gap: "10px" }}>
+                <button
+                  onClick={handlePunchIn}
+                  disabled={punchingIn}
+                  style={{
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    border: "none",
+                    background: punchingIn ? "#ccc" : "#4caf50",
+                    color: "white",
+                    cursor: punchingIn ? "not-allowed" : "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  {punchingIn ? 'Punching In...' : 'Punch In'}
+                </button>
+                
+                <button
+                  onClick={handlePunchOut}
+                  disabled={punchingOut}
+                  style={{
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    border: "none",
+                    background: punchingOut ? "#ccc" : "#f44336",
+                    color: "white",
+                    cursor: punchingOut ? "not-allowed" : "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  {punchingOut ? 'Punching Out...' : 'Punch Out'}
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Anomalies Section */}
+         
           <div style={cardStyleFlex}>
             <h4 style={{ marginBottom: "15px" }}>Anomalies detected</h4>
 
@@ -153,12 +228,12 @@ const AttendanceManagement = () => {
                     <button style={reviewBtn}>Review</button>
                   </td>
                 </tr>
-              </tbody>
+            </tbody>
             </table>
           </div>
         </div>
 
-        {/* Bottom Employee Table */}
+        
         <div style={cardStyle}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
@@ -172,24 +247,46 @@ const AttendanceManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {currentRows.map((emp, index) => (
-                <tr key={index}>
-                  <td style={tdStyle}>{emp.id}</td>
-                  <td style={tdStyle}>{emp.name}</td>
-                  <td style={tdStyle}>{emp.date}</td>
-                  <td style={tdStyle}>{emp.checkIn}</td>
-                  <td style={tdStyle}>{emp.checkOut}</td>
+                <tr>
+                  <td style={tdStyle}>EM-001</td>
+                  <td style={tdStyle}>Rahul Patidar</td>
+                  <td style={tdStyle}>10 Jan 2026</td>
+                  <td style={tdStyle}>09:00 AM</td>
+                  <td style={tdStyle}>05:00 PM</td>
                   <td style={tdStyle}>
-                    <span
-                      style={
-                        emp.status === "Present" ? presentBadge : absentBadge
-                      }
-                    >
-                      {emp.status}
-                    </span>
+                    <span style={presentBadge}>Present</span>
                   </td>
                 </tr>
-              ))}
+                <tr>
+                  <td style={tdStyle}>EM-002</td>
+                  <td style={tdStyle}>Neha Shah</td>
+                  <td style={tdStyle}>12 Jan 2026</td>
+                  <td style={tdStyle}>Mid Set</td>
+                  <td style={tdStyle}>05:00 PM</td>
+                  <td style={tdStyle}>
+                    <span style={absentBadge}>Absent</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style={tdStyle}>EM-003</td>
+                  <td style={tdStyle}>Pooja Patel</td>
+                  <td style={tdStyle}>14 Jan 2026</td>
+                  <td style={tdStyle}>09:15 AM</td>
+                  <td style={tdStyle}>05:10 PM</td>
+                  <td style={tdStyle}>
+                    <span style={presentBadge}>Present</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style={tdStyle}>EM-004</td>
+                  <td style={tdStyle}>Amit Verma</td>
+                  <td style={tdStyle}>15 Jan 2026</td>
+                  <td style={tdStyle}>09:05 AM</td>
+                  <td style={tdStyle}>05:00 PM</td>
+                  <td style={tdStyle}>
+                    <span style={absentBadge}>Absent</span>
+                  </td>
+                </tr>
             </tbody>
           </table>
 
@@ -274,6 +371,14 @@ const absentBadge = {
   borderRadius: "20px",
   background: "#ffebee",
   color: "red",
+  fontSize: "12px",
+};
+
+const lateBadge = {
+  padding: "4px 10px",
+  borderRadius: "20px",
+  background: "#fff3e0",
+  color: "#ff9800",
   fontSize: "12px",
 };
 
