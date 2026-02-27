@@ -20,6 +20,8 @@ import LeaveManagement from "./components/HRMSComponents/LeaveManagement";
 import PayrollManagement from "./components/HRMSComponents/PayrollManagement";
 import CustomerManagement from "./components/CRMComponents/CustomerManagement";
 import EmployeesOnboarding from "./components/HRMSComponents/EmployeesOnboarding";
+import PerformanceAppraisal from "./components/HRMSComponents/PerformanceAppraisal";
+import EmployeeSelfService from "./components/HRMSComponents/EmployeeSelfService";
 import "./App.css";
 
 function App() {
@@ -166,8 +168,24 @@ function App() {
     </PrivateRoutes>
   }
 />
-
-
+<Route
+  path="/hrms/performance-appraisal"
+  element={
+    <PrivateRoutes>
+      <PerformanceAppraisal />
+    </PrivateRoutes>
+  }
+/>
+  <Route
+  path="/hrms/EmployeeSelfService"
+  element={
+    <PrivateRoutes>
+      <EmployeeSelfService />
+    </PrivateRoutes>
+  }
+/>
+  
+  {/* EmployeeSelfService */}
           {/* Catch all route */}
           <Route
             path="*"

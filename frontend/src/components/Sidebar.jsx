@@ -286,7 +286,9 @@ const Sidebar = () => {
       '/hrms/employee-profile',
       '/hrms/employees-onboarding',
       '/hrms/leave-management',
-      '/hrms/payroll-management'
+      '/hrms/payroll-management',
+      '/hrms/performance-appraisal',
+      '/hrms/EmployeeSelfService'
     ];
 
     if (hrmsPages.includes(location.pathname)) {
@@ -430,6 +432,21 @@ const Sidebar = () => {
             <li onClick={() => menuNavigate('/hrms/payroll-management')} style={{ paddingLeft: '45px', color: isActive('/hrms/payroll-management') ? '#0ea5e9' : '#ffffff', fontSize: '14px', cursor: 'pointer' }}>
               Payroll Management
             </li>
+            <li onClick={() => menuNavigate('/hrms/EmployeeSelfService')} style={{ paddingLeft: '45px', color: isActive('/hrms/EmployeeSelfService') ? '#0ea5e9' : '#ffffff', fontSize: '14px', cursor: 'pointer' }}>
+             Employee Self Service
+            </li>
+            <li
+  onClick={() => menuNavigate('/hrms/performance-appraisal')}
+  style={{
+    padding: '8px 0',
+    paddingLeft: '45px',
+    color: isActive('/hrms/performance-appraisal') ? '#0ea5e9' : '#ffffff',
+    fontSize: '14px',
+    cursor: 'pointer'
+  }}
+>
+  Performance & Appraisal
+</li>
           </>
         )}
 

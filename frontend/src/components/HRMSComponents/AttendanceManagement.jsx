@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 
 const AttendanceManagement = () => {
-
   // Pagination Logic
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 4;
@@ -14,7 +13,7 @@ const AttendanceManagement = () => {
       date: "10 Jan 2026",
       checkIn: "09:00 AM",
       checkOut: "05:00 PM",
-      status: "Present"
+      status: "Present",
     },
     {
       id: "EM-002",
@@ -22,7 +21,7 @@ const AttendanceManagement = () => {
       date: "12 Jan 2026",
       checkIn: "Mid Set",
       checkOut: "05:00 PM",
-      status: "Absent"
+      status: "Absent",
     },
     {
       id: "EM-003",
@@ -30,7 +29,7 @@ const AttendanceManagement = () => {
       date: "14 Jan 2026",
       checkIn: "09:15 AM",
       checkOut: "05:10 PM",
-      status: "Present"
+      status: "Present",
     },
     {
       id: "EM-004",
@@ -38,7 +37,7 @@ const AttendanceManagement = () => {
       date: "15 Jan 2026",
       checkIn: "09:05 AM",
       checkOut: "05:00 PM",
-      status: "Absent"
+      status: "Absent",
     },
     {
       id: "EM-005",
@@ -46,7 +45,7 @@ const AttendanceManagement = () => {
       date: "16 Jan 2026",
       checkIn: "09:00 AM",
       checkOut: "05:00 PM",
-      status: "Present"
+      status: "Present",
     },
     {
       id: "EM-006",
@@ -54,15 +53,15 @@ const AttendanceManagement = () => {
       date: "17 Jan 2026",
       checkIn: "09:20 AM",
       checkOut: "05:00 PM",
-      status: "Present"
+      status: "Present",
     },
-     {
+    {
       id: "EM-005",
       name: "Aditi Sharma",
       date: "16 Jan 2026",
       checkIn: "09:00 AM",
       checkOut: "05:00 PM",
-      status: "Present"
+      status: "Present",
     },
     {
       id: "EM-006",
@@ -70,8 +69,8 @@ const AttendanceManagement = () => {
       date: "17 Jan 2026",
       checkIn: "09:15 AM",
       checkOut: "05:00 PM",
-      status: "Present"
-    }
+      status: "Present",
+    },
   ];
 
   const totalPages = Math.ceil(employeeData.length / rowsPerPage);
@@ -81,28 +80,38 @@ const AttendanceManagement = () => {
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "20px", background: "#f5f6fa", minHeight: "100vh" }}>
-        
+      <div
+        style={{ padding: "20px", background: "#f5f6fa", minHeight: "100vh" }}
+      >
         <h2 style={{ marginBottom: "20px", fontWeight: "600" }}>
           HRMS / Attendance Management
         </h2>
 
         {/* Top Section */}
         <div style={{ display: "flex", gap: "20px", marginBottom: "20px" }}>
-          
           {/* Left Cards */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px", width: "250px" }}>
-            
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+              width: "250px",
+            }}
+          >
             <div style={cardStyle}>
               <h4 style={{ margin: 0, color: "#555" }}>Present</h4>
               <h2 style={{ margin: "10px 0", color: "#000" }}>124</h2>
-              <span style={{ color: "green", fontSize: "14px" }}>+5.8% this week</span>
+              <span style={{ color: "green", fontSize: "14px" }}>
+                +5.8% this week
+              </span>
             </div>
 
             <div style={cardStyle}>
               <h4 style={{ margin: 0, color: "#555" }}>Absent</h4>
               <h2 style={{ margin: "10px 0", color: "#000" }}>26</h2>
-              <span style={{ color: "red", fontSize: "14px" }}>-3.4% this week</span>
+              <span style={{ color: "red", fontSize: "14px" }}>
+                -3.4% this week
+              </span>
             </div>
           </div>
 
@@ -124,21 +133,26 @@ const AttendanceManagement = () => {
                   <td style={tdStyle}>Rahul Patidar</td>
                   <td style={tdStyle}>10 Jan 2026</td>
                   <td style={tdStyle}>Late Check-In</td>
-                  <td style={tdStyle}><button style={reviewBtn}>Review</button></td>
+                  <td style={tdStyle}>
+                    <button style={reviewBtn}>Review</button>
+                  </td>
                 </tr>
                 <tr>
                   <td style={tdStyle}>Neha Shah</td>
                   <td style={tdStyle}>12 Jan 2026</td>
                   <td style={tdStyle}>Early Check Out</td>
-                  <td style={tdStyle}><button style={reviewBtn}>Review</button></td>
+                  <td style={tdStyle}>
+                    <button style={reviewBtn}>Review</button>
+                  </td>
                 </tr>
                 <tr>
                   <td style={tdStyle}>Pooja Patel</td>
                   <td style={tdStyle}>14 Jan 2026</td>
                   <td style={tdStyle}>Missed Punch</td>
-                  <td style={tdStyle}><button style={reviewBtn}>Review</button></td>
+                  <td style={tdStyle}>
+                    <button style={reviewBtn}>Review</button>
+                  </td>
                 </tr>
-                
               </tbody>
             </table>
           </div>
@@ -166,7 +180,11 @@ const AttendanceManagement = () => {
                   <td style={tdStyle}>{emp.checkIn}</td>
                   <td style={tdStyle}>{emp.checkOut}</td>
                   <td style={tdStyle}>
-                    <span style={emp.status === "Present" ? presentBadge : absentBadge}>
+                    <span
+                      style={
+                        emp.status === "Present" ? presentBadge : absentBadge
+                      }
+                    >
                       {emp.status}
                     </span>
                   </td>
@@ -176,12 +194,14 @@ const AttendanceManagement = () => {
           </table>
 
           {/* Functional Pagination */}
-          <div style={{
-            marginTop: "20px",
-            display: "flex",
-            justifyContent: "center",
-            gap: "10px"
-          }}>
+          <div
+            style={{
+              marginTop: "20px",
+              display: "flex",
+              justifyContent: "center",
+              gap: "10px",
+            }}
+          >
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
               <button
                 key={num}
@@ -192,7 +212,7 @@ const AttendanceManagement = () => {
                   border: "1px solid #ddd",
                   background: currentPage === num ? "#00bcd4" : "#fff",
                   color: currentPage === num ? "#fff" : "#000",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               >
                 {num}
@@ -200,7 +220,6 @@ const AttendanceManagement = () => {
             ))}
           </div>
         </div>
-
       </div>
     </DashboardLayout>
   );
@@ -210,7 +229,7 @@ const cardStyle = {
   background: "#fff",
   padding: "20px",
   borderRadius: "12px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
 };
 
 const cardStyleFlex = {
@@ -218,19 +237,19 @@ const cardStyleFlex = {
   background: "#fff",
   padding: "20px",
   borderRadius: "12px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
 };
 
 const thStyle = {
   padding: "12px",
   fontSize: "14px",
-  color: "#666"
+  color: "#666",
 };
 
 const tdStyle = {
   padding: "12px",
   borderBottom: "1px solid #eee",
-  fontSize: "14px"
+  fontSize: "14px",
 };
 
 const reviewBtn = {
@@ -239,7 +258,7 @@ const reviewBtn = {
   border: "none",
   background: "#e0f7fa",
   color: "#00796b",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 const presentBadge = {
@@ -247,7 +266,7 @@ const presentBadge = {
   borderRadius: "20px",
   background: "#e8f5e9",
   color: "green",
-  fontSize: "12px"
+  fontSize: "12px",
 };
 
 const absentBadge = {
@@ -255,7 +274,7 @@ const absentBadge = {
   borderRadius: "20px",
   background: "#ffebee",
   color: "red",
-  fontSize: "12px"
+  fontSize: "12px",
 };
 
 export default AttendanceManagement;

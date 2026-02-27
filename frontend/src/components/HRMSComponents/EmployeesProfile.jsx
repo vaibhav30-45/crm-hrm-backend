@@ -4,17 +4,21 @@ import DashboardLayout from "../DashboardComponents/DashboardLayout";
 const EmployeeProfile = () => {
   return (
     <DashboardLayout>
-      <div style={{ padding: "20px", background: "#f4f6f9", minHeight: "100vh" }}>
-
+      <div
+        style={{ padding: "20px", background: "#f4f6f9", minHeight: "100vh" }}
+      >
         {/* Page Heading */}
-        <h2 style={{ marginBottom: "20px" }}>
-          HRMS / Employees Profile
-        </h2>
+        <h2 style={{ marginBottom: "20px" }}>HRMS / Employees Profile</h2>
 
         {/* Profile Header Card */}
         <div style={card}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
               <img
                 src="https://i.pravatar.cc/100"
@@ -36,7 +40,6 @@ const EmployeeProfile = () => {
 
         {/* Grid Section */}
         <div style={gridContainer}>
-
           {/* Basic Information */}
           <div style={card}>
             <h4 style={sectionTitle}>Basic Information</h4>
@@ -94,7 +97,6 @@ const EmployeeProfile = () => {
             <InfoRow label="Role" value="Employee" />
             <InfoRow label="Last Login" value="Today 10:12 AM" />
           </div>
-
         </div>
 
         {/* Bottom Buttons */}
@@ -104,7 +106,6 @@ const EmployeeProfile = () => {
           <button style={secondaryBtn}>Reset Password</button>
           <button style={dangerBtn}>Delete Employee</button>
         </div>
-
       </div>
     </DashboardLayout>
   );
@@ -113,17 +114,33 @@ const EmployeeProfile = () => {
 /* Reusable Components */
 
 const InfoRow = ({ label, value }) => (
-  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "8px",
+    }}
+  >
     <span style={{ color: "#666", fontSize: "14px" }}>{label}</span>
     <span style={{ fontSize: "14px", fontWeight: "500" }}>{value}</span>
   </div>
 );
 
 const DocumentRow = ({ name }) => (
-  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "8px",
+    }}
+  >
     <span>{name}</span>
     <div>
-      <span style={{ color: "#00bcd4", cursor: "pointer", marginRight: "10px" }}>View</span>
+      <span
+        style={{ color: "#00bcd4", cursor: "pointer", marginRight: "10px" }}
+      >
+        View
+      </span>
       <span style={{ color: "#00bcd4", cursor: "pointer" }}>Download</span>
     </div>
   </div>
@@ -135,18 +152,18 @@ const card = {
   background: "#fff",
   padding: "20px",
   borderRadius: "12px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
 };
 
 const gridContainer = {
   display: "grid",
   gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))",
   gap: "20px",
-  marginTop: "20px"
+  marginTop: "20px",
 };
 
 const sectionTitle = {
-  marginBottom: "15px"
+  marginBottom: "15px",
 };
 
 const activeBadge = {
@@ -154,7 +171,7 @@ const activeBadge = {
   color: "green",
   padding: "4px 10px",
   borderRadius: "20px",
-  fontSize: "12px"
+  fontSize: "12px",
 };
 
 const primaryBtn = {
@@ -163,7 +180,7 @@ const primaryBtn = {
   border: "none",
   color: "#fff",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 const secondaryBtn = {
@@ -171,7 +188,7 @@ const secondaryBtn = {
   background: "#f1f1f1",
   border: "1px solid #ddd",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 const dangerBtn = {
@@ -180,7 +197,7 @@ const dangerBtn = {
   border: "1px solid red",
   color: "red",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
 };
 
 export default EmployeeProfile;
