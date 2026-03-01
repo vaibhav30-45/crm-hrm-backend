@@ -31,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ========================================
-// 📘 SWAGGER DOCS
+// SWAGGER DOCS
 // ========================================
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
@@ -85,6 +85,7 @@ app.use((req, res) => {
     message: "Route not found",
   });
 });
+
 
 // ========================================
 // 💥 GLOBAL ERROR HANDLER
