@@ -2,7 +2,7 @@ const Attendance = require("./attendance.model");
 
 
 // ==========================
-// ✅ Punch In
+// ✅ 
 // ==========================
 exports.punchIn = async (req, res) => {
   try {
