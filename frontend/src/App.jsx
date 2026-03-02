@@ -22,6 +22,7 @@ import CustomerManagement from "./components/CRMComponents/CustomerManagement";
 import EmployeesOnboarding from "./components/HRMSComponents/EmployeesOnboarding";
 import PerformanceAppraisal from "./components/HRMSComponents/PerformanceAppraisal";
 import EmployeeSelfService from "./components/HRMSComponents/EmployeeSelfService";
+import ManagerDashboard from "./components/ManagerDashboard/ManagerDashboard"
 import "./App.css";
 
 function App() {
@@ -88,6 +89,16 @@ function App() {
               </PrivateRoutes>
             }
           />
+        
+
+<Route
+  path="/manager-dashboard"
+  element={
+    <PrivateRoutes>
+      <ManagerDashboard />   {/* MANAGER MAIN PAGE */}
+    </PrivateRoutes>
+  }
+/>
           <Route
             path="/users"
             element={

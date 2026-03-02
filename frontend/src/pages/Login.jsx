@@ -211,34 +211,43 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('Login attempt:', { email, password, rememberMe });
-    
-    try {
-      // Call real API
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  e.preventDefault();
+  console.log('Login attempt:', { email, password, rememberMe });
+  
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (data.success) {
-        // Update AuthContext and navigate
-        login(data.token, data.user);
-        navigate('/dashboard');
+    if (data.success) {
+      console.log("USER DATA:", data.user);
+
+      // Save token & user in context
+      login(data.token, data.user);
+
+      // ✅ Role Based Redirect
+      if (data.user.role === "ADMIN") {
+        navigate("/admin-dashboard");
+      } else if (data.user.role === "MANAGER") {
+        navigate("/manager-dashboard");
       } else {
-        // Handle login error
-        alert(data.message || 'Login failed');
+        navigate("/dashboard"); // fallback
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('Login failed. Please try again.');
+
+    } else {
+      alert(data.message || 'Login failed');
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    alert('Login failed. Please try again.');
+  }
+};
 
   return (
     <div style={styles.fullScreenContainer}>
