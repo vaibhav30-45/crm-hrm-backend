@@ -12,12 +12,12 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const AttendanceTrend = () => {
   // Hardcoded attendance data
   const attendanceData = {
-    present: 142,
-    absent: 23,
-    late: 8,
-    onLeave: 7,
-    total: 180,
-    percentage: 78.9
+    present: 0,
+    absent: 0,
+    late: 0,
+    onLeave: 0,
+    total: 0,
+    percentage: 0
   };
 
   const chartData = {
