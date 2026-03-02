@@ -3,16 +3,16 @@ import React from 'react';
 const EmployeeGrowth = () => {
   // Hardcoded employee growth data
   const employeeGrowthData = {
-    current: 182,
-    previous: 173,
-    growth: 9,
-    growthPercentage: 5.2,
+    current:0,
+    previous:0,
+    growth: 0,
+    growthPercentage: 0,
     stages: [
-      { label: "Applications", value: "450" },
-      { label: "Screened", value: "280" },
-      { label: "Interviewed", value: "120" },
-      { label: "Selected", value: "45" },
-      { label: "Onboarded", value: "182" },
+      { label: "Applications", value: "0" },
+      { label: "Screened", value: "0" },
+      { label: "Interviewed", value: "0" },
+      { label: "Selected", value: "0" },
+      { label: "Onboarded", value: "0" },
     ]
   };
 

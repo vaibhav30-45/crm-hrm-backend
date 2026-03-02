@@ -24,4 +24,10 @@ export const authService = {
   isAuthenticated: () => {
     return !!localStorage.getItem('token');
   },
+
+  // Logout user
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  },
 };

@@ -7,10 +7,10 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
   Legend,
   AreaChart,
-  Area
+  Area,
+  ResponsiveContainer
 } from "recharts";
 
 const ManagerDashboard = () => {
@@ -113,7 +113,7 @@ const ManagerDashboard = () => {
                     fill="#bbdefb"
                     strokeWidth={3}
                   />
-                </AreaChart> 
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>

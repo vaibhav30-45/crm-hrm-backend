@@ -7,19 +7,25 @@ export const userService = {
     return await api.get(`/users${queryString ? `?${queryString}` : ''}`);
   },
   
-  // getById: async (id) => {
-  //   return await api.get(`/users/${id}`);
-  // },
+  // Get employee profile by ID
+  getProfile: async (id) => {
+    const response = await api.get(`/hrm/profile/${id}`);
+    return response;
+  },
   
   create: async (userData) => {
     return await api.post('/users', userData);
   },
   
-  // update: async (id, userData) => {
-  //   return await api.put(`/users/${id}`, userData);
-  // },
+  // Update employee profile
+  updateProfile: async (id, userData) => {
+    const response = await api.put(`/hrm/profile/${id}`, userData);
+    return response.data;
+  },
   
-  // delete: async (id) => {
-  //   return await api.delete(`/users/${id}`);
-  // },
+  // Delete employee
+  delete: async (id) => {
+    const response = await api.delete(`/hrm/profile/${id}`);
+    return response.data;
+  },
 };

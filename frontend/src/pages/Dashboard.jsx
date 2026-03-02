@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import StatCard from "../components/StatCard";
@@ -11,8 +11,179 @@ import DownloadReports from "../components/DashboardComponents/DownloadReports";
 
 import RiskAnomalyCard from "../components/DashboardComponents/RiskAnomalyCard";
 import SecurityAlerts from "../components/DashboardComponents/SecurityAlerts";
+import { crmService } from "../services/crmService";
+import { userService } from "../services/userService";
 
 export default function Dashboard() {
+  const [totalLeads, setTotalLeads] = useState(8420);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+  const [leadsError, setLeadsError] = useState(null);
+  
+  const [totalCustomers, setTotalCustomers] = useState(3265);
+  const [customersLoading, setCustomersLoading] = useState(false);
+  const [customersError, setCustomersError] = useState(null);
+
+  const [totalEmployees, setTotalEmployees] = useState(182);
+  const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [employeesError, setEmployeesError] = useState(null);
+
+  const [totalUsers, setTotalUsers] = useState(1024);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [usersError, setUsersError] = useState(null);
+
+  // Fetch total leads count
+  useEffect(() => {
+    const fetchTotalLeads = async () => {
+      try {
+        setLeadsLoading(true);
+        setLeadsError(null);
+        
+        const response = await crmService.leads.getAll({ limit: 1000 }); // Get all leads for count
+        
+        if (response.data && Array.isArray(response.data)) {
+          // Backend returns { message: "All leads", data: leads }
+          const leadsCount = response.data.length;
+          setTotalLeads(leadsCount);
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          // Alternative response structure
+          const leadsCount = response.data.data.length;
+          setTotalLeads(leadsCount);
+        } else {
+          console.error('Unexpected leads response format:', response);
+          // Keep fallback value
+        }
+      } catch (error) {
+        console.error('Error fetching total leads:', error);
+        setLeadsError('Failed to fetch leads count');
+        // Keep fallback value
+      } finally {
+        setLeadsLoading(false);
+      }
+    };
+
+    fetchTotalLeads();
+  }, []);
+
+  // Fetch total customers count
+  useEffect(() => {
+    const fetchTotalCustomers = async () => {
+      try {
+        setCustomersLoading(true);
+        setCustomersError(null);
+        
+        const response = await crmService.customers.getAll({ limit: 1000 }); // Get all customers for count
+        
+        if (response.success) {
+          // Customer API returns { success: true, data: customers }
+          const customersCount = response.data?.length || response.count || 0;
+          setTotalCustomers(customersCount);
+        } else if (response.data && Array.isArray(response.data)) {
+          // Alternative response structure
+          const customersCount = response.data.length;
+          setTotalCustomers(customersCount);
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          // Another alternative structure
+          const customersCount = response.data.data.length;
+          setTotalCustomers(customersCount);
+        } else {
+          console.error('Unexpected customers response format:', response);
+          // Keep fallback value
+        }
+      } catch (error) {
+        console.error('Error fetching total customers:', error);
+        setCustomersError('Failed to fetch customers count');
+        // Keep fallback value
+      } finally {
+        setCustomersLoading(false);
+      }
+    };
+
+    fetchTotalCustomers();
+  }, []);
+
+  // Fetch total employees count
+  useEffect(() => {
+    const fetchTotalEmployees = async () => {
+      try {
+        setEmployeesLoading(true);
+        setEmployeesError(null);
+        
+        const response = await userService.getAll(); // Get all users
+        
+        if (response.success) {
+          // User API returns { success: true, data: users }
+          const allUsers = response.data || [];
+          // Filter users with EMPLOYEE role
+          const employees = allUsers.filter(user => user.role === 'EMPLOYEE');
+          const employeesCount = employees.length;
+          setTotalEmployees(employeesCount);
+        } else if (response.data && Array.isArray(response.data)) {
+          // Alternative response structure
+          const allUsers = response.data;
+          const employees = allUsers.filter(user => user.role === 'EMPLOYEE');
+          const employeesCount = employees.length;
+          setTotalEmployees(employeesCount);
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          // Another alternative structure
+          const allUsers = response.data.data;
+          const employees = allUsers.filter(user => user.role === 'EMPLOYEE');
+          const employeesCount = employees.length;
+          setTotalEmployees(employeesCount);
+        } else {
+          console.error('Unexpected users response format:', response);
+          // Keep fallback value
+        }
+      } catch (error) {
+        console.error('Error fetching total employees:', error);
+        setEmployeesError('Failed to fetch employees count');
+        // Keep fallback value
+      } finally {
+        setEmployeesLoading(false);
+      }
+    };
+
+    fetchTotalEmployees();
+  }, []);
+
+  // Fetch total users count
+  useEffect(() => {
+    const fetchTotalUsers = async () => {
+      try {
+        setUsersLoading(true);
+        setUsersError(null);
+        
+        const response = await userService.getAll(); // Get all users
+        
+        if (response.success) {
+          // User API returns { success: true, data: users }
+          const allUsers = response.data || [];
+          const usersCount = allUsers.length;
+          setTotalUsers(usersCount);
+        } else if (response.data && Array.isArray(response.data)) {
+          // Alternative response structure
+          const allUsers = response.data;
+          const usersCount = allUsers.length;
+          setTotalUsers(usersCount);
+        } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          // Another alternative structure
+          const allUsers = response.data.data;
+          const usersCount = allUsers.length;
+          setTotalUsers(usersCount);
+        } else {
+          console.error('Unexpected users response format:', response);
+          // Keep fallback value
+        }
+      } catch (error) {
+        console.error('Error fetching total users:', error);
+        setUsersError('Failed to fetch users count');
+        // Keep fallback value
+      } finally {
+        setUsersLoading(false);
+      }
+    };
+
+    fetchTotalUsers();
+  }, []);
   return (
     <DashboardLayout>
       <style>{`
@@ -177,35 +348,35 @@ export default function Dashboard() {
       <div className="grid">
         <StatCard
           title="Total Leads"
-          value="8,420"
-          change="+12% from last month"
-          changeType="positive"
+          value={leadsLoading ? "Loading..." : totalLeads.toLocaleString()}
+          change={leadsError ? "Error loading data" : "0% from last month"}
+          changeType={leadsError ? "negative" : "positive"}
           icon="✓"
-          color="#10b981"
+          color={leadsError ? "#ef4444" : "#10b981"}
         />
         <StatCard
           title="Total Customers"
-          value="3,265"
-          change="+9% Growth"
-          changeType="positive"
+          value={customersLoading ? "Loading..." : totalCustomers.toLocaleString()}
+          change={customersError ? "Error loading data" : "0% Growth"}
+          changeType={customersError ? "negative" : "positive"}
           icon="✓"
-          color="#10b981"
+          color={customersError ? "#ef4444" : "#10b981"}
         />
         <StatCard
-          title="Total Employees"
-          value="182"
-          change="+5% new this month"
-          changeType="positive"
+          title="Employees"
+          value={employeesLoading ? "Loading..." : totalEmployees.toLocaleString()}
+          change={employeesError ? "Error loading data" : "0% new this month"}
+          changeType={employeesError ? "negative" : "positive"}
           icon="✓"
-          color="#10b981"
+          color={employeesError ? "#ef4444" : "#10b981"}
         />
         <StatCard
-          title="Active Users"
-          value="1,024"
-          change="Online right now"
-          changeType="neutral"
+          title="Users"
+          value={usersLoading ? "Loading..." : totalUsers.toLocaleString()}
+          change={usersError ? "Error loading data" : "Online right now"}
+          changeType={usersError ? "negative" : "neutral"}
           icon="👥"
-          color="#10b981"
+          color={usersError ? "#ef4444" : "#10b981"}
         />
       </div>
 
@@ -213,22 +384,22 @@ export default function Dashboard() {
       <div className="grid">
         <AlertCard
           title="AI Alerts"
-          value="5 New Alerts"
+          value="0 New Alerts"
           subtitle="Review Required"
         />
         <AlertCard
           title="AI Credits Usage"
-          value="75% Credits Used"
+          value="0% Credits Used"
           subtitle="Upgrade Recommended"
         />
         <AlertCard
           title="SLA Breaches"
-          value="6 Violations"
+          value="0 Violations"
           subtitle="Immediate Action Needed"
         />
         <AlertCard
           title="System Health"
-          value="98% System Stable"
+          value="0% System Stable"
           subtitle="All Services Running"
         />
       </div>

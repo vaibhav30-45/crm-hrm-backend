@@ -13,15 +13,23 @@ export const attendanceService = {
     return response;
   },
 
+  // Get All Employees Attendance (HR/Admin only)
+  getAllAttendance: async (params = {}) => {
+    const response = await api.get('/hrm/attendance/all', { params });
+    return response;
+  },
+
+  // Get My Attendance (Employee only)
+  getMyAttendance: async (params = {}) => {
+    const response = await api.get('/hrm/attendance/my-attendance', { params });
+    return response.data;
+  },
+
   // Get Attendance Records (if needed for future)
   getAttendance: async (params = {}) => {
     const response = await api.get('/hrm/attendance', { params });
     return response.data;
   },
 
-  // Get Today's Attendance
-  getTodayAttendance: async () => {
-    const response = await api.get('/hrm/attendance/today');
-    return response.data;
-  }
+  
 };

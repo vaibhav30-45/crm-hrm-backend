@@ -4,48 +4,56 @@ export const crmService = {
   // Customer Management
   customers: {
     getAll: async (params = {}) => {
-      const queryString = new URLSearchParams(params).toString();
-      return await api.get(`/crm/customers${queryString ? `?${queryString}` : ''}`);
+      const response = await api.get('/crm/customers', { params });
+      return response;
     },
     
     getById: async (id) => {
-      return await api.get(`/crm/customers/${id}`);
+      const response = await api.get(`/crm/customers/${id}`);
+      return response;
     },
     
     create: async (customerData) => {
-      return await api.post('/crm/customers', customerData);
+      const response = await api.post('/crm/customers', customerData);
+      return response;
     },
     
     update: async (id, customerData) => {
-      return await api.put(`/crm/customers/${id}`, customerData);
+      const response = await api.put(`/crm/customers/${id}`, customerData);
+      return response;
     },
     
     delete: async (id) => {
-      return await api.delete(`/crm/customers/${id}`);
+      const response = await api.delete(`/crm/customers/${id}`);
+      return response;
     },
   },
 
   // Lead Management
   leads: {
     getAll: async (params = {}) => {
-      const queryString = new URLSearchParams(params).toString();
-      return await api.get(`/crm/leads${queryString ? `?${queryString}` : ''}`);
+      const response = await api.get('/crm/leads', { params });
+      return response;
     },
     
     getById: async (id) => {
-      return await api.get(`/crm/leads/${id}`);
+      const response = await api.get(`/crm/leads/${id}`);
+      return response;
     },
     
     create: async (leadData) => {
-      return await api.post('/crm/leads', leadData);
+      const response = await api.post('/crm/leads', leadData);
+      return response;
     },
     
     update: async (id, leadData) => {
-      return await api.put(`/crm/leads/${id}`, leadData);
+      const response = await api.put(`/crm/leads/${id}`, leadData);
+      return response;
     },
     
     delete: async (id) => {
-      return await api.delete(`/crm/leads/${id}`);
+      const response = await api.delete(`/crm/leads/${id}`);
+      return response;
     },
   },
 
