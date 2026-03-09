@@ -56,7 +56,8 @@ const AttendanceManagement = () => {
       }
     } catch (error) {
       console.error('Punch in error:', error);
-      alert('Failed to punch in. Please try again.');
+      // Show the actual error message from the API
+      alert(error.message || 'Failed to punch in. Please try again.');
     } finally {
       setPunchingIn(false);
     }
@@ -78,7 +79,8 @@ const AttendanceManagement = () => {
       }
     } catch (error) {
       console.error('Punch out error:', error);
-      alert('Failed to punch out. Please try again.');
+      // Show the actual error message from the API
+      alert(error.message || 'Failed to punch out. Please try again.');
     } finally {
       setPunchingOut(false);
     }
