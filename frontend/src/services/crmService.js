@@ -4,28 +4,53 @@ export const crmService = {
   // Customer Management
   customers: {
     getAll: async (params = {}) => {
-      const response = await api.get('/crm/customers', { params });
-      return response;
+      try {
+        const response = await api.get('/crm/customers', { params });
+        return response;
+      } catch (error) {
+        console.error('CRM Service - Get customers error:', error);
+        throw error;
+      }
     },
     
     getById: async (id) => {
-      const response = await api.get(`/crm/customers/${id}`);
-      return response;
+      try {
+        const response = await api.get(`/crm/customers/${id}`);
+        return response;
+      } catch (error) {
+        console.error('CRM Service - Get customer by ID error:', error);
+        throw error;
+      }
     },
     
     create: async (customerData) => {
-      const response = await api.post('/crm/customers', customerData);
-      return response;
+      try {
+        const response = await api.post('/crm/customers', customerData);
+        return response;
+      } catch (error) {
+        console.error('CRM Service - Create customer error:', error);
+        throw error;
+      }
     },
     
     update: async (id, customerData) => {
-      const response = await api.put(`/crm/customers/${id}`, customerData);
-      return response;
+      try {
+        const response = await api.put(`/crm/customers/${id}`, customerData);
+        return response;
+      } catch (error) {
+        console.error('CRM Service - Update customer error:', error);
+        throw error;
+      }
     },
     
     delete: async (id) => {
-      const response = await api.delete(`/crm/customers/${id}`);
-      return response;
+      try {
+        const response = await api.delete(`/crm/customers/${id}`);
+        return response;
+      } catch (error) {
+        console.error('CRM Service - Delete customer error:', error);
+        throw error;
+      }
     },
   },
 

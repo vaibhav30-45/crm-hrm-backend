@@ -19,7 +19,7 @@ const CustomerManagement = () => {
     phone: '',
     company: '',
     status: 'new',
-    assignedTo: ''
+    assignedTo: null
   });
 
   // Fetch customers from API
@@ -44,44 +44,56 @@ const CustomerManagement = () => {
       }
     } catch (err) {
       console.error('Fetch customers error:', err);
-      setError('Failed to fetch customers. Please try again.');
+      
+      // Provide more specific error messages
+      if (err.message.includes('NetworkError') || err.message.includes('Failed to fetch')) {
+        setError('Network error: Unable to connect to the server. Please check if the backend server is running on localhost:5000');
+      } else if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+        setError('Authentication error: Please log in again');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      } else if (err.message.includes('403') || err.message.includes('Forbidden')) {
+        setError('Permission denied: You do not have permission to view customers');
+      } else {
+        setError(`Failed to fetch customers: ${err.message}`);
+      }
       
       // Fallback to mock data if API fails
       setCustomers([
         {
           _id: "1",
           name: "John Doe",
-          email: "john@acme.com",
-          phone: "+1 234-567-8900",
-          company: "Acme Corp",
-          status: "qualified",
-          assignedTo: { name: "Jane Smith", email: "jane@company.com" },
-          createdBy: { name: "Admin User" },
-          createdAt: "2024-01-15T10:30:00.000Z",
-          updatedAt: "2024-01-20T14:22:00.000Z"
+          email: "john@example.com",
+          phone: "+1234567890",
+          company: "Tech Corp",
+          status: "new",
+          assignedTo: { name: "Admin User", email: "admin@example.com" },
+          createdBy: { name: "Admin User", email: "admin@example.com" },
+          createdAt: "2024-01-05T10:30:00.000Z",
+          updatedAt: "2024-01-05T10:30:00.000Z"
         },
         {
           _id: "2",
-          name: "Sarah Johnson",
-          email: "sarah@beta.com",
-          phone: "+1 345-678-9012",
-          company: "Beta Solution",
+          name: "Jane Smith",
+          email: "jane@example.com",
+          phone: "+0987654321",
+          company: "Design Inc",
           status: "contacted",
-          assignedTo: { name: "Mike Wilson", email: "mike@company.com" },
-          createdBy: { name: "Admin User" },
-          createdAt: "2024-01-10T09:15:00.000Z",
-          updatedAt: "2024-01-18T16:45:00.000Z"
+          assignedTo: { name: "Manager User", email: "manager@example.com" },
+          createdBy: { name: "Admin User", email: "admin@example.com" },
+          createdAt: "2024-01-06T14:20:00.000Z",
+          updatedAt: "2024-01-07T09:15:00.000Z"
         },
         {
           _id: "3",
-          name: "Robert Chen",
-          email: "robert@global.com",
-          phone: "+1 456-789-0123",
-          company: "Global Tech",
-          status: "new",
-          assignedTo: { name: "Sarah Davis", email: "sarah@company.com" },
-          createdBy: { name: "Admin User" },
-          createdAt: "2024-01-08T11:20:00.000Z",
+          name: "Bob Johnson",
+          email: "bob@example.com",
+          phone: "+1122334455",
+          company: "Marketing Ltd",
+          status: "qualified",
+          assignedTo: { name: "BD User", email: "bd@example.com" },
+          createdBy: { name: "Admin User", email: "admin@example.com" },
+          createdAt: "2024-01-07T16:45:00.000Z",
           updatedAt: "2024-01-08T11:20:00.000Z"
         },
       ]);
@@ -92,7 +104,19 @@ const CustomerManagement = () => {
 
   const handleCreateCustomer = async () => {
     try {
-      const response = await crmService.customers.create(formData);
+      // Validate required fields
+      if (!formData.name.trim()) {
+        alert('Name is required');
+        return;
+      }
+
+      // Clean the form data before sending
+      const cleanedData = {
+        ...formData,
+        assignedTo: formData.assignedTo && formData.assignedTo.trim() ? formData.assignedTo.trim() : null
+      };
+
+      const response = await crmService.customers.create(cleanedData);
       
       if (response.success) {
         setShowCreateModal(false);
@@ -104,13 +128,39 @@ const CustomerManagement = () => {
       }
     } catch (error) {
       console.error('Create customer error:', error);
-      alert('Failed to create customer. Please try again.');
+      
+      // Provide more specific error messages
+      if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+        alert('Network error: Unable to connect to the server. Please check if the backend server is running on localhost:5000');
+      } else if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        alert('Authentication error: Please log in again');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
+        alert('Permission denied: You do not have permission to create customers');
+      } else if (error.message.includes('ValidationError') || error.message.includes('Cast to ObjectId failed')) {
+        alert('Validation error: Please check all required fields and ensure assigned user is selected or left empty');
+      } else {
+        alert(`Failed to create customer: ${error.message}`);
+      }
     }
   };
 
   const handleUpdateCustomer = async () => {
     try {
-      const response = await crmService.customers.update(selectedCustomer._id, formData);
+      // Validate required fields
+      if (!formData.name.trim()) {
+        alert('Name is required');
+        return;
+      }
+
+      // Clean the form data before sending
+      const cleanedData = {
+        ...formData,
+        assignedTo: formData.assignedTo && formData.assignedTo.trim() ? formData.assignedTo.trim() : null
+      };
+
+      const response = await crmService.customers.update(selectedCustomer._id, cleanedData);
       
       if (response.success) {
         setShowEditModal(false);
@@ -122,7 +172,23 @@ const CustomerManagement = () => {
       }
     } catch (error) {
       console.error('Update customer error:', error);
-      alert('Failed to update customer. Please try again.');
+      
+      // Provide more specific error messages
+      if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+        alert('Network error: Unable to connect to the server. Please check if the backend server is running on localhost:5000');
+      } else if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+        alert('Authentication error: Please log in again');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
+        alert('Permission denied: You do not have permission to update customers');
+      } else if (error.message.includes('404') || error.message.includes('Customer not found')) {
+        alert('Customer not found: The customer may have been deleted');
+      } else if (error.message.includes('ValidationError') || error.message.includes('Cast to ObjectId failed')) {
+        alert('Validation error: Please check all required fields and ensure assigned user is selected or left empty');
+      } else {
+        alert(`Failed to update customer: ${error.message}`);
+      }
     }
   };
 
@@ -139,7 +205,21 @@ const CustomerManagement = () => {
         }
       } catch (error) {
         console.error('Delete customer error:', error);
-        alert('Failed to delete customer. Please try again.');
+        
+        // Provide more specific error messages
+        if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+          alert('Network error: Unable to connect to the server. Please check if the backend server is running on localhost:5000');
+        } else if (error.message.includes('401') || error.message.includes('Unauthorized')) {
+          alert('Authentication error: Please log in again');
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        } else if (error.message.includes('403') || error.message.includes('Forbidden')) {
+          alert('Permission denied: You do not have permission to delete customers');
+        } else if (error.message.includes('404') || error.message.includes('Customer not found')) {
+          alert('Customer not found: The customer may have already been deleted');
+        } else {
+          alert(`Failed to delete customer: ${error.message}`);
+        }
       }
     }
   };
@@ -152,7 +232,7 @@ const CustomerManagement = () => {
       phone: customer.phone || '',
       company: customer.company || '',
       status: customer.status || 'new',
-      assignedTo: customer.assignedTo?._id || ''
+      assignedTo: customer.assignedTo?._id || null
     });
     setShowEditModal(true);
   };
@@ -164,7 +244,7 @@ const CustomerManagement = () => {
       phone: '',
       company: '',
       status: 'new',
-      assignedTo: ''
+      assignedTo: null
     });
     setSelectedCustomer(null);
   };

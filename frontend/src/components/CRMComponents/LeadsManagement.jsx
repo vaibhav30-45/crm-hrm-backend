@@ -295,7 +295,7 @@ const LeadsManagement = () => {
                 fontWeight: "500",
               }}
             >
-              +12% from last month
+              0% from last month
             </p>
           </div>
 
@@ -357,7 +357,7 @@ const LeadsManagement = () => {
                 fontWeight: "500",
               }}
             >
-              +8% from last month
+              0% from last month
             </p>
           </div>
 
@@ -409,7 +409,7 @@ const LeadsManagement = () => {
                 color: "#111827",
               }}
             >
-              68.2%
+              0%
             </p>
             <p
               style={{
@@ -419,7 +419,7 @@ const LeadsManagement = () => {
                 fontWeight: "500",
               }}
             >
-              +4.5% from last month
+              0% from last month
             </p>
           </div>
 
@@ -471,7 +471,7 @@ const LeadsManagement = () => {
                 color: "#111827",
               }}
             >
-              1,293
+              0
             </p>
             <p
               style={{
@@ -481,7 +481,7 @@ const LeadsManagement = () => {
                 fontWeight: "500",
               }}
             >
-              -2% from last month
+              0% from last month
             </p>
           </div>
         </div>
