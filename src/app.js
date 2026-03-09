@@ -21,6 +21,8 @@ const profileRoutes = require("./modules/profile/profile.routes");
 const managerDashboardRoutes = require("./modules/dashboard/manager/manager.dashboard.routes");
 const projectRoutes = require("./modules/project/project.routes");
 const requestRoutes = require("./modules/request/request.routes");
+const onboardingRoutes = require("./modules/onboarding/onboarding.routes");
+const salaryRoutes = require("./modules/salaryStructure/salaryStructure.routes");
 const app = express();
 
 // ========================================
@@ -66,6 +68,9 @@ app.use("/api/hrm/payroll", payrollRoutes);
 app.use("/api/hrm/review", reviewRoutes);
 app.use("/api/hrm/profile", profileRoutes);
 app.use("/api/hrm/request", requestRoutes);
+
+app.use("/api/hrm/onboarding", onboardingRoutes);
+app.use("/api/hrm/salary-structure", salaryRoutes);
 
 // ========================================
 // 🛑 HEALTH CHECK (Optional but Recommended)
