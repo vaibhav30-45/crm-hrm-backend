@@ -20,7 +20,7 @@ const reviewRoutes = require("./modules/performance/performance.routes");
 const profileRoutes = require("./modules/profile/profile.routes");
 const managerDashboardRoutes = require("./modules/dashboard/manager/manager.dashboard.routes");
 const projectRoutes = require("./modules/project/project.routes");
-
+const requestRoutes = require("./modules/request/request.routes");
 const app = express();
 
 // ========================================
@@ -65,6 +65,7 @@ app.use("/api/hrm/attendance", attendanceRoutes);
 app.use("/api/hrm/payroll", payrollRoutes);
 app.use("/api/hrm/review", reviewRoutes);
 app.use("/api/hrm/profile", profileRoutes);
+app.use("/api/hrm/request", requestRoutes);
 
 // ========================================
 // 🛑 HEALTH CHECK (Optional but Recommended)

@@ -15,6 +15,17 @@ const userSchema = new mongoose.Schema(
 
     password: { type: String, required: true },
 
+    // ✅ NEW FIELD
+    phone: {
+      type: String
+    },
+
+    // ✅ NEW FIELD
+    department: {
+      type: String,
+      enum: ["IT", "HR", "Sales", "Marketing", "Finance"]
+    },
+
     role: {
       type: String,
       enum: ["ADMIN", "HR", "MANAGER", "EMPLOYEE", "BDE"],
@@ -52,4 +63,3 @@ const userSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("User", userSchema);
-
