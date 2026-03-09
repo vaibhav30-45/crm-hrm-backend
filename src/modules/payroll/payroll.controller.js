@@ -28,3 +28,24 @@ exports.markPaid = async (req, res) => {
 
   res.json(payroll);
 };
+
+// ✅ Get All Payroll
+exports.getAllPayroll = async (req, res) => {
+  try {
+
+    const payrolls = await Payroll.find()
+      .populate("employee", "name email role");
+
+    res.status(200).json({
+      success: true,
+      count: payrolls.length,
+      data: payrolls
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
