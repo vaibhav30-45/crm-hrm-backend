@@ -3,6 +3,7 @@ const Attendance = require("../attendance/attendance.model");
 const Leave = require("../leave/leave.model");
 const Payroll = require("../payroll/payroll.model");
 
+// Get Employee Profile
 const getEmployeeProfile = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -42,4 +43,40 @@ const getEmployeeProfile = async (req, res) => {
   }
 };
 
-module.exports = { getEmployeeProfile };
+
+// ✅ Update Employee Profile
+const updateEmployeeProfile = async (req, res) => {
+  try {
+
+    const userId = req.params.id;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      req.body,
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found"
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      data: updatedUser
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};
+
+module.exports = {
+  getEmployeeProfile,
+  updateEmployeeProfile
+};
