@@ -4,7 +4,8 @@ const router = express.Router();
 const {
   runPayroll,
   markPaid,
-   getAllPayroll
+   getAllPayroll,
+   downloadPayslip
 
 } = require("./payroll.controller");
 const { protect, authorizeRoles } = require("../../middleware/auth.middleware");
@@ -21,7 +22,7 @@ router.put(
   "/pay/:id",
   protect,
   authorizeRoles("ADMIN", "HR"),
-  
+
   markPaid
 );
 // ✅ Get All Payroll
@@ -30,6 +31,12 @@ router.get(
   protect,
   authorizeRoles("ADMIN", "HR"),
   getAllPayroll
+);
+router.get(
+  "/payslip/:id",
+  protect,
+  authorizeRoles("ADMIN","HR","EMPLOYEE"),
+  downloadPayslip
 );
 
 module.exports = router;
