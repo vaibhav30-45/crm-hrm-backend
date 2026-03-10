@@ -13,15 +13,23 @@ export const payrollService = {
     return response;
   },
 
-  // Get All Payroll Records (Admin/HR) - if needed
+  // Get All Payroll Records (Admin/HR)
   getAllPayroll: async () => {
     const response = await api.get('/hrm/payroll/all');
     return response;
   },
 
-  // Get My Payroll (Employee) - if needed
+  // Get My Payroll (Employee)
   getMyPayroll: async () => {
     const response = await api.get('/hrm/payroll/my');
+    return response;
+  },
+
+  // Download Payslip (Employee/HR/Admin)
+  downloadPayslip: async (payrollId) => {
+    const response = await api.get(`/hrm/payroll/payslip/${payrollId}`, {
+      responseType: 'blob'
+    });
     return response;
   }
 };
