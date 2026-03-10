@@ -1,66 +1,98 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
+import { onboardingService } from "../../services/onboardingService";
 
 const EmployeesOnboarding = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  const employees = [
-    {
-      id: "EM-001",
-      name: "Rahul Patidar",
-      dept: "IT",
-      role: "Software Engineer",
-      status: "Active",
-    },
-    {
-      id: "EM-002",
-      name: "Neha Shah",
-      dept: "Human Resources",
-      role: "HR",
-      status: "Inactive",
-    },
-    {
-      id: "EM-003",
-      name: "Pooja Patel",
-      dept: "Finance",
-      role: "Accountant",
-      status: "Inactive",
-    },
-    {
-      id: "EM-004",
-      name: "Pooja Patel",
-      dept: "Sales",
-      role: "Sales",
-      status: "Active",
-    },
-    {
-      id: "EM-005",
-      name: "Pooja Patel",
-      dept: "Sales",
-      role: "Sales",
-      status: "Active",
-    },
-    {
-      id: "EM-006",
-      name: "Riya Sharma",
-      dept: "IT",
-      role: "Software Engineer",
-      status: "Inactive",
-    },
-    {
-      id: "EM-007",
-      name: "Karan Mehta",
-      dept: "IT",
-      role: "Developer",
-      status: "Active",
-    },
-  ];
+  // State for API data
+  const [onboardingData, setOnboardingData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const totalPages = Math.ceil(employees.length / rowsPerPage);
+  // State for start onboarding modal
+  const [showStartModal, setShowStartModal] = useState(false);
+  const [startLoading, setStartLoading] = useState(false);
+  const [startError, setStartError] = useState(null);
+  const [formData, setFormData] = useState({
+    employeeId: ''
+  });
+
+  // Fetch onboarding data on component mount
+  useEffect(() => {
+    fetchOnboardingData();
+  }, []);
+
+  const fetchOnboardingData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await onboardingService.getOnboarding();
+      
+      if (response.success) {
+        setOnboardingData(response.data || []);
+      } else {
+        setError(response.message || 'Failed to fetch onboarding data');
+      }
+    } catch (error) {
+      console.error('Fetch onboarding error:', error);
+      setError('Failed to fetch onboarding data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle start onboarding
+  const handleStartOnboarding = async () => {
+    try {
+      setStartLoading(true);
+      setStartError(null);
+      
+      const onboardingData = {
+        employeeId: formData.employeeId
+      };
+      
+      const response = await onboardingService.startOnboarding(onboardingData);
+      
+      if (response.success) {
+        fetchOnboardingData();
+        setFormData({ employeeId: '' });
+        setShowStartModal(false);
+        alert('Onboarding started successfully!');
+      } else {
+        setStartError(response.message || 'Failed to start onboarding');
+      }
+    } catch (error) {
+      console.error('Start onboarding error:', error);
+      setStartError(error.message || 'Failed to start onboarding. Please try again.');
+    } finally {
+      setStartLoading(false);
+    }
+  };
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Reset start form
+  const resetStartForm = () => {
+    setFormData({ employeeId: '' });
+    setStartError(null);
+    setShowStartModal(false);
+  };
+
+  // Calculate pagination
+  const totalPages = Math.ceil(onboardingData.length / rowsPerPage);
   const indexOfLast = currentPage * rowsPerPage;
   const indexOfFirst = indexOfLast - rowsPerPage;
-  const currentRows = employees.slice(indexOfFirst, indexOfLast);
+  const currentRows = onboardingData.slice(indexOfFirst, indexOfLast);
 
   return (
     <DashboardLayout>
@@ -83,7 +115,12 @@ const EmployeesOnboarding = () => {
               <li>Employee document upload & verification</li>
               <li>Welcome emails & training modules</li>
             </ul>
-            <button style={primaryBtn}>Start Onboarding</button>
+            <button 
+              onClick={() => setShowStartModal(true)}
+              style={primaryBtn}
+            >
+              Start Onboarding
+            </button>
           </div>
 
           {/* Card 2 */}
@@ -115,73 +152,277 @@ const EmployeesOnboarding = () => {
 
         {/* Employee Table */}
         <div style={tableCard}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr style={{ background: "#f8f9fb", textAlign: "left" }}>
-                <th style={thStyle}>Employee ID</th>
-                <th style={thStyle}>Name</th>
-                <th style={thStyle}>Department</th>
-                <th style={thStyle}>Role</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Action</th>
-              </tr>
-            </thead>
+          {/* Loading State */}
+          {loading && (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <div style={{ 
+                display: 'inline-block',
+                width: '40px',
+                height: '40px',
+                border: '4px solid #f3f3f3',
+                borderTop: '4px solid #00bcd4',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite'
+              }}></div>
+              <p style={{ marginTop: '10px', color: '#666' }}>Loading onboarding data...</p>
+            </div>
+          )}
 
-            <tbody>
-              {currentRows.map((emp, index) => (
-                <tr key={index}>
-                  <td style={tdStyle}>{emp.id}</td>
-                  <td style={tdStyle}>{emp.name}</td>
-                  <td style={tdStyle}>{emp.dept}</td>
-                  <td style={tdStyle}>{emp.role}</td>
-                  <td style={tdStyle}>
-                    <span
-                      style={
-                        emp.status === "Active" ? activeBadge : inactiveBadge
-                      }
-                    >
-                      {emp.status}
-                    </span>
-                  </td>
-                  <td style={tdStyle}>⋯</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* Pagination */}
-          <div style={paginationContainer}>
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(currentPage - 1)}
-              style={pageBtn}
-            >
-              Previous
-            </button>
-
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+          {/* Error State */}
+          {error && (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <div style={{ color: '#e74c3c', marginBottom: '10px' }}>{error}</div>
               <button
-                key={num}
-                onClick={() => setCurrentPage(num)}
+                onClick={fetchOnboardingData}
                 style={{
-                  ...pageBtn,
-                  background: currentPage === num ? "#00bcd4" : "#fff",
-                  color: currentPage === num ? "#fff" : "#000",
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  background: '#00bcd4',
+                  color: 'white',
+                  cursor: 'pointer'
                 }}
               >
-                {num}
+                Retry
               </button>
-            ))}
+            </div>
+          )}
 
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(currentPage + 1)}
-              style={pageBtn}
-            >
-              Next
-            </button>
-          </div>
+          {/* Data Table */}
+          {!loading && !error && (
+            <>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "#f8f9fb", textAlign: "left" }}>
+                    <th style={thStyle}>Onboarding ID</th>
+                    <th style={thStyle}>Employee Name</th>
+                    <th style={thStyle}>Employee ID</th>
+                    <th style={thStyle}>Documents</th>
+                    <th style={thStyle}>Training</th>
+                    <th style={thStyle}>Welcome Email</th>
+                    <th style={thStyle}>Status</th>
+                    <th style={thStyle}>Created Date</th>
+                    <th style={thStyle}>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {currentRows.length > 0 ? (
+                    currentRows.map((onboarding, index) => (
+                      <tr key={onboarding._id || index}>
+                        <td style={tdStyle}>{onboarding._id?.slice(-8).toUpperCase() || 'N/A'}</td>
+                        <td style={tdStyle}>
+                          {onboarding.employee?.name || onboarding.employeeName || 'N/A'}
+                        </td>
+                        <td style={tdStyle}>
+                          {onboarding.employee?._id?.slice(-6).toUpperCase() || onboarding.employeeId || 'N/A'}
+                        </td>
+                        <td style={tdStyle}>
+                          <span
+                            style={{
+                              padding: "4px 10px",
+                              borderRadius: "20px",
+                              fontSize: "12px",
+                              backgroundColor: onboarding.documentsUploaded ? "#e8f5e9" : "#fff3cd",
+                              color: onboarding.documentsUploaded ? "green" : "#856404"
+                            }}
+                          >
+                            {onboarding.documentsUploaded ? "Uploaded" : "Pending"}
+                          </span>
+                        </td>
+                        <td style={tdStyle}>
+                          <span
+                            style={{
+                              padding: "4px 10px",
+                              borderRadius: "20px",
+                              fontSize: "12px",
+                              backgroundColor: onboarding.trainingCompleted ? "#e8f5e9" : "#fff3cd",
+                              color: onboarding.trainingCompleted ? "green" : "#856404"
+                            }}
+                          >
+                            {onboarding.trainingCompleted ? "Completed" : "Pending"}
+                          </span>
+                        </td>
+                        <td style={tdStyle}>
+                          <span
+                            style={{
+                              padding: "4px 10px",
+                              borderRadius: "20px",
+                              fontSize: "12px",
+                              backgroundColor: onboarding.welcomeEmailSent ? "#e8f5e9" : "#fff3cd",
+                              color: onboarding.welcomeEmailSent ? "green" : "#856404"
+                            }}
+                          >
+                            {onboarding.welcomeEmailSent ? "Sent" : "Pending"}
+                          </span>
+                        </td>
+                        <td style={tdStyle}>
+                          <span
+                            style={
+                              onboarding.status === "Completed" ? activeBadge : 
+                              onboarding.status === "In Progress" ? inProgressBadge : 
+                              inactiveBadge
+                            }
+                          >
+                            {onboarding.status || 'Unknown'}
+                          </span>
+                        </td>
+                        <td style={tdStyle}>
+                          {onboarding.createdAt ? new Date(onboarding.createdAt).toLocaleDateString() : 'N/A'}
+                        </td>
+                        <td style={tdStyle}>⋯</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="9" style={{ 
+                        textAlign: 'center', 
+                        padding: '40px', 
+                        color: '#666',
+                        fontStyle: 'italic'
+                      }}>
+                        No onboarding records found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div style={paginationContainer}>
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    style={pageBtn}
+                  >
+                    Previous
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+                    <button
+                      key={num}
+                      onClick={() => setCurrentPage(num)}
+                      style={{
+                        ...pageBtn,
+                        background: currentPage === num ? "#00bcd4" : "#fff",
+                        color: currentPage === num ? "#fff" : "#000",
+                      }}
+                    >
+                      {num}
+                    </button>
+                  ))}
+
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    style={pageBtn}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </div>
+
+        {/* Start Onboarding Modal */}
+        {showStartModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}>
+            <div style={{
+              backgroundColor: 'white',
+              padding: '30px',
+              borderRadius: '12px',
+              width: '500px',
+              maxWidth: '90%',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
+            }}>
+              <h3 style={{ marginBottom: '20px', color: '#333' }}>Start Employee Onboarding</h3>
+              
+              {startError && (
+                <div style={{
+                  padding: '10px',
+                  backgroundColor: '#fee',
+                  border: '1px solid #fcc',
+                  borderRadius: '6px',
+                  marginBottom: '15px',
+                  color: '#c00'
+                }}>
+                  {startError}
+                </div>
+              )}
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', marginBottom: '5px', color: '#666', fontSize: '14px' }}>
+                  Employee ID
+                </label>
+                <input
+                  type="text"
+                  name="employeeId"
+                  value={formData.employeeId}
+                  onChange={handleInputChange}
+                  placeholder="Enter employee ID"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    border: '1px solid #ddd',
+                    borderRadius: '6px',
+                    fontSize: '14px'
+                  }}
+                />
+                <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
+                  Enter the MongoDB ObjectId of the employee
+                </small>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={resetStartForm}
+                  disabled={startLoading}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#6c757d',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: startLoading ? 'not-allowed' : 'pointer',
+                    fontSize: '14px',
+                    opacity: startLoading ? 0.6 : 1
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleStartOnboarding}
+                  disabled={startLoading || !formData.employeeId}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: startLoading ? '#6c757d' : '#00bcd4',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: startLoading ? 'not-allowed' : 'pointer',
+                    fontSize: '14px',
+                    opacity: startLoading ? 0.6 : 1
+                  }}
+                >
+                  {startLoading ? 'Starting...' : 'Start Onboarding'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );
@@ -239,6 +480,14 @@ const inactiveBadge = {
   borderRadius: "20px",
   background: "#ffebee",
   color: "red",
+  fontSize: "12px",
+};
+
+const inProgressBadge = {
+  padding: "4px 10px",
+  borderRadius: "20px",
+  background: "#e3f2fd",
+  color: "#1976d2",
   fontSize: "12px",
 };
 
