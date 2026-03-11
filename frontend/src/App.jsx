@@ -23,6 +23,7 @@ import EmployeesOnboarding from "./components/HRMSComponents/EmployeesOnboarding
 import PerformanceAppraisal from "./components/HRMSComponents/PerformanceAppraisal";
 import EmployeeSelfService from "./components/HRMSComponents/EmployeeSelfService";
 import ManagerDashboard from "./components/ManagerDashboard/ManagerDashboard"
+import EmployeeDashboard from "./components/EmployeeDashboard/EmployeeDashboard";
 import "./App.css";
 
 function App() {
@@ -99,6 +100,13 @@ function App() {
     </PrivateRoutes>
   }
 />
+    <Route 
+    path="/employee-dashboard" 
+    element={
+      <PrivateRoutes>
+    <EmployeeDashboard />
+    </PrivateRoutes>
+    } />
           <Route
             path="/users"
             element={

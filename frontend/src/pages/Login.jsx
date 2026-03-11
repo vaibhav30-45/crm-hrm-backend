@@ -225,24 +225,24 @@ const Login = () => {
 
     const data = await response.json();
 
-    if (data.success) {
-      console.log("USER DATA:", data.user);
+   if (data.success) {
+  console.log("USER DATA:", data.user);
 
-      // Save token & user in context
-      login(data.token, data.user);
+  login(data.token, data.user);
 
-      // ✅ Role Based Redirect
-      if (data.user.role === "ADMIN") {
-        navigate("/admin-dashboard");
-      } else if (data.user.role === "MANAGER") {
-        navigate("/manager-dashboard");
-      } else {
-        navigate("/dashboard"); // fallback
-      }
+  if (data.user.role === "ADMIN") {
+    navigate("/admin-dashboard");
+  } 
+  else if (data.user.role === "MANAGER") {
+    navigate("/manager-dashboard");
+  }
+  else if (data.user.role === "EMPLOYEE") {
+    navigate("/employee-dashboard");
+  }
 
-    } else {
-      alert(data.message || 'Login failed');
-    }
+} else {
+  alert(data.message || 'Login failed');
+}
   } catch (error) {
     console.error('Login error:', error);
     alert('Login failed. Please try again.');

@@ -14,12 +14,12 @@ const CustomerManagement = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    status: 'new',
-    assignedTo: ''
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    status: "new",
+    assignedTo: "",
   });
 
   // Fetch customers from API
@@ -31,21 +31,21 @@ const CustomerManagement = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await crmService.customers.getAll({
         page: currentPage,
         limit: itemsPerPage,
       });
-      
+
       if (response.success) {
         setCustomers(response.data || []);
       } else {
-        setError(response.message || 'Failed to fetch customers');
+        setError(response.message || "Failed to fetch customers");
       }
     } catch (err) {
-      console.error('Fetch customers error:', err);
-      setError('Failed to fetch customers. Please try again.');
-      
+      console.error("Fetch customers error:", err);
+      setError("Failed to fetch customers. Please try again.");
+
       // Fallback to mock data if API fails
       setCustomers([
         {
@@ -58,7 +58,7 @@ const CustomerManagement = () => {
           assignedTo: { name: "Jane Smith", email: "jane@company.com" },
           createdBy: { name: "Admin User" },
           createdAt: "2024-01-15T10:30:00.000Z",
-          updatedAt: "2024-01-20T14:22:00.000Z"
+          updatedAt: "2024-01-20T14:22:00.000Z",
         },
         {
           _id: "2",
@@ -70,7 +70,7 @@ const CustomerManagement = () => {
           assignedTo: { name: "Mike Wilson", email: "mike@company.com" },
           createdBy: { name: "Admin User" },
           createdAt: "2024-01-10T09:15:00.000Z",
-          updatedAt: "2024-01-18T16:45:00.000Z"
+          updatedAt: "2024-01-18T16:45:00.000Z",
         },
         {
           _id: "3",
@@ -82,7 +82,7 @@ const CustomerManagement = () => {
           assignedTo: { name: "Sarah Davis", email: "sarah@company.com" },
           createdBy: { name: "Admin User" },
           createdAt: "2024-01-08T11:20:00.000Z",
-          updatedAt: "2024-01-08T11:20:00.000Z"
+          updatedAt: "2024-01-08T11:20:00.000Z",
         },
       ]);
     } finally {
@@ -93,53 +93,60 @@ const CustomerManagement = () => {
   const handleCreateCustomer = async () => {
     try {
       const response = await crmService.customers.create(formData);
-      
+
       if (response.success) {
         setShowCreateModal(false);
         resetForm();
         fetchCustomers(); // Refresh the list
-        alert('Customer created successfully!');
+        alert("Customer created successfully!");
       } else {
-        alert(response.message || 'Failed to create customer');
+        alert(response.message || "Failed to create customer");
       }
     } catch (error) {
-      console.error('Create customer error:', error);
-      alert('Failed to create customer. Please try again.');
+      console.error("Create customer error:", error);
+      alert("Failed to create customer. Please try again.");
     }
   };
 
   const handleUpdateCustomer = async () => {
     try {
-      const response = await crmService.customers.update(selectedCustomer._id, formData);
-      
+      const response = await crmService.customers.update(
+        selectedCustomer._id,
+        formData,
+      );
+
       if (response.success) {
         setShowEditModal(false);
         resetForm();
         fetchCustomers(); // Refresh the list
-        alert('Customer updated successfully!');
+        alert("Customer updated successfully!");
       } else {
-        alert(response.message || 'Failed to update customer');
+        alert(response.message || "Failed to update customer");
       }
     } catch (error) {
-      console.error('Update customer error:', error);
-      alert('Failed to update customer. Please try again.');
+      console.error("Update customer error:", error);
+      alert("Failed to update customer. Please try again.");
     }
   };
 
   const handleDeleteCustomer = async (customerId) => {
-    if (window.confirm('Are you sure you want to delete this customer? This action cannot be undone.')) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this customer? This action cannot be undone.",
+      )
+    ) {
       try {
         const response = await crmService.customers.delete(customerId);
-        
+
         if (response.success) {
           fetchCustomers(); // Refresh the list
-          alert('Customer deleted successfully!');
+          alert("Customer deleted successfully!");
         } else {
-          alert(response.message || 'Failed to delete customer');
+          alert(response.message || "Failed to delete customer");
         }
       } catch (error) {
-        console.error('Delete customer error:', error);
-        alert('Failed to delete customer. Please try again.');
+        console.error("Delete customer error:", error);
+        alert("Failed to delete customer. Please try again.");
       }
     }
   };
@@ -147,24 +154,24 @@ const CustomerManagement = () => {
   const handleEditClick = (customer) => {
     setSelectedCustomer(customer);
     setFormData({
-      name: customer.name || '',
-      email: customer.email || '',
-      phone: customer.phone || '',
-      company: customer.company || '',
-      status: customer.status || 'new',
-      assignedTo: customer.assignedTo?._id || ''
+      name: customer.name || "",
+      email: customer.email || "",
+      phone: customer.phone || "",
+      company: customer.company || "",
+      status: customer.status || "new",
+      assignedTo: customer.assignedTo?._id || "",
     });
     setShowEditModal(true);
   };
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      company: '',
-      status: 'new',
-      assignedTo: ''
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      status: "new",
+      assignedTo: "",
     });
     setSelectedCustomer(null);
   };
@@ -172,7 +179,7 @@ const CustomerManagement = () => {
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -183,28 +190,35 @@ const CustomerManagement = () => {
   const currentItems = customers.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
-  const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'new': return '#10b981';
-      case 'contacted': return '#3b82f6';
-      case 'qualified': return '#8b5cf6';
-      case 'lost': return '#ef4444';
-      default: return '#6b7280';
+      case "new":
+        return "#10b981";
+      case "contacted":
+        return "#3b82f6";
+      case "qualified":
+        return "#8b5cf6";
+      case "lost":
+        return "#ef4444";
+      default:
+        return "#6b7280";
     }
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString();
   };
 
   return (
     <DashboardLayout>
-      <div style={{ padding: "24px", background: "#f3f4f6", minHeight: "100vh" }}>
-        
+      <div
+        style={{ padding: "24px", background: "#f3f4f6", minHeight: "100vh" }}
+      >
         {/* PAGE TITLE */}
         <h2 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "16px" }}>
           CRM / Customer Management
@@ -240,10 +254,10 @@ const CustomerManagement = () => {
                 >
                   {btn}
                 </button>
-              )
+              ),
             )}
           </div>
-          
+
           <button
             onClick={() => {
               resetForm();
@@ -274,39 +288,45 @@ const CustomerManagement = () => {
           }}
         >
           {loading ? (
-            <div style={{ 
-              padding: "40px", 
-              textAlign: "center", 
-              color: "#6b7280" 
-            }}>
-              <div style={{
-                display: 'inline-block',
-                width: '40px',
-                height: '40px',
-                border: '4px solid #f3f3f3',
-                borderTop: '4px solid #0ea5e9',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite',
-                marginBottom: '10px'
-              }}></div>
+            <div
+              style={{
+                padding: "40px",
+                textAlign: "center",
+                color: "#6b7280",
+              }}
+            >
+              <div
+                style={{
+                  display: "inline-block",
+                  width: "40px",
+                  height: "40px",
+                  border: "4px solid #f3f3f3",
+                  borderTop: "4px solid #0ea5e9",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite",
+                  marginBottom: "10px",
+                }}
+              ></div>
               <div>Loading customers...</div>
             </div>
           ) : error ? (
-            <div style={{ 
-              padding: "40px", 
-              textAlign: "center", 
-              color: "#dc2626" 
-            }}>
-              <div style={{ marginBottom: '10px' }}>Error: {error}</div>
+            <div
+              style={{
+                padding: "40px",
+                textAlign: "center",
+                color: "#dc2626",
+              }}
+            >
+              <div style={{ marginBottom: "10px" }}>Error: {error}</div>
               <button
                 onClick={fetchCustomers}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: '6px',
-                  border: 'none',
-                  background: '#0ea5e9',
-                  color: 'white',
-                  cursor: 'pointer'
+                  padding: "8px 16px",
+                  borderRadius: "6px",
+                  border: "none",
+                  background: "#0ea5e9",
+                  color: "white",
+                  cursor: "pointer",
                 }}
               >
                 Retry
@@ -319,7 +339,7 @@ const CustomerManagement = () => {
                   <tr>
                     {[
                       "Name",
-                      "Email", 
+                      "Email",
                       "Phone",
                       "Company",
                       "Status",
@@ -347,21 +367,24 @@ const CustomerManagement = () => {
                 <tbody>
                   {currentItems.length > 0 ? (
                     currentItems.map((customer) => (
-                      <tr key={customer._id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                      <tr
+                        key={customer._id}
+                        style={{ borderBottom: "1px solid #f3f4f6" }}
+                      >
                         <td style={{ padding: "14px 16px", fontWeight: 500 }}>
                           {customer.name}
                         </td>
 
                         <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                          {customer.email || 'N/A'}
+                          {customer.email || "N/A"}
                         </td>
 
                         <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                          {customer.phone || 'N/A'}
+                          {customer.phone || "N/A"}
                         </td>
 
                         <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                          {customer.company || 'N/A'}
+                          {customer.company || "N/A"}
                         </td>
 
                         <td style={{ padding: "14px 16px" }}>
@@ -380,7 +403,7 @@ const CustomerManagement = () => {
                         </td>
 
                         <td style={{ padding: "14px 16px", color: "#6b7280" }}>
-                          {customer.assignedTo?.name || 'Unassigned'}
+                          {customer.assignedTo?.name || "Unassigned"}
                         </td>
 
                         <td style={{ padding: "14px 16px", color: "#6b7280" }}>
@@ -423,12 +446,15 @@ const CustomerManagement = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="8" style={{ 
-                        textAlign: 'center', 
-                        padding: '40px', 
-                        color: '#6b7280',
-                        fontStyle: 'italic'
-                      }}>
+                      <td
+                        colSpan="8"
+                        style={{
+                          textAlign: "center",
+                          padding: "40px",
+                          color: "#6b7280",
+                          fontStyle: "italic",
+                        }}
+                      >
                         No customers found
                       </td>
                     </tr>
@@ -465,28 +491,31 @@ const CustomerManagement = () => {
                   </button>
 
                   <div style={{ display: "flex", gap: "6px" }}>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => paginate(page)}
-                        style={{
-                          minWidth: "32px",
-                          height: "32px",
-                          borderRadius: "6px",
-                          border:
-                            page === currentPage
-                              ? "1px solid #0ea5e9"
-                              : "1px solid #e5e7eb",
-                          background: page === currentPage ? "#e0f2fe" : "#ffffff",
-                          fontSize: "13px",
-                          cursor: "pointer",
-                          color: page === currentPage ? "#0ea5e9" : "#374151",
-                          fontWeight: page === currentPage ? "500" : "400",
-                        }}
-                      >
-                        {page}
-                      </button>
-                    ))}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <button
+                          key={page}
+                          onClick={() => paginate(page)}
+                          style={{
+                            minWidth: "32px",
+                            height: "32px",
+                            borderRadius: "6px",
+                            border:
+                              page === currentPage
+                                ? "1px solid #0ea5e9"
+                                : "1px solid #e5e7eb",
+                            background:
+                              page === currentPage ? "#e0f2fe" : "#ffffff",
+                            fontSize: "13px",
+                            cursor: "pointer",
+                            color: page === currentPage ? "#0ea5e9" : "#374151",
+                            fontWeight: page === currentPage ? "500" : "400",
+                          }}
+                        >
+                          {page}
+                        </button>
+                      ),
+                    )}
                   </div>
 
                   <button
@@ -497,7 +526,8 @@ const CustomerManagement = () => {
                       borderRadius: "6px",
                       border: "1px solid #e5e7eb",
                       background: "#ffffff",
-                      cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+                      cursor:
+                        currentPage === totalPages ? "not-allowed" : "pointer",
                       fontSize: "13px",
                       opacity: currentPage === totalPages ? 0.5 : 1,
                     }}
@@ -512,32 +542,55 @@ const CustomerManagement = () => {
 
         {/* CREATE CUSTOMER MODAL */}
         {showCreateModal && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              background: '#ffffff',
-              padding: '24px',
-              borderRadius: '12px',
-              width: '500px',
-              maxWidth: '90%'
-            }}>
-              <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: '600' }}>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              style={{
+                background: "#ffffff",
+                padding: "24px",
+                borderRadius: "12px",
+                width: "500px",
+                maxWidth: "90%",
+              }}
+            >
+              <h3
+                style={{
+                  margin: "0 0 20px 0",
+                  fontSize: "18px",
+                  fontWeight: "600",
+                }}
+              >
                 Add New Customer
               </h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Name *
                   </label>
                   <input
@@ -546,18 +599,25 @@ const CustomerManagement = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                     required
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Email
                   </label>
                   <input
@@ -566,17 +626,24 @@ const CustomerManagement = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Phone
                   </label>
                   <input
@@ -585,17 +652,24 @@ const CustomerManagement = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Company
                   </label>
                   <input
@@ -604,17 +678,24 @@ const CustomerManagement = () => {
                     value={formData.company}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Status
                   </label>
                   <select
@@ -622,11 +703,11 @@ const CustomerManagement = () => {
                     value={formData.status}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   >
                     <option value="new">New</option>
@@ -637,17 +718,24 @@ const CustomerManagement = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  marginTop: "24px",
+                  justifyContent: "flex-end",
+                }}
+              >
                 <button
                   onClick={() => setShowCreateModal(false)}
                   style={{
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    border: '1px solid #e5e7eb',
-                    background: '#ffffff',
-                    color: '#6b7280',
-                    fontSize: '14px',
-                    cursor: 'pointer'
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    border: "1px solid #e5e7eb",
+                    background: "#ffffff",
+                    color: "#6b7280",
+                    fontSize: "14px",
+                    cursor: "pointer",
                   }}
                 >
                   Cancel
@@ -655,13 +743,13 @@ const CustomerManagement = () => {
                 <button
                   onClick={handleCreateCustomer}
                   style={{
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    border: 'none',
-                    background: '#10b981',
-                    color: '#ffffff',
-                    fontSize: '14px',
-                    cursor: 'pointer'
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    border: "none",
+                    background: "#10b981",
+                    color: "#ffffff",
+                    fontSize: "14px",
+                    cursor: "pointer",
                   }}
                 >
                   Create Customer
@@ -673,32 +761,55 @@ const CustomerManagement = () => {
 
         {/* EDIT CUSTOMER MODAL */}
         {showEditModal && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              background: '#ffffff',
-              padding: '24px',
-              borderRadius: '12px',
-              width: '500px',
-              maxWidth: '90%'
-            }}>
-              <h3 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: '600' }}>
+          <div
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              style={{
+                background: "#ffffff",
+                padding: "24px",
+                borderRadius: "12px",
+                width: "500px",
+                maxWidth: "90%",
+              }}
+            >
+              <h3
+                style={{
+                  margin: "0 0 20px 0",
+                  fontSize: "18px",
+                  fontWeight: "600",
+                }}
+              >
                 Edit Customer
               </h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                }}
+              >
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Name *
                   </label>
                   <input
@@ -707,18 +818,25 @@ const CustomerManagement = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                     required
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Email
                   </label>
                   <input
@@ -727,17 +845,24 @@ const CustomerManagement = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Phone
                   </label>
                   <input
@@ -746,17 +871,24 @@ const CustomerManagement = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Company
                   </label>
                   <input
@@ -765,17 +897,24 @@ const CustomerManagement = () => {
                     value={formData.company}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: "4px",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                  >
                     Status
                   </label>
                   <select
@@ -783,11 +922,11 @@ const CustomerManagement = () => {
                     value={formData.status}
                     onChange={handleInputChange}
                     style={{
-                      width: '100%',
-                      padding: '8px 12px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '6px',
-                      fontSize: '14px'
+                      width: "100%",
+                      padding: "8px 12px",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "6px",
+                      fontSize: "14px",
                     }}
                   >
                     <option value="new">New</option>
@@ -798,17 +937,24 @@ const CustomerManagement = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '12px', marginTop: '24px', justifyContent: 'flex-end' }}>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  marginTop: "24px",
+                  justifyContent: "flex-end",
+                }}
+              >
                 <button
                   onClick={() => setShowEditModal(false)}
                   style={{
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    border: '1px solid #e5e7eb',
-                    background: '#ffffff',
-                    color: '#6b7280',
-                    fontSize: '14px',
-                    cursor: 'pointer'
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    border: "1px solid #e5e7eb",
+                    background: "#ffffff",
+                    color: "#6b7280",
+                    fontSize: "14px",
+                    cursor: "pointer",
                   }}
                 >
                   Cancel
@@ -816,13 +962,13 @@ const CustomerManagement = () => {
                 <button
                   onClick={handleUpdateCustomer}
                   style={{
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    border: 'none',
-                    background: '#0ea5e9',
-                    color: '#ffffff',
-                    fontSize: '14px',
-                    cursor: 'pointer'
+                    padding: "8px 16px",
+                    borderRadius: "6px",
+                    border: "none",
+                    background: "#0ea5e9",
+                    color: "#ffffff",
+                    fontSize: "14px",
+                    cursor: "pointer",
                   }}
                 >
                   Update Customer
