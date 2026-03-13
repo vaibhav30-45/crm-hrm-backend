@@ -1,15 +1,22 @@
-import { FaPhone, FaEnvelope, FaWhatsapp, FaCalendarAlt } from 'react-icons/fa';
+import { FaPhone, FaEnvelope, FaWhatsapp, FaCalendarAlt } from "react-icons/fa";
 
-const SalesActivityCard = ({ title, value, change, changeType, icon, color = '#3b82f6' }) => {
+const SalesActivityCard = ({
+  title,
+  value,
+  change,
+  changeType,
+  icon,
+  color = "#3b82f6",
+}) => {
   const getIcon = () => {
-    switch(icon) {
-      case 'phone':
+    switch (icon) {
+      case "phone":
         return <FaPhone size={20} color={color} />;
-      case 'email':
+      case "email":
         return <FaEnvelope size={20} color={color} />;
-      case 'whatsapp':
+      case "whatsapp":
         return <FaWhatsapp size={20} color={color} />;
-      case 'calendar':
+      case "calendar":
         return <FaCalendarAlt size={20} color={color} />;
       default:
         return <FaPhone size={20} color={color} />;
@@ -71,7 +78,7 @@ const SalesActivityCard = ({ title, value, change, changeType, icon, color = '#3
         style={{
           margin: "8px 0 0 0",
           fontSize: "12px",
-          color: changeType === 'positive' ? "#059669" : "#dc2626",
+          color: changeType === "positive" ? "#059669" : "#dc2626",
           fontWeight: "500",
         }}
       >

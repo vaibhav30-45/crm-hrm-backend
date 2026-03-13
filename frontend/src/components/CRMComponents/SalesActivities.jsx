@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 import SalesActivityCard from "./SalesActivityCard";
 import { crmService } from "../../services/crmService";
@@ -25,38 +25,36 @@ const SalesActivities = () => {
       }
       setError(null);
     } catch (error) {
-      console.error('Error fetching activities:', error);
-      setError('Failed to fetch activities');
+      console.error("Error fetching activities:", error);
+      setError("Failed to fetch activities");
       setActivities([]);
     } finally {
       setLoading(false);
     }
   };
 
-  
   useEffect(() => {
     fetchActivities();
   }, []);
 
-  
   const getActivityCounts = () => {
     const counts = {
       Call: 0,
       WhatsApp: 0,
       Meeting: 0,
       Email: 0,
-      Other: 0
+      Other: 0,
     };
 
-    activities.forEach(activity => {
+    activities.forEach((activity) => {
       const type = activity.type?.toLowerCase();
-      if (type === 'call') {
+      if (type === "call") {
         counts.Call++;
-      } else if (type === 'whatsapp') {
+      } else if (type === "whatsapp") {
         counts.WhatsApp++;
-      } else if (type === 'meeting') {
+      } else if (type === "meeting") {
         counts.Meeting++;
-      } else if (type === 'email') {
+      } else if (type === "email") {
         counts.Email++;
       } else {
         counts.Other++;
@@ -71,15 +69,18 @@ const SalesActivities = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [activitiesPerPage] = useState(6);
 
- 
   const indexOfLastActivity = currentPage * activitiesPerPage;
   const indexOfFirstActivity = indexOfLastActivity - activitiesPerPage;
-  const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
+  const currentActivities = activities.slice(
+    indexOfFirstActivity,
+    indexOfLastActivity,
+  );
   const totalPages = Math.ceil(activities.length / activitiesPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
-  const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   // Get badge style for activity type
   const getActivityTypeStyle = (type) => {
@@ -88,7 +89,7 @@ const SalesActivities = () => {
       WhatsApp: { bg: "#d1fae5", color: "#10b981", border: "#a7f3d0" },
       Meeting: { bg: "#fef3c7", color: "#f59e0b", border: "#fde68a" },
       Email: { bg: "#f3f4f6", color: "#6b7280", border: "#e5e7eb" },
-      Other: { bg: "#fce7f3", color: "#ec4899", border: "#fbcfe8" }
+      Other: { bg: "#fce7f3", color: "#ec4899", border: "#fbcfe8" },
     };
 
     return (
@@ -128,7 +129,7 @@ const SalesActivities = () => {
         <h2 style={{ fontSize: "18px", fontWeight: 600, marginBottom: "16px" }}>
           CRM / Sales Activities
         </h2>
-       
+
         <div
           style={{
             display: "grid",
@@ -174,132 +175,132 @@ const SalesActivities = () => {
           />
         </div>
 
-      
-<div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "1fr 1.6fr", 
-    gap: "24px",
-    marginTop: "24px",
-    alignItems: "stretch",
-  }}
->
-  
-  <div
-    style={{
-      background: "#ffffff",
-      borderRadius: "14px",
-      padding: "20px",
-      border: "1px solid #e5e7eb",
-    }}
-  >
-    <h3
-      style={{
-        margin: "0 0 16px 0",
-        fontSize: "16px",
-        fontWeight: "600",
-        color: "#111827",
-      }}
-    >
-      Interaction Analysis
-    </h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1.6fr",
+            gap: "24px",
+            marginTop: "24px",
+            alignItems: "stretch",
+          }}
+        >
+          <div
+            style={{
+              background: "#ffffff",
+              borderRadius: "14px",
+              padding: "20px",
+              border: "1px solid #e5e7eb",
+            }}
+          >
+            <h3
+              style={{
+                margin: "0 0 16px 0",
+                fontSize: "16px",
+                fontWeight: "600",
+                color: "#111827",
+              }}
+            >
+              Interaction Analysis
+            </h3>
 
-    <div style={{ height: "220px" }}>
-      <Pie
-        data={{
-          labels: ["Calls", "Emails", "WhatsApp", "Meetings"],
-          datasets: [
-            {
-              data: [38, 31, 18, 13],
-              backgroundColor: [
-                "#0ea5e9", 
-                "#93c5fd", 
-                "#38bdf8", 
-                "#e0f2fe", 
-              ],
-              borderWidth: 0,
-              cutout: "60%",
-            },
-          ],
-        }}
-        options={{
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: "right", 
-              labels: {
-                boxWidth: 10,
-                padding: 16,
-                font: {
-                  size: 12,
-                },
-              },
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  return `${context.label} ${context.parsed}%`;
-                },
-              },
-            },
-          },
-        }}
-      />
-    </div>
-  </div>
+            <div style={{ height: "220px" }}>
+              <Pie
+                data={{
+                  labels: ["Calls", "Emails", "WhatsApp", "Meetings"],
+                  datasets: [
+                    {
+                      data: [38, 31, 18, 13],
+                      backgroundColor: [
+                        "#0ea5e9",
+                        "#93c5fd",
+                        "#38bdf8",
+                        "#e0f2fe",
+                      ],
+                      borderWidth: 0,
+                      cutout: "60%",
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "right",
+                      labels: {
+                        boxWidth: 10,
+                        padding: 16,
+                        font: {
+                          size: 12,
+                        },
+                      },
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: function (context) {
+                          return `${context.label} ${context.parsed}%`;
+                        },
+                      },
+                    },
+                  },
+                }}
+              />
+            </div>
+          </div>
 
- 
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      gap: "20px",
-    }}
-  >
-    <h3
-      style={{
-        margin: "0",
-        fontSize: "16px",
-        fontWeight: "600",
-        color: "#111827",
-      }}
-    >
-      AI Enhancements
-    </h3>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+            }}
+          >
+            <h3
+              style={{
+                margin: "0",
+                fontSize: "16px",
+                fontWeight: "600",
+                color: "#111827",
+              }}
+            >
+              AI Enhancements
+            </h3>
 
-    <div
-      style={{
-        background: "#e0f2fe",
-        borderRadius: "12px",
-        padding: "18px",
-      }}
-    >
-      <div style={{ fontWeight: 600, fontSize: "14px" }}>
-        Follow-Up Reminders
-      </div>
-      <div style={{ fontSize: "12px", color: "#475569", marginTop: "6px" }}>
-        3 Scheduled reminders
-      </div>
-    </div>
+            <div
+              style={{
+                background: "#e0f2fe",
+                borderRadius: "12px",
+                padding: "18px",
+              }}
+            >
+              <div style={{ fontWeight: 600, fontSize: "14px" }}>
+                Follow-Up Reminders
+              </div>
+              <div
+                style={{ fontSize: "12px", color: "#475569", marginTop: "6px" }}
+              >
+                3 Scheduled reminders
+              </div>
+            </div>
 
-  
-    <div
-      style={{
-        background: "#fce7f3",
-        borderRadius: "12px",
-        padding: "18px",
-      }}
-    >
-      <div style={{ fontWeight: 600, fontSize: "14px" }}>
-        Interaction Insights
-      </div>
-      <div style={{ fontSize: "12px", color: "#475569", marginTop: "6px" }}>
-        120+ points analyzed
-      </div>
-    </div>
-  </div>
-</div>
+            <div
+              style={{
+                background: "#fce7f3",
+                borderRadius: "12px",
+                padding: "18px",
+              }}
+            >
+              <div style={{ fontWeight: 600, fontSize: "14px" }}>
+                Interaction Insights
+              </div>
+              <div
+                style={{ fontSize: "12px", color: "#475569", marginTop: "6px" }}
+              >
+                120+ points analyzed
+              </div>
+            </div>
+          </div>
+        </div>
         <div
           style={{
             background: "#ffffff",
@@ -308,7 +309,6 @@ const SalesActivities = () => {
             overflow: "hidden",
           }}
         >
-          
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead style={{ background: "#f9fafb" }}>
               <tr>
@@ -340,34 +340,43 @@ const SalesActivities = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6" style={{ 
-                    padding: "40px", 
-                    textAlign: "center", 
-                    color: "#64748b",
-                    fontSize: "16px"
-                  }}>
+                  <td
+                    colSpan="6"
+                    style={{
+                      padding: "40px",
+                      textAlign: "center",
+                      color: "#64748b",
+                      fontSize: "16px",
+                    }}
+                  >
                     Loading activities...
                   </td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan="6" style={{ 
-                    padding: "40px", 
-                    textAlign: "center", 
-                    color: "#ef4444",
-                    fontSize: "16px"
-                  }}>
+                  <td
+                    colSpan="6"
+                    style={{
+                      padding: "40px",
+                      textAlign: "center",
+                      color: "#ef4444",
+                      fontSize: "16px",
+                    }}
+                  >
                     {error}
                   </td>
                 </tr>
               ) : currentActivities.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ 
-                    padding: "40px", 
-                    textAlign: "center", 
-                    color: "#64748b",
-                    fontSize: "16px"
-                  }}>
+                  <td
+                    colSpan="6"
+                    style={{
+                      padding: "40px",
+                      textAlign: "center",
+                      color: "#64748b",
+                      fontSize: "16px",
+                    }}
+                  >
                     No activities found
                   </td>
                 </tr>
@@ -463,7 +472,7 @@ const SalesActivities = () => {
               {(() => {
                 const pages = [];
                 const maxVisiblePages = 5;
-                
+
                 if (totalPages <= maxVisiblePages) {
                   for (let i = 1; i <= totalPages; i++) {
                     pages.push(i);
@@ -473,32 +482,35 @@ const SalesActivities = () => {
                     for (let i = 1; i <= 4; i++) {
                       pages.push(i);
                     }
-                    pages.push('...');
+                    pages.push("...");
                     pages.push(totalPages);
                   } else if (currentPage >= totalPages - 2) {
                     pages.push(1);
-                    pages.push('...');
+                    pages.push("...");
                     for (let i = totalPages - 3; i <= totalPages; i++) {
                       pages.push(i);
                     }
                   } else {
                     pages.push(1);
-                    pages.push('...');
+                    pages.push("...");
                     for (let i = currentPage - 1; i <= currentPage + 1; i++) {
                       pages.push(i);
                     }
-                    pages.push('...');
+                    pages.push("...");
                     pages.push(totalPages);
                   }
                 }
-                
-                return pages.map((page, index) => (
-                  page === '...' ? (
-                    <span key={`ellipsis-${index}`} style={{ 
-                      padding: '8px 4px',
-                      color: '#64748b',
-                      fontSize: '14px'
-                    }}>
+
+                return pages.map((page, index) =>
+                  page === "..." ? (
+                    <span
+                      key={`ellipsis-${index}`}
+                      style={{
+                        padding: "8px 4px",
+                        color: "#64748b",
+                        fontSize: "14px",
+                      }}
+                    >
                       ...
                     </span>
                   ) : (
@@ -513,7 +525,8 @@ const SalesActivities = () => {
                           page === currentPage
                             ? "1px solid #0ea5e9"
                             : "1px solid #e5e7eb",
-                        background: page === currentPage ? "#e0f2fe" : "#ffffff",
+                        background:
+                          page === currentPage ? "#e0f2fe" : "#ffffff",
                         fontSize: "13px",
                         cursor: "pointer",
                         color: page === currentPage ? "#0ea5e9" : "#374151",
@@ -522,8 +535,8 @@ const SalesActivities = () => {
                     >
                       {page}
                     </button>
-                  )
-                ));
+                  ),
+                );
               })()}
             </div>
 
@@ -544,12 +557,7 @@ const SalesActivities = () => {
             </button>
           </div>
         </div>
-
- 
-
-          </div>
-          
-        
+      </div>
     </DashboardLayout>
   );
 };

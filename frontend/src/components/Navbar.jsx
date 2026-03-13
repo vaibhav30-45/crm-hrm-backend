@@ -1,4 +1,5 @@
 import React from "react";
+import img from "../assets/vs.jpg"
 
 
 const Navbar = () => {
@@ -9,7 +10,7 @@ const Navbar = () => {
       <div className="profile">
         <span>{name}</span>
         <img
-          src="https://i.pravatar.cc/40"
+          src={img}
           alt="profile"
           className="avatar"
         />
