@@ -23,9 +23,31 @@ export const userService = {
     return response.data;
   },
   
+  // Update user (for admin/hr management)
+  update: async (id, userData) => {
+    try {
+      const response = await api.put(`/users/${id}`, userData);
+      return response;
+    } catch (error) {
+      console.error('User Service - Update user error:', error);
+      throw error;
+    }
+  },
+  
   // Delete employee
   delete: async (id) => {
     const response = await api.delete(`/hrm/profile/${id}`);
     return response.data;
+  },
+  
+  // Delete user (for admin/hr management)
+  deleteUser: async (id) => {
+    try {
+      const response = await api.delete(`/users/${id}`);
+      return response;
+    } catch (error) {
+      console.error('User Service - Delete user error:', error);
+      throw error;
+    }
   },
 };

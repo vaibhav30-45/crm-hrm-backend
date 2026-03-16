@@ -88,6 +88,29 @@ const EmployeesOnboarding = () => {
     setShowStartModal(false);
   };
 
+  // Delete onboarding handler
+  const handleDeleteOnboarding = async (onboardingId) => {
+    try {
+      // Show confirmation dialog
+      const confirmDelete = window.confirm("Are you sure you want to delete this onboarding record?");
+      if (!confirmDelete) return;
+
+      // Call API to delete onboarding
+      await onboardingService.deleteOnboarding(onboardingId);
+      
+      // Update local state to remove the deleted onboarding
+      setOnboardingData(prevData => 
+        prevData.filter(onboarding => onboarding._id !== onboardingId)
+      );
+      
+      // Show success message
+      alert("Onboarding record deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting onboarding:", error);
+      alert("Failed to delete onboarding record. Please try again.");
+    }
+  };
+
   // Calculate pagination
   const totalPages = Math.ceil(onboardingData.length / rowsPerPage);
   const indexOfLast = currentPage * rowsPerPage;
@@ -270,7 +293,57 @@ const EmployeesOnboarding = () => {
                         <td style={tdStyle}>
                           {onboarding.createdAt ? new Date(onboarding.createdAt).toLocaleDateString() : 'N/A'}
                         </td>
-                        <td style={tdStyle}>⋯</td>
+                        <td style={tdStyle}>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <button
+                            style={{
+                              background: "none",
+                              border: "none",
+                              fontSize: "18px",
+                              cursor: "pointer",
+                              color: "#9ca3af",
+                              padding: "4px",
+                              borderRadius: "4px",
+                              transition: "all 0.2s ease",
+                            }}
+                            onMouseOver={(e) => {
+                              e.target.style.background = "#f3f4f6";
+                              e.target.style.color = "#6b7280";
+                            }}
+                            onMouseOut={(e) => {
+                              e.target.style.background = "none";
+                              e.target.style.color = "#9ca3af";
+                            }}
+                            title="More options"
+                          >
+                            ⋯
+                          </button>
+                          <button
+                            onClick={() => handleDeleteOnboarding(onboarding._id)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#ef4444",
+                              padding: "4px",
+                              borderRadius: "4px",
+                              transition: "all 0.2s ease",
+                            }}
+                            onMouseOver={(e) => {
+                              e.target.style.background = "#fee2e2";
+                              e.target.style.color = "#dc2626";
+                            }}
+                            onMouseOut={(e) => {
+                              e.target.style.background = "none";
+                              e.target.style.color = "#ef4444";
+                            }}
+                            title="Delete onboarding record"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </td>
                       </tr>
                     ))
                   ) : (
