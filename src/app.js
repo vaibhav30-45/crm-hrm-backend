@@ -2,17 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const swaggerUI = require("swagger-ui-express");
 const swaggerSpec = require("./config/swagger");
-
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
 const dashboardRoutes = require("./modules/dashboard/dashboard.routes");
-
 const leadRoutes = require("./modules/crm/routes/leadRoutes");
 const customerRoutes = require("./modules/crm/routes/customerRoutes");
 const activityRoutes = require("./modules/crm/routes/activityRoutes");
 const dealRoutes = require("./modules/crm/routes/dealRoutes");
 const reportRoutes = require("./modules/crm/routes/reportRoutes");
-
 const leaveRoutes = require("./modules/leave/leave.routes");
 const attendanceRoutes = require("./modules/attendance/attendance.routes");
 const payrollRoutes = require("./modules/payroll/payroll.routes");
@@ -68,7 +65,6 @@ app.use("/api/hrm/payroll", payrollRoutes);
 app.use("/api/hrm/review", reviewRoutes);
 app.use("/api/hrm/profile", profileRoutes);
 app.use("/api/hrm/request", requestRoutes);
-
 app.use("/api/hrm/onboarding", onboardingRoutes);
 app.use("/api/hrm/salary-structure", salaryRoutes);
 
