@@ -13,6 +13,8 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(6);
   const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null);
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -147,7 +149,110 @@ const Users = () => {
       
     } catch (error) {
       console.error('Error creating user:', error);
-      alert(`Error creating user: ${error.message || 'Unknown error'}`);
+      alert('Failed to create user. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Edit user handler
+  const handleEditUser = (user) => {
+    // Populate form with user data for editing
+    setNewUser({
+      name: user.name,
+      email: user.email,
+      password: '', // Don't populate password for security
+      role: user.role,
+      designation: user.designation || '',
+      techStack: user.techStack || '',
+    });
+    setEditingUserId(user._id);
+    setIsEditing(true);
+    setShowModal(true);
+  };
+
+  // Update user handler
+  const handleUpdateUser = async () => {
+    if (!newUser.name || !newUser.email || !newUser.role) {
+      alert("Please fill in all required fields: Name, Email, and Role");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Only include password if it's provided
+      const userDataToSend = { ...newUser };
+      if (!userDataToSend.password || userDataToSend.password.trim() === '') {
+        delete userDataToSend.password;
+      }
+      
+      if (!userDataToSend.techStack || userDataToSend.techStack.trim() === '') {
+        delete userDataToSend.techStack;
+      }
+      
+      const response = await userService.update(editingUserId, userDataToSend);
+      
+      // Show success popup
+      setSuccessMessage(`User "${newUser.name}" updated successfully!`);
+      setShowSuccessPopup(true);
+      
+      // Reset form
+      setNewUser({
+        name: "",
+        email: "",
+        password: "",
+        role: "",
+        designation: "",
+        techStack: "",
+      });
+      setEditingUserId(null);
+      setIsEditing(false);
+      setShowModal(false);
+      
+      // Refresh users list after successful update
+      await fetchUsers();
+      
+      // Hide popup after 3 seconds
+      setTimeout(() => {
+        setShowSuccessPopup(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Failed to update user. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete user handler
+  const handleDeleteUser = async (userId, userName) => {
+    try {
+      // Show confirmation dialog
+      const confirmDelete = window.confirm(`Are you sure you want to delete user "${userName}"?`);
+      if (!confirmDelete) return;
+
+      setLoading(true);
+      
+      // Call API to delete user
+      await userService.deleteUser(userId);
+      
+      // Show success popup
+      setSuccessMessage(`User "${userName}" deleted successfully!`);
+      setShowSuccessPopup(true);
+      
+      // Refresh users list after successful deletion
+      await fetchUsers();
+      
+      // Hide popup after 3 seconds
+      setTimeout(() => {
+        setShowSuccessPopup(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Failed to delete user. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -268,6 +373,19 @@ const Users = () => {
             Users Management
           </h2>
           <button
+            onClick={() => {
+              setIsEditing(false);
+              setEditingUserId(null);
+              setNewUser({
+                name: "",
+                email: "",
+                password: "",
+                role: "",
+                designation: "",
+                techStack: "",
+              });
+              setShowModal(true);
+            }}
             style={{
               backgroundColor: "#0ea5e9",
               color: "#ffffff",
@@ -280,7 +398,6 @@ const Users = () => {
               fontSize: "14px",
               transition: "all 0.2s ease",
             }}
-            onClick={() => setShowModal(true)}
           >
             <FaPlus style={{ marginRight: "8px" }} />
             Add User
@@ -664,6 +781,7 @@ const Users = () => {
                       }}
                     >
                       <button
+                        onClick={() => handleEditUser(user)}
                         style={{
                           backgroundColor: "#3b82f6",
                           color: "#ffffff",
@@ -681,10 +799,12 @@ const Users = () => {
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = "#3b82f6";
                         }}
+                        title="Edit user"
                       >
                         <FaEdit size={12} />
                       </button>
                       <button
+                        onClick={() => handleDeleteUser(user._id, user.name)}
                         style={{
                           backgroundColor: "#ef4444",
                           color: "#ffffff",
@@ -702,6 +822,7 @@ const Users = () => {
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = "#ef4444";
                         }}
+                        title="Delete user"
                       >
                         <FaTrash size={12} />
                       </button>
@@ -735,7 +856,9 @@ const Users = () => {
                   boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
                 }}
               >
-                <h3 style={{ marginBottom: "16px" }}>Add New User</h3>
+                <h3 style={{ marginBottom: "16px" }}>
+                  {isEditing ? "Edit User" : "Add New User"}
+                </h3>
 
                 <input
                   name="name"
@@ -772,7 +895,7 @@ const Users = () => {
                 <input
                   name="password"
                   type="password"
-                  placeholder="Password *"
+                  placeholder={isEditing ? "Password (leave blank to keep current)" : "Password *"}
                   value={newUser.password}
                   onChange={handleInputChange}
                   style={{
@@ -865,7 +988,7 @@ const Users = () => {
                   </button>
 
                   <button
-                    onClick={handleSaveUser}
+                    onClick={isEditing ? handleUpdateUser : handleSaveUser}
                     disabled={loading}
                     style={{
                       padding: "10px 16px",
@@ -878,7 +1001,7 @@ const Users = () => {
                       fontWeight: "500",
                     }}
                   >
-                    {loading ? "Creating..." : "Create User"}
+                    {loading ? (isEditing ? "Updating..." : "Creating...") : (isEditing ? "Update User" : "Create User")}
                   </button>
                 </div>
               </div>

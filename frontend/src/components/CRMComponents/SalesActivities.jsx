@@ -12,6 +12,95 @@ const SalesActivities = () => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    type: 'Call',
+    description: '',
+    date: new Date().toISOString().split('T')[0],
+    ipAddress: ''
+  });
+
+  // Delete activity handler
+  const handleDeleteActivity = async (activityId) => {
+    try {
+      // Show confirmation dialog
+      const confirmDelete = window.confirm("Are you sure you want to delete this activity?");
+      if (!confirmDelete) return;
+
+      // Call API to delete activity
+      await crmService.activities.delete(activityId);
+      
+      // Update local state to remove the deleted activity
+      setActivities(prevActivities => 
+        prevActivities.filter(activity => activity._id !== activityId)
+      );
+      
+      // Show success message
+      alert("Activity deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting activity:", error);
+      alert("Failed to delete activity. Please try again.");
+    }
+  };
+
+  // Add activity handler
+  const handleAddActivity = async () => {
+    try {
+      setAddLoading(true);
+      
+      // Validate form
+      if (!formData.description.trim()) {
+        alert("Please enter a description for the activity.");
+        return;
+      }
+
+      // Call API to create activity
+      const response = await crmService.activities.create(formData);
+      
+      // Update local state to add the new activity
+      if (response.data) {
+        setActivities(prevActivities => [response.data, ...prevActivities]);
+      }
+      
+      // Reset form and close modal
+      setFormData({
+        type: 'Call',
+        description: '',
+        date: new Date().toISOString().split('T')[0],
+        ipAddress: ''
+      });
+      setShowAddModal(false);
+      
+      // Show success message
+      alert("Activity added successfully!");
+    } catch (error) {
+      console.error("Error adding activity:", error);
+      alert("Failed to add activity. Please try again.");
+    } finally {
+      setAddLoading(false);
+    }
+  };
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setFormData({
+      type: 'Call',
+      description: '',
+      date: new Date().toISOString().split('T')[0],
+      ipAddress: ''
+    });
+    setShowAddModal(false);
+  };
 
   // Fetch activities from API
   const fetchActivities = async () => {
@@ -299,6 +388,38 @@ const SalesActivities = () => {
                 120+ points analyzed
               </div>
             </div>
+
+            <button
+              onClick={() => setShowAddModal(true)}
+              style={{
+                background: "#0ea5e9",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                padding: "12px 20px",
+                fontSize: "14px",
+                fontWeight: "500",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 4px rgba(14, 165, 233, 0.2)",
+                width: "100%",
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = "#0284c7";
+                e.target.style.transform = "translateY(-1px)";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = "#0ea5e9";
+                e.target.style.transform = "translateY(0)";
+              }}
+            >
+              <span style={{ fontSize: "16px" }}>+</span>
+              Add Activity
+            </button>
           </div>
         </div>
         <div
@@ -422,17 +543,55 @@ const SalesActivities = () => {
                       </td>
 
                       <td style={{ padding: "14px 16px" }}>
-                        <button
-                          style={{
-                            background: "none",
-                            border: "none",
-                            fontSize: "18px",
-                            cursor: "pointer",
-                            color: "#9ca3af",
-                          }}
-                        >
-                          ⋯
-                        </button>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <button
+                            style={{
+                              background: "none",
+                              border: "none",
+                              fontSize: "18px",
+                              cursor: "pointer",
+                              color: "#9ca3af",
+                              padding: "4px",
+                              borderRadius: "4px",
+                              transition: "all 0.2s ease",
+                            }}
+                            onMouseOver={(e) => {
+                              e.target.style.background = "#f3f4f6";
+                              e.target.style.color = "#6b7280";
+                            }}
+                            onMouseOut={(e) => {
+                              e.target.style.background = "none";
+                              e.target.style.color = "#9ca3af";
+                            }}
+                            title="More options"
+                          >
+                            ⋯
+                          </button>
+                          <button
+                            onClick={() => handleDeleteActivity(activity._id)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#ef4444",
+                              padding: "4px",
+                              borderRadius: "4px",
+                              transition: "all 0.2s ease",
+                            }}
+                            onMouseOver={(e) => {
+                              e.target.style.background = "#fee2e2";
+                              e.target.style.color = "#dc2626";
+                            }}
+                            onMouseOut={(e) => {
+                              e.target.style.background = "none";
+                              e.target.style.color = "#ef4444";
+                            }}
+                            title="Delete activity"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -558,6 +717,213 @@ const SalesActivities = () => {
           </div>
         </div>
       </div>
+
+      {/* Add Activity Modal */}
+      {showAddModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              borderRadius: "12px",
+              padding: "30px",
+              width: "500px",
+              maxWidth: "90%",
+              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+            }}
+          >
+            <h3
+              style={{
+                margin: "0 0 20px 0",
+                fontSize: "18px",
+                fontWeight: "600",
+                color: "#111827",
+              }}
+            >
+              Add New Activity
+            </h3>
+
+            <div style={{ marginBottom: "15px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "5px",
+                  color: "#374151",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                }}
+              >
+                Activity Type
+              </label>
+              <select
+                name="type"
+                value={formData.type}
+                onChange={handleInputChange}
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  backgroundColor: "#ffffff",
+                }}
+              >
+                <option value="Call">Call</option>
+                <option value="Email">Email</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Meeting">Meeting</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: "15px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "5px",
+                  color: "#374151",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                }}
+              >
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter activity description"
+                rows="3"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  resize: "vertical",
+                  fontFamily: "inherit",
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: "15px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "5px",
+                  color: "#374151",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                }}
+              >
+                Date
+              </label>
+              <input
+                type="date"
+                name="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: "20px" }}>
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: "5px",
+                  color: "#374151",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                }}
+              >
+                IP Address (Optional)
+              </label>
+              <input
+                type="text"
+                name="ipAddress"
+                value={formData.ipAddress}
+                onChange={handleInputChange}
+                placeholder="Enter IP address"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                }}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                onClick={resetForm}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#6b7280",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  transition: "background-color 0.2s ease",
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = "#4b5563";
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = "#6b7280";
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddActivity}
+                disabled={addLoading || !formData.description.trim()}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: addLoading ? "#9ca3af" : "#0ea5e9",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: addLoading ? "not-allowed" : "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  transition: "background-color 0.2s ease",
+                  opacity: addLoading || !formData.description.trim() ? 0.7 : 1,
+                }}
+              >
+                {addLoading ? "Adding..." : "Add Activity"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 };
