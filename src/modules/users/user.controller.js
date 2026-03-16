@@ -196,3 +196,98 @@ exports.getAllUsers = async (req, res) => {
 
   }
 };
+// ================= DELETE USER =================
+exports.deleteUser = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    // HR can only delete their tenant users
+    if (
+      req.user.role === "HR" &&
+      user.tenantId.toString() !== req.user.tenantId
+    ) {
+      return res.status(403).json({
+        message: "Access denied"
+      });
+    }
+
+    await user.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+}; // ================= UPDATE USER =================
+exports.updateUser = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const {
+      name,
+      email,
+      phone,
+      department,
+      designation,
+      techStack,
+      reportingTo
+    } = req.body;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    // HR can only update users of same tenant
+    if (
+      req.user.role === "HR" &&
+      user.tenantId.toString() !== req.user.tenantId
+    ) {
+      return res.status(403).json({
+        message: "Access denied"
+      });
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.phone = phone || user.phone;
+    user.department = department || user.department;
+    user.designation = designation || user.designation;
+    user.techStack = techStack || user.techStack;
+    user.reportingTo = reportingTo || user.reportingTo;
+
+    await user.save();
+
+    const userData = user.toObject();
+    delete userData.password;
+
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: userData
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    });
+  }
+};

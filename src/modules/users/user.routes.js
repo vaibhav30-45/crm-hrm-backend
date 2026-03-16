@@ -20,5 +20,21 @@ router.get(
   authorizeRoles("ADMIN", "HR", "MANAGER"),
   controller.getAllUsers
 );
+// ================= UPDATE =================
+router.put(
+  "/:id",
+  protect,
+  authorizeRoles("ADMIN", "HR"),
+  controller.updateUser
+);
+
+// ================= DELETE =================
+router.delete(
+  "/:id",
+  protect,
+  authorizeRoles("ADMIN", "HR"),
+  controller.deleteUser
+);
+
 
 module.exports = router;
