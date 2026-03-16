@@ -402,9 +402,11 @@ const SalesActivities = () => {
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 gap: "8px",
                 transition: "all 0.2s ease",
                 boxShadow: "0 2px 4px rgba(14, 165, 233, 0.2)",
+                width: "100%",
               }}
               onMouseOver={(e) => {
                 e.target.style.background = "#0284c7";
