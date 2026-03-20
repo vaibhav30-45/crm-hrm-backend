@@ -83,30 +83,29 @@ function App() {
 
           {/* Private Routes */}
           <Route
-            path="/dashboard"
+            path="/admin-dashboard"
             element={
               <PrivateRoutes>
                 <Dashboard />
               </PrivateRoutes>
             }
           />
-        
-
-<Route
-  path="/manager-dashboard"
-  element={
-    <PrivateRoutes>
-      <ManagerDashboard />   {/* MANAGER MAIN PAGE */}
-    </PrivateRoutes>
-  }
-/>
-    <Route 
-    path="/employee-dashboard" 
-    element={
-      <PrivateRoutes>
-    <EmployeeDashboard />
-    </PrivateRoutes>
-    } />
+          <Route
+            path="/manager-dashboard"
+            element={
+              <PrivateRoutes>
+                <ManagerDashboard />   {/* MANAGER MAIN PAGE */}
+              </PrivateRoutes>
+            }
+          />
+          <Route 
+            path="/employee-dashboard" 
+            element={
+              <PrivateRoutes>
+                <EmployeeDashboard />
+              </PrivateRoutes>
+            } 
+          />
           <Route
             path="/users"
             element={

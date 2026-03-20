@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import loginBg from "../assets/Rectangle906.png";
-import logo from "../assets/logo.webp";
+import logo from "../assets/logo.jpeg";
 
 const ResetPassword = () => {
   const navigate = useNavigate();

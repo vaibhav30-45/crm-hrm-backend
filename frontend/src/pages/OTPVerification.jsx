@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import loginBg from "../assets/Rectangle906.png";
-import logo from "../assets/logo.webp";
+import logo from "../assets/logo.jpeg";
 
 const OTPVerification = () => {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import loginBg from '../assets/Rectangle906.png';
 import Glogo from '../assets/google.jpg';
-import logo from '../assets/logo.webp';
+import logo from '../assets/logo.jpeg';
 
 const Login = () => {
   const { login } = useAuth();

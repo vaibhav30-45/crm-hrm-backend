@@ -5,7 +5,7 @@ import { GiHandBag } from "react-icons/gi";
 import { RiRobot2Fill } from "react-icons/ri";
 import { IoSettings } from "react-icons/io5";
 import { FaChevronDown, FaChevronRight } from "react-icons/fa";
-import logo from "../assets/logo.webp";
+import logo from "../assets/logo.jpeg";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useEffect } from "react";
