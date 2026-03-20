@@ -8,8 +8,8 @@ import logo from '../assets/logo.jpeg';
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@crmhrm.com'); // Default admin email
-  const [password, setPassword] = useState('Admin@123'); // Default admin password
+  const [email, setEmail] = useState('admin@crmhrm.com'); 
+  const [password, setPassword] = useState('Admin@123'); 
   const [rememberMe, setRememberMe] = useState(false);
 
   const styles = {
@@ -212,43 +212,37 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
-  console.log('Login attempt:', { email, password, rememberMe });
-  
+
   try {
     const response = await fetch('http://localhost:5000/api/auth/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
     const data = await response.json();
 
-   if (data.success) {
-  console.log("USER DATA:", data.user);
+    if (data.success) {
+      console.log("USER DATA:", data.user);
 
-  login(data.token, data.user);
+      login(data.token, data.user);
 
-  if (data.user.role === "ADMIN") {
-    navigate("/admin-dashboard");
-  } 
-  else if (data.user.role === "MANAGER") {
-    navigate("/manager-dashboard");
-  }
-  else if (data.user.role === "EMPLOYEE") {
-    navigate("/employee-dashboard");
-  }
+      // ✅ IMPORTANT FIX
+      const role = data.user.role?.toUpperCase();
 
-} else {
-  alert(data.message || 'Login failed');
-}
+      console.log("ROLE:", role);
+
+     navigate("/dashboard");
+
+    } else {
+      alert(data.message || 'Login failed');
+    }
+
   } catch (error) {
     console.error('Login error:', error);
     alert('Login failed. Please try again.');
   }
 };
-
   return (
     <div style={styles.fullScreenContainer}>
       <div style={styles.loginContainer}>

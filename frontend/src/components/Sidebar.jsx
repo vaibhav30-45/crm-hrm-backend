@@ -1,4 +1,3 @@
-
 import { FaUser } from "react-icons/fa6";
 import { AiFillShopping } from "react-icons/ai";
 import { GiHandBag } from "react-icons/gi";
@@ -31,14 +30,8 @@ const Sidebar = () => {
   const role = user?.role?.toUpperCase();
 
   const handleDashboardClick = () => {
-    if (role === "ADMIN") {
-      navigate("/admin-dashboard");
-    } else if (role === "MANAGER") {
-      navigate("/manager-dashboard");
-    } else if (role === "EMPLOYEE") {
-      navigate("/employee-dashboard");
-    }
-  };
+  navigate("/dashboard");
+};
 
   const menuNavigate = (path) => {
     navigate(path);
@@ -101,7 +94,7 @@ const Sidebar = () => {
         </li>
 
         {/* USER MANAGEMENT */}
-        {role !== "EMPLOYEE" && (
+        {(role === "ADMIN" || role === "HR" || role === "MANAGER") && (
           <>
             <li
               onClick={toggleUserManagement}
@@ -143,7 +136,7 @@ const Sidebar = () => {
         )}
 
         {/* CRM */}
-        {role !== "EMPLOYEE" && (
+        {(role === "ADMIN" || role === "MANAGER" || role === "BDE") &&(
           <>
             <li
               onClick={toggleCrm}
@@ -225,55 +218,38 @@ const Sidebar = () => {
         </li>
 
         {isHrmsOpen && (
-          <>
-            <li
-              onClick={() => menuNavigate("/hrms/attendance")}
-              style={{ paddingLeft: "45px", cursor: "pointer" }}
-            >
-              Attendance Management
-            </li>
+  <>
+    {/* ✅ COMMON (sab ke liye) */}
+    <li onClick={() => menuNavigate("/hrms/attendance")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+      Attendance Management
+    </li>
 
-            <li
-              onClick={() => menuNavigate("/hrms/employee-profile")}
-              style={{ paddingLeft: "45px", cursor: "pointer" }}
-            >
-              Employee Profile
-            </li>
+    <li onClick={() => menuNavigate("/hrms/employee-profile")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+      Employee Profile
+    </li>
 
-            <li
-              onClick={() => menuNavigate("/hrms/leave-management")}
-              style={{ paddingLeft: "45px", cursor: "pointer" }}
-            >
-              Leave Management
-            </li>
+    <li onClick={() => menuNavigate("/hrms/leave-management")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+      Leave Management
+    </li>
 
-            {role !== "EMPLOYEE" && (
-              <>
-                <li
-                  onClick={() => menuNavigate("/hrms/employees-onboarding")}
-                  style={{ paddingLeft: "45px", cursor: "pointer" }}
-                >
-                  Employees Onboarding
-                </li>
+    {/* ✅ EXTRA (sirf ADMIN + HR + MANAGER) */}
+    {(role === "ADMIN" || role === "HR" || role === "MANAGER") && (
+      <>
+        <li onClick={() => menuNavigate("/hrms/employees-onboarding")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+          Employees Onboarding
+        </li>
 
-                <li
-                  onClick={() => menuNavigate("/hrms/payroll-management")}
-                  style={{ paddingLeft: "45px", cursor: "pointer" }}
-                >
-                  Payroll Management
-                </li>
+        <li onClick={() => menuNavigate("/hrms/payroll-management")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+          Payroll Management
+        </li>
 
-                <li
-                  onClick={() => menuNavigate("/hrms/performance-appraisal")}
-                  style={{ paddingLeft: "45px", cursor: "pointer" }}
-                >
-                  Performance Appraisal
-                </li>
-              </>
-            )}
-          </>
-        )}
-
+        <li onClick={() => menuNavigate("/hrms/performance-appraisal")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+          Performance Appraisal
+        </li>
+      </>
+    )}
+  </>
+)}
         {/* AI CENTER */}
         <li>
           <RiRobot2Fill size={16} color="#ffffff" /> AI Center
@@ -305,4 +281,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

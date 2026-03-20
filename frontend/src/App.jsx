@@ -9,7 +9,7 @@ import OTPVerification from "./pages/OTPVerification";
 import ResetPassword from "./pages/ResetPassword";
 import ForgotPassword from "./pages/ForgotPassword";
 import NewPassword from "./pages/NewPassword";
-import Dashboard from "./pages/Dashboard";
+import DashboardRouter from "./components/DashboardRouter";
 import Users from "./components/Users";
 import LeadsManagement from "./components/CRMComponents/LeadsManagement";
 import SalesActivities from "./components/CRMComponents/SalesActivities";
@@ -24,6 +24,8 @@ import PerformanceAppraisal from "./components/HRMSComponents/PerformanceApprais
 import EmployeeSelfService from "./components/HRMSComponents/EmployeeSelfService";
 import ManagerDashboard from "./components/ManagerDashboard/ManagerDashboard"
 import EmployeeDashboard from "./components/EmployeeDashboard/EmployeeDashboard";
+import HRDashboard from "./components/HRDashboard/HRDashboard"
+import BDEDashboard from "./components/SalesDashboard/SalesDashboard";
 import "./App.css";
 
 function App() {
@@ -83,29 +85,47 @@ function App() {
 
           {/* Private Routes */}
           <Route
-            path="/admin-dashboard"
-            element={
-              <PrivateRoutes>
-                <Dashboard />
-              </PrivateRoutes>
-            }
-          />
-          <Route
-            path="/manager-dashboard"
-            element={
-              <PrivateRoutes>
-                <ManagerDashboard />   {/* MANAGER MAIN PAGE */}
-              </PrivateRoutes>
-            }
-          />
-          <Route 
-            path="/employee-dashboard" 
-            element={
-              <PrivateRoutes>
-                <EmployeeDashboard />
-              </PrivateRoutes>
-            } 
-          />
+
+path="/dashboard"
+  element={
+    <PrivateRoutes>
+      <DashboardRouter />
+    </PrivateRoutes>
+  }
+/>
+        
+
+<Route
+  path="/manager-dashboard"
+  element={
+    <PrivateRoutes>
+      <ManagerDashboard />   
+    </PrivateRoutes>
+  }
+/>
+<Route
+  path="/sales-dashboard"
+  element={
+    <PrivateRoutes>
+      <BDEDashboard />   
+    </PrivateRoutes>
+  }
+/>
+    <Route 
+    path="/employee-dashboard" 
+    element={
+      <PrivateRoutes>
+    <EmployeeDashboard />
+    </PrivateRoutes>
+    } />
+    <Route 
+    path="/hr-dashboard" 
+    element={
+      <PrivateRoutes>
+    <HRDashboard />
+    </PrivateRoutes>
+    } />
+
           <Route
             path="/users"
             element={
