@@ -120,18 +120,31 @@ const Sidebar = () => {
               )}
             </li>
 
-            {isUserManagementOpen && (
-              <li
-                onClick={() => menuNavigate("/users")}
-                style={{
-                  paddingLeft: "45px",
-                  fontSize: "14px",
-                  cursor: "pointer",
-                }}
-              >
-                Users
-              </li>
-            )}
+           {isUserManagementOpen && (
+  <>
+    <li
+      onClick={() => menuNavigate("/users")}
+      style={{
+        paddingLeft: "45px",
+        fontSize: "14px",
+        cursor: "pointer",
+      }}
+    >
+      Users 
+    </li>
+
+    <li
+      onClick={() => menuNavigate("/userlist")}
+      style={{
+        paddingLeft: "45px",
+        fontSize: "14px",
+        cursor: "pointer",
+      }}
+    >
+      User List 
+    </li>
+  </>
+)}
           </>
         )}
 
