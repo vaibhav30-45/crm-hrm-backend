@@ -5,14 +5,16 @@ import { userService } from "../../services/userService";
 
 const EmployeeProfile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
-const id = user?.id;
+  const id = user?.id;
   const navigate = useNavigate();
-  
+
   // State management
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [formData, setFormData] = useState({});
 
   // Fetch employee profile on component mount
   useEffect(() => {
@@ -23,53 +25,76 @@ const id = user?.id;
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await userService.getProfile(id);
-      
+
       if (response.success) {
         setProfileData(response.profile);
       } else {
-        setError(response.message || 'Failed to fetch employee profile');
+        setError(response.message || "Failed to fetch employee profile");
       }
     } catch (error) {
-      console.error('Fetch profile error:', error);
-      setError('Failed to fetch employee profile. Please try again.');
+      console.error("Fetch profile error:", error);
+      setError("Failed to fetch employee profile. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+  const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+const handleEditSubmit = async () => {
+  try {
+    const res = await userService.updateProfile(id, formData);
+    if (res.success) {
+      setProfileData(res.profile);
+      setShowEditModal(false);
+      alert("Profile updated successfully");
+    }
+  } catch {
+    alert("Update failed");
+  }
+};
 
   const handleUpdateProfile = async (updatedData) => {
     try {
       const response = await userService.updateProfile(id, updatedData);
-      
+
       if (response.success) {
         setProfileData(response.profile);
         setEditing(false);
-        alert('Profile updated successfully!');
+        alert("Profile updated successfully!");
       } else {
-        alert(response.message || 'Failed to update profile');
+        alert(response.message || "Failed to update profile");
       }
     } catch (error) {
-      console.error('Update profile error:', error);
-      alert('Failed to update profile. Please try again.');
+      console.error("Update profile error:", error);
+      alert("Failed to update profile. Please try again.");
     }
   };
 
   const handleDeleteEmployee = async () => {
-    if (window.confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this employee? This action cannot be undone.",
+      )
+    ) {
       try {
         const response = await userService.delete(id);
-        
+
         if (response.success) {
-          alert('Employee deleted successfully!');
-          navigate('/hrm/employees'); // Redirect to employees list
+          alert("Employee deleted successfully!");
+          navigate("/hrm/employees"); // Redirect to employees list
         } else {
-          alert(response.message || 'Failed to delete employee');
+          alert(response.message || "Failed to delete employee");
         }
       } catch (error) {
-        console.error('Delete employee error:', error);
-        alert('Failed to delete employee. Please try again.');
+        console.error("Delete employee error:", error);
+        alert("Failed to delete employee. Please try again.");
       }
     }
   };
@@ -78,18 +103,24 @@ const id = user?.id;
   if (loading) {
     return (
       <DashboardLayout>
-        <div style={{ padding: "20px", background: "#f4f6f9", minHeight: "100vh" }}>
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            <div style={{ 
-              display: 'inline-block',
-              width: '40px',
-              height: '40px',
-              border: '4px solid #f3f3f3',
-              borderTop: '4px solid #00bcd4',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}></div>
-            <p style={{ marginTop: '10px', color: '#666' }}>Loading employee profile...</p>
+        <div
+          style={{ padding: "20px", background: "#f4f6f9", minHeight: "100vh" }}
+        >
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <div
+              style={{
+                display: "inline-block",
+                width: "40px",
+                height: "40px",
+                border: "4px solid #f3f3f3",
+                borderTop: "4px solid #00bcd4",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+              }}
+            ></div>
+            <p style={{ marginTop: "10px", color: "#666" }}>
+              Loading employee profile...
+            </p>
           </div>
         </div>
       </DashboardLayout>
@@ -100,18 +131,22 @@ const id = user?.id;
   if (error) {
     return (
       <DashboardLayout>
-        <div style={{ padding: "20px", background: "#f4f6f9", minHeight: "100vh" }}>
-          <div style={{ textAlign: 'center', padding: '40px' }}>
-            <div style={{ color: '#e74c3c', marginBottom: '10px' }}>{error}</div>
+        <div
+          style={{ padding: "20px", background: "#f4f6f9", minHeight: "100vh" }}
+        >
+          <div style={{ textAlign: "center", padding: "40px" }}>
+            <div style={{ color: "#e74c3c", marginBottom: "10px" }}>
+              {error}
+            </div>
             <button
               onClick={fetchEmployeeProfile}
               style={{
-                padding: '8px 16px',
-                borderRadius: '6px',
-                border: 'none',
-                background: '#00bcd4',
-                color: 'white',
-                cursor: 'pointer'
+                padding: "8px 16px",
+                borderRadius: "6px",
+                border: "none",
+                background: "#00bcd4",
+                color: "white",
+                cursor: "pointer",
               }}
             >
               Retry
@@ -149,21 +184,25 @@ const id = user?.id;
                 style={{ width: "90px", height: "90px", borderRadius: "50%" }}
               />
               <div>
-                <h3 style={{ margin: 0 }}>{basicInfo?.name || 'N/A'}</h3>
+                <h3 style={{ margin: 0 }}>{basicInfo?.name || "N/A"}</h3>
                 <p style={{ margin: "4px 0", color: "#777" }}>
-                  EID : {basicInfo?._id?.slice(-6).toUpperCase() || 'N/A'} &nbsp; | &nbsp; {basicInfo?.role || 'N/A'}
+                  EID : {basicInfo?._id?.slice(-6).toUpperCase() || "N/A"}{" "}
+                  &nbsp; | &nbsp; {basicInfo?.role || "N/A"}
                 </p>
                 <span style={basicInfo?.isActive ? activeBadge : inactiveBadge}>
-                  {basicInfo?.isActive ? 'Active' : 'Inactive'}
+                  {basicInfo?.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
             </div>
 
-            <button 
-              onClick={() => setEditing(!editing)}
+            <button
+              onClick={() => {
+                setFormData(basicInfo);
+                setShowEditModal(true);
+              }}
               style={primaryBtn}
             >
-              {editing ? 'Cancel' : 'Edit Profile'}
+              {editing ? "Cancel" : "Edit Profile"}
             </button>
           </div>
         </div>
@@ -173,72 +212,194 @@ const id = user?.id;
           {/* Basic Information */}
           <div style={card}>
             <h4 style={sectionTitle}>Basic Information</h4>
-            <InfoRow label="Full Name" value={basicInfo?.name || 'N/A'} />
-            <InfoRow label="Email" value={basicInfo?.email || 'N/A'} />
-            <InfoRow label="Phone" value={basicInfo?.phone || 'N/A'} />
-            <InfoRow label="Department" value={basicInfo?.department || 'N/A'} />
-            <InfoRow label="Joining Date" value={basicInfo?.createdAt ? new Date(basicInfo.createdAt).toLocaleDateString() : 'N/A'} />
+            <InfoRow label="Full Name" value={basicInfo?.name || "N/A"} />
+            <InfoRow label="Email" value={basicInfo?.email || "N/A"} />
+            <InfoRow label="Phone" value={basicInfo?.phone || "N/A"} />
+            <InfoRow
+              label="Department"
+              value={basicInfo?.department || "N/A"}
+            />
+            <InfoRow
+              label="Joining Date"
+              value={
+                basicInfo?.createdAt
+                  ? new Date(basicInfo.createdAt).toLocaleDateString()
+                  : "N/A"
+              }
+            />
           </div>
 
           {/* Job Details */}
           <div style={card}>
             <h4 style={sectionTitle}>Job & Organization Details</h4>
-            <InfoRow label="Employee ID" value={basicInfo?._id?.slice(-6).toUpperCase() || 'N/A'} />
-            <InfoRow label="Role" value={basicInfo?.role || 'N/A'} />
-            <InfoRow label="Department" value={basicInfo?.department || 'N/A'} />
-            <InfoRow label="Status" value={basicInfo?.isActive ? 'Active' : 'Inactive'} />
-            <InfoRow label="Created" value={basicInfo?.createdAt ? new Date(basicInfo.createdAt).toLocaleDateString() : 'N/A'} />
+            <InfoRow
+              label="Employee ID"
+              value={basicInfo?._id?.slice(-6).toUpperCase() || "N/A"}
+            />
+            <InfoRow label="Role" value={basicInfo?.role || "N/A"} />
+            <InfoRow
+              label="Department"
+              value={basicInfo?.department || "N/A"}
+            />
+            <InfoRow
+              label="Status"
+              value={basicInfo?.isActive ? "Active" : "Inactive"}
+            />
+            <InfoRow
+              label="Created"
+              value={
+                basicInfo?.createdAt
+                  ? new Date(basicInfo.createdAt).toLocaleDateString()
+                  : "N/A"
+              }
+            />
           </div>
 
           {/* Attendance Summary */}
           <div style={card}>
             <h4 style={sectionTitle}>Attendance Summary</h4>
-            <InfoRow label="Present Days" value={attendanceSummary?.presentDays || 0} />
-            <InfoRow label="Leaves Taken" value={attendanceSummary?.leavesTaken || 0} />
-            <InfoRow label="Attendance %" value={attendanceSummary ? 
-              Math.round((attendanceSummary.presentDays / (attendanceSummary.presentDays + attendanceSummary.leavesTaken)) * 100) || 0 : 0} />
+            <InfoRow
+              label="Present Days"
+              value={attendanceSummary?.presentDays || 0}
+            />
+            <InfoRow
+              label="Leaves Taken"
+              value={attendanceSummary?.leavesTaken || 0}
+            />
+            <InfoRow
+              label="Attendance %"
+              value={
+                attendanceSummary
+                  ? Math.round(
+                      (attendanceSummary.presentDays /
+                        (attendanceSummary.presentDays +
+                          attendanceSummary.leavesTaken)) *
+                        100,
+                    ) || 0
+                  : 0
+              }
+            />
           </div>
 
           {/* Account */}
           <div style={card}>
             <h4 style={sectionTitle}>Account & Access Control</h4>
-            <InfoRow label="Username" value={basicInfo?.email?.split('@')[0] || 'N/A'} />
-            <InfoRow label="Role" value={basicInfo?.role || 'N/A'} />
-            <InfoRow label="Status" value={basicInfo?.isActive ? 'Active' : 'Inactive'} />
-            <InfoRow label="Last Updated" value={basicInfo?.updatedAt ? new Date(basicInfo.updatedAt).toLocaleDateString() : 'N/A'} />
+            <InfoRow
+              label="Username"
+              value={basicInfo?.email?.split("@")[0] || "N/A"}
+            />
+            <InfoRow label="Role" value={basicInfo?.role || "N/A"} />
+            <InfoRow
+              label="Status"
+              value={basicInfo?.isActive ? "Active" : "Inactive"}
+            />
+            <InfoRow
+              label="Last Updated"
+              value={
+                basicInfo?.updatedAt
+                  ? new Date(basicInfo.updatedAt).toLocaleDateString()
+                  : "N/A"
+              }
+            />
           </div>
         </div>
 
         {/* Bottom Buttons */}
         <div style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-          <button 
+          <button
             onClick={() => handleUpdateProfile(basicInfo)}
             disabled={!editing}
             style={{
               ...primaryBtn,
               opacity: editing ? 1 : 0.5,
-              cursor: editing ? 'pointer' : 'not-allowed'
+              cursor: editing ? "pointer" : "not-allowed",
             }}
           >
             Save Changes
           </button>
-          <button 
-            onClick={() => setEditing(false)}
-            style={secondaryBtn}
-          >
+          <button onClick={() => setEditing(false)} style={secondaryBtn}>
             Cancel
           </button>
-          <button style={secondaryBtn}>
-            Reset Password
-          </button>
-          <button 
-            onClick={handleDeleteEmployee}
-            style={dangerBtn}
-          >
+          <button style={secondaryBtn}>Reset Password</button>
+          <button onClick={handleDeleteEmployee} style={dangerBtn}>
             Delete Employee
           </button>
         </div>
       </div>
+      {showEditModal && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.4)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: "25px",
+        borderRadius: "12px",
+        width: "500px",
+        maxWidth: "90%",
+      }}
+    >
+      <h3 style={{ marginBottom: "15px" }}>Edit Profile</h3>
+
+      <input
+        name="name"
+        value={formData.name || ""}
+        onChange={handleChange}
+        placeholder="Full Name"
+        style={inputStyle}
+      />
+
+      <input
+        name="email"
+        value={formData.email || ""}
+        onChange={handleChange}
+        placeholder="Email"
+        style={inputStyle}
+      />
+
+      <input
+        name="phone"
+        value={formData.phone || ""}
+        onChange={handleChange}
+        placeholder="Phone"
+        style={inputStyle}
+      />
+
+      <input
+        name="department"
+        value={formData.department || ""}
+        onChange={handleChange}
+        placeholder="Department"
+        style={inputStyle}
+      />
+
+      {/* Buttons */}
+      <div style={{ marginTop: "15px", display: "flex", gap: "10px" }}>
+        <button onClick={handleEditSubmit} style={primaryBtn}>
+          Save
+        </button>
+
+        <button
+          onClick={() => setShowEditModal(false)}
+          style={secondaryBtn}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </DashboardLayout>
   );
 };
@@ -338,6 +499,13 @@ const dangerBtn = {
   color: "red",
   borderRadius: "6px",
   cursor: "pointer",
+};
+const inputStyle = {
+  width: "100%",
+  padding: "8px",
+  marginBottom: "10px",
+  borderRadius: "6px",
+  border: "1px solid #ccc",
 };
 
 export default EmployeeProfile;
