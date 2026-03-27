@@ -19,8 +19,9 @@ export const userService = {
   
   // Update employee profile
   updateProfile: async (id, userData) => {
-    const response = await api.put(`/hrm/profile/${id}`, userData);
-    return response.data;
+    console.log('Updating profile for ID:', id, 'with data:', userData);
+    const response = await api.put(`/hrm/update/${id}`, userData);
+    return response;
   },
   
   // Update user (for admin/hr management)

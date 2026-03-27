@@ -49,31 +49,45 @@ const EmployeeProfile = () => {
 };
 const handleEditSubmit = async () => {
   try {
+    setLoading(true);
     const res = await userService.updateProfile(id, formData);
+    
     if (res.success) {
-      setProfileData(res.profile);
+      setProfileData(res.profile || res.data);
       setShowEditModal(false);
-      alert("Profile updated successfully");
+      alert("Profile updated successfully!");
+      // Refresh the profile data
+      await fetchEmployeeProfile();
+    } else {
+      alert(res.message || "Failed to update profile");
     }
-  } catch {
-    alert("Update failed");
+  } catch (error) {
+    console.error("Update profile error:", error);
+    alert("Update failed. Please try again.");
+  } finally {
+    setLoading(false);
   }
 };
 
   const handleUpdateProfile = async (updatedData) => {
     try {
+      setLoading(true);
       const response = await userService.updateProfile(id, updatedData);
 
       if (response.success) {
-        setProfileData(response.profile);
+        setProfileData(response.profile || response.data);
         setEditing(false);
         alert("Profile updated successfully!");
+        // Refresh the profile data
+        await fetchEmployeeProfile();
       } else {
         alert(response.message || "Failed to update profile");
       }
     } catch (error) {
       console.error("Update profile error:", error);
       alert("Failed to update profile. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -386,8 +400,8 @@ const handleEditSubmit = async () => {
 
       {/* Buttons */}
       <div style={{ marginTop: "15px", display: "flex", gap: "10px" }}>
-        <button onClick={handleEditSubmit} style={primaryBtn}>
-          Save
+        <button onClick={handleEditSubmit} style={primaryBtn} disabled={loading}>
+          {loading ? "Saving..." : "Save"}
         </button>
 
         <button

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 import { payrollService } from "../../services/payrollService";
 
 const PayrollManagement = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
 
@@ -15,6 +18,7 @@ const PayrollManagement = () => {
   const [markingPaid, setMarkingPaid] = useState({});
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [prefillEmployeeInfo, setPrefillEmployeeInfo] = useState(null);
 
   // Form state for run payroll
   const [newPayroll, setNewPayroll] = useState({
@@ -115,6 +119,7 @@ const PayrollManagement = () => {
           deductions: '',
           month: ''
         });
+        setPrefillEmployeeInfo(null);
         
         // Refresh data
         await fetchAllPayroll();
@@ -167,6 +172,34 @@ const PayrollManagement = () => {
   };
 
   const stats = calculateStats();
+
+  // Check for navigation state (prefill data from UserList)
+  useEffect(() => {
+    if (location.state?.prefillData && location.state?.openRunPayroll) {
+      const { employeeId, employeeName, employeeEmail } = location.state.prefillData;
+      
+      // Pre-fill the form with employee data
+      setNewPayroll({
+        employeeId: employeeId,
+        baseSalary: '',
+        deductions: '',
+        month: ''
+      });
+      
+      // Store the employee info for display
+      setPrefillEmployeeInfo({
+        employeeId,
+        employeeName,
+        employeeEmail
+      });
+      
+      // Show the run payroll modal
+      setShowRunPayrollModal(true);
+      
+      // Clear the navigation state to prevent re-opening on refresh
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state, navigate]);
 
   // Fetch data on component mount
   useEffect(() => {
@@ -424,20 +457,42 @@ const PayrollManagement = () => {
             width: "500px",
             maxWidth: "90%"
           }}>
-            <h3 style={{ marginBottom: "20px" }}>Run Payroll</h3>
+            <h3 style={{ marginBottom: "20px" }}>
+              Run Payroll
+              {prefillEmployeeInfo && (
+                <span style={{ fontSize: "14px", color: "#64748b", fontWeight: "normal", marginLeft: "10px" }}>
+                  - {prefillEmployeeInfo.employeeName}
+                </span>
+              )}
+            </h3>
+            
+            {prefillEmployeeInfo && (
+              <div style={{ marginBottom: "15px", padding: "10px", backgroundColor: "#f0f9ff", borderRadius: "6px", border: "1px solid #0ea5e9" }}>
+                <div style={{ fontSize: "12px", color: "#64748b", marginBottom: "5px" }}>Employee Information:</div>
+                <div style={{ fontSize: "14px", color: "#1e293b" }}>
+                  <strong>{prefillEmployeeInfo.employeeName}</strong> ({prefillEmployeeInfo.employeeEmail})
+                </div>
+              </div>
+            )}
             
             <div style={{ marginBottom: "15px" }}>
-              <label style={{ display: "block", marginBottom: "5px", fontSize: "14px" }}>Employee ID</label>
+              <label style={{ display: "block", marginBottom: "5px", fontSize: "14px" }}>
+                Employee ID
+                {prefillEmployeeInfo && <span style={{ color: "#64748b", marginLeft: "5px" }}>(Pre-filled)</span>}
+              </label>
               <input
                 type="text"
                 value={newPayroll.employeeId}
                 onChange={(e) => setNewPayroll({ ...newPayroll, employeeId: e.target.value })}
                 placeholder="Enter employee ID"
+                readOnly={prefillEmployeeInfo ? true : false}
                 style={{
                   width: "100%",
                   padding: "8px",
                   border: "1px solid #ddd",
-                  borderRadius: "4px"
+                  borderRadius: "4px",
+                  backgroundColor: prefillEmployeeInfo ? "#f8fafc" : "#ffffff",
+                  cursor: prefillEmployeeInfo ? "not-allowed" : "text"
                 }}
               />
             </div>
@@ -500,12 +555,12 @@ const PayrollManagement = () => {
                     deductions: '',
                     month: ''
                   });
+                  setPrefillEmployeeInfo(null);
                 }}
                 style={{
-                  padding: "8px 16px",
-                  background: "#6c757d",
-                  color: "white",
-                  border: "none",
+                  padding: "10px 20px",
+                  border: "1px solid #ddd",
+                  background: "#fff",
                   borderRadius: "4px",
                   cursor: "pointer"
                 }}

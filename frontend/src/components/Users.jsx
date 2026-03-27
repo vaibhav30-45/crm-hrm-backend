@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { FaUser, FaEdit, FaTrash, FaPlus, FaSearch } from "react-icons/fa";
+import { FaUser, FaEdit, FaTrash, FaPlus, FaSearch, FaUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "./DashboardComponents/DashboardLayout";
 import { userService } from "../services/userService";
 
 const Users = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -258,6 +260,7 @@ const Users = () => {
     }
   };
 
+ 
   return (
     <DashboardLayout>
       <style>{`
@@ -803,6 +806,7 @@ const Users = () => {
                       >
                         <FaEdit size={12} />
                       </button>
+                    
                       <button
                         onClick={() => handleDeleteUser(user._id, user.name)}
                         style={{
@@ -1006,8 +1010,7 @@ const Users = () => {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          )}</div>
 
         {/* Pagination */}
         {totalPages > 1 && (

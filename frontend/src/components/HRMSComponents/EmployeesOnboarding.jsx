@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 import { onboardingService } from "../../services/onboardingService";
 
 const EmployeesOnboarding = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
@@ -15,6 +18,7 @@ const EmployeesOnboarding = () => {
   const [showStartModal, setShowStartModal] = useState(false);
   const [startLoading, setStartLoading] = useState(false);
   const [startError, setStartError] = useState(null);
+  const [prefillEmployeeInfo, setPrefillEmployeeInfo] = useState(null);
   const [formData, setFormData] = useState({
     employeeId: ''
   });
@@ -23,6 +27,31 @@ const EmployeesOnboarding = () => {
   useEffect(() => {
     fetchOnboardingData();
   }, []);
+
+  // Check for navigation state (prefill data from Users page)
+  useEffect(() => {
+    if (location.state?.prefillData && location.state?.openModal) {
+      const { employeeId, employeeName, employeeEmail } = location.state.prefillData;
+      
+      // Pre-fill the form with employee data
+      setFormData({
+        employeeId: employeeId
+      });
+      
+      // Store the employee info for display in modal
+      setPrefillEmployeeInfo({
+        employeeId,
+        employeeName,
+        employeeEmail
+      });
+      
+      // Show the modal
+      setShowStartModal(true);
+      
+      // Clear the navigation state to prevent re-opening on refresh
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state, navigate]);
 
   const fetchOnboardingData = async () => {
     try {
@@ -84,6 +113,7 @@ const EmployeesOnboarding = () => {
   // Reset start form
   const resetStartForm = () => {
     setFormData({ employeeId: '' });
+    setPrefillEmployeeInfo(null);
     setStartError(null);
     setShowStartModal(false);
   };
@@ -421,7 +451,15 @@ const EmployeesOnboarding = () => {
               maxWidth: '90%',
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
             }}>
-              <h3 style={{ marginBottom: '20px', color: '#333' }}>Start Employee Onboarding</h3>
+              <h3 style={{ marginBottom: '20px', color: '#333' }}>
+  Start Employee Onboarding
+  {prefillEmployeeInfo && (
+    <span style={{ fontSize: '14px', color: '#666', fontWeight: 'normal' }}>
+      <br />
+      <span style={{ color: '#10b981' }}>For:</span> {prefillEmployeeInfo.employeeName} ({prefillEmployeeInfo.employeeEmail})
+    </span>
+  )}
+</h3>
               
               {startError && (
                 <div style={{
@@ -446,16 +484,22 @@ const EmployeesOnboarding = () => {
                   value={formData.employeeId}
                   onChange={handleInputChange}
                   placeholder="Enter employee ID"
+                  readOnly={!!prefillEmployeeInfo}
                   style={{
                     width: '100%',
                     padding: '10px',
                     border: '1px solid #ddd',
                     borderRadius: '6px',
-                    fontSize: '14px'
+                    fontSize: '14px',
+                    backgroundColor: prefillEmployeeInfo ? '#f8fafc' : '#ffffff',
+                    cursor: prefillEmployeeInfo ? 'not-allowed' : 'text'
                   }}
                 />
                 <small style={{ color: '#666', fontSize: '12px', marginTop: '5px', display: 'block' }}>
-                  Enter the MongoDB ObjectId of the employee
+                  {prefillEmployeeInfo 
+                    ? 'Employee ID pre-filled from user selection' 
+                    : 'Enter the MongoDB ObjectId of the employee'
+                  }
                 </small>
               </div>
 

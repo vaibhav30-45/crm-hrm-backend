@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { FaUser } from "react-icons/fa";
 import { MdAssignmentInd, MdReceiptLong } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "./DashboardComponents/DashboardLayout";
 import { userService } from "../services/userService";
 
 const UserList = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,16 +35,35 @@ const UserList = () => {
 
   // onboarding
   const handleOnboarding = (user) => {
-    alert(`Onboarding for ${user.name}`);
-    // example:
-    // navigate(`/onboarding/${user._id}`);
+    // Close the user details modal
+    setShowDetailModal(false);
+    
+    // Navigate to onboarding page with user data
+    navigate('/hrms/employees-onboarding', { 
+      state: { 
+        prefillData: {
+          employeeId: user._id,
+          employeeName: user.name,
+          employeeEmail: user.email
+        },
+        openModal: true
+      }
+    });
   };
 
   // salary slip
   const handleSalarySlip = (user) => {
-    alert(`Salary Slip for ${user.name}`);
-    // example:
-    // window.open(`/salary-slip/${user._id}`);
+    // Navigate to payroll management with user data
+    navigate('/hrms/payroll-management', {
+      state: {
+        prefillData: {
+          employeeId: user._id,
+          employeeName: user.name,
+          employeeEmail: user.email
+        },
+        openRunPayroll: true
+      }
+    });
   };
 
   return (
