@@ -63,6 +63,7 @@ const Sidebar = () => {
       "/hrms/leave-management",
       "/hrms/payroll-management",
       "/hrms/performance-appraisal",
+      "/hrms/project-managers",
     ];
 
     if (hrmsPages.includes(location.pathname)) {
@@ -244,6 +245,9 @@ const Sidebar = () => {
     <li onClick={() => menuNavigate("/hrms/leave-management")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
       Leave Management
     </li>
+     <li onClick={() => navigate("/hrms/project-managers")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+  Project Managers
+</li>
 
     {/* ✅ EXTRA (sirf ADMIN + HR + MANAGER) */}
     {(role === "ADMIN" || role === "HR" || role === "MANAGER") && (
@@ -259,6 +263,9 @@ const Sidebar = () => {
         <li onClick={() => menuNavigate("/hrms/performance-appraisal")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
           Performance Appraisal
         </li>
+        <li onClick={() => navigate("/hrms/project-managers")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+  Project Managers
+</li>
       </>
     )}
   </>
