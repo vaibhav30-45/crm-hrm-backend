@@ -72,4 +72,11 @@ router.get(
   controller.getMyTeam
 );
 
-module.exports = router;   // ✅ VERY IMPORTANT
+module.exports = router;  
+
+router.get(
+  "/all",
+  protect,
+  authorizeRoles("HR","ADMIN"),
+  controller.getALLProjects
+);
