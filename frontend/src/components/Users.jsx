@@ -21,7 +21,9 @@ const Users = () => {
     password: "",
     role: "",
     designation: "",
+    managerType: "", // 👈 NEW
     techStack: "",
+    teamMembers: [], // 👈 NEW
   });
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -39,8 +41,8 @@ const Users = () => {
       }
       setError(null);
     } catch (error) {
-      console.error('Error fetching users:', error);
-      setError('Failed to fetch users');
+      console.error("Error fetching users:", error);
+      setError("Failed to fetch users");
       setUsers([]);
     } finally {
       setLoading(false);
@@ -58,14 +60,15 @@ const Users = () => {
   // }, [currentPage, usersPerPage]);
 
   // Filter users based on search
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.role.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Filter users based on department, role, and status
-  const filteredUsersWithDepartmentRoleStatus = filteredUsers.filter(user => {
+  const filteredUsersWithDepartmentRoleStatus = filteredUsers.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -74,22 +77,31 @@ const Users = () => {
     const matchesDepartment =
       !departmentFilter || user.designation === departmentFilter;
     const matchesRole = !roleFilter || user.role === roleFilter;
-    const matchesStatus = !statusFilter || (user.isActive ? "Active" : "Inactive") === statusFilter;
+    const matchesStatus =
+      !statusFilter || (user.isActive ? "Active" : "Inactive") === statusFilter;
 
     return matchesSearch && matchesDepartment && matchesRole && matchesStatus;
   });
 
   const roles = [...new Set(users.map((user) => user.role))];
-  const statuses = [...new Set(users.map((user) => user.isActive ? "Active" : "Inactive"))];
-  const departments = [...new Set(users.map((user) => user.designation).filter(Boolean))];
+  const statuses = [
+    ...new Set(users.map((user) => (user.isActive ? "Active" : "Inactive"))),
+  ];
+  const departments = [
+    ...new Set(users.map((user) => user.designation).filter(Boolean)),
+  ];
 
   // Pagination logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsersWithDepartmentRoleStatus.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsersWithDepartmentRoleStatus.length / usersPerPage);
+  const currentUsers = filteredUsersWithDepartmentRoleStatus.slice(
+    indexOfFirstUser,
+    indexOfLastUser,
+  );
+  const totalPages = Math.ceil(
+    filteredUsersWithDepartmentRoleStatus.length / usersPerPage,
+  );
 
-  
   const handleFilterChange = () => {
     setCurrentPage(1);
   };
@@ -108,25 +120,27 @@ const Users = () => {
 
   const handleSaveUser = async () => {
     if (!newUser.name || !newUser.email || !newUser.password || !newUser.role) {
-      alert("Please fill in all required fields: Name, Email, Password, and Role");
+      alert(
+        "Please fill in all required fields: Name, Email, Password, and Role",
+      );
       return;
     }
 
     try {
       setLoading(true);
-      
+
       // Only include techStack if it has a value
       const userDataToSend = { ...newUser };
-      if (!userDataToSend.techStack || userDataToSend.techStack.trim() === '') {
+      if (!userDataToSend.techStack || userDataToSend.techStack.trim() === "") {
         delete userDataToSend.techStack;
       }
-      
+
       const response = await userService.create(userDataToSend);
-      
+
       // Show success popup
       setSuccessMessage(`User "${newUser.name}" created successfully!`);
       setShowSuccessPopup(true);
-      
+
       // Reset form
       setNewUser({
         name: "",
@@ -136,20 +150,19 @@ const Users = () => {
         designation: "",
         techStack: "",
       });
-      
+
       setShowModal(false);
-      
+
       // Refresh users list after successful creation
       await fetchUsers();
-      
+
       // Hide popup after 3 seconds
       setTimeout(() => {
         setShowSuccessPopup(false);
       }, 3000);
-      
     } catch (error) {
-      console.error('Error creating user:', error);
-      alert('Failed to create user. Please try again.');
+      console.error("Error creating user:", error);
+      alert("Failed to create user. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -161,10 +174,10 @@ const Users = () => {
     setNewUser({
       name: user.name,
       email: user.email,
-      password: '', // Don't populate password for security
+      password: "", // Don't populate password for security
       role: user.role,
-      designation: user.designation || '',
-      techStack: user.techStack || '',
+      designation: user.designation || "",
+      techStack: user.techStack || "",
     });
     setEditingUserId(user._id);
     setIsEditing(true);
@@ -180,23 +193,23 @@ const Users = () => {
 
     try {
       setLoading(true);
-      
+
       // Only include password if it's provided
       const userDataToSend = { ...newUser };
-      if (!userDataToSend.password || userDataToSend.password.trim() === '') {
+      if (!userDataToSend.password || userDataToSend.password.trim() === "") {
         delete userDataToSend.password;
       }
-      
-      if (!userDataToSend.techStack || userDataToSend.techStack.trim() === '') {
+
+      if (!userDataToSend.techStack || userDataToSend.techStack.trim() === "") {
         delete userDataToSend.techStack;
       }
-      
+
       const response = await userService.update(editingUserId, userDataToSend);
-      
+
       // Show success popup
       setSuccessMessage(`User "${newUser.name}" updated successfully!`);
       setShowSuccessPopup(true);
-      
+
       // Reset form
       setNewUser({
         name: "",
@@ -209,18 +222,17 @@ const Users = () => {
       setEditingUserId(null);
       setIsEditing(false);
       setShowModal(false);
-      
+
       // Refresh users list after successful update
       await fetchUsers();
-      
+
       // Hide popup after 3 seconds
       setTimeout(() => {
         setShowSuccessPopup(false);
       }, 3000);
-      
     } catch (error) {
-      console.error('Error updating user:', error);
-      alert('Failed to update user. Please try again.');
+      console.error("Error updating user:", error);
+      alert("Failed to update user. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -230,29 +242,30 @@ const Users = () => {
   const handleDeleteUser = async (userId, userName) => {
     try {
       // Show confirmation dialog
-      const confirmDelete = window.confirm(`Are you sure you want to delete user "${userName}"?`);
+      const confirmDelete = window.confirm(
+        `Are you sure you want to delete user "${userName}"?`,
+      );
       if (!confirmDelete) return;
 
       setLoading(true);
-      
+
       // Call API to delete user
       await userService.deleteUser(userId);
-      
+
       // Show success popup
       setSuccessMessage(`User "${userName}" deleted successfully!`);
       setShowSuccessPopup(true);
-      
+
       // Refresh users list after successful deletion
       await fetchUsers();
-      
+
       // Hide popup after 3 seconds
       setTimeout(() => {
         setShowSuccessPopup(false);
       }, 3000);
-      
     } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Failed to delete user. Please try again.');
+      console.error("Error deleting user:", error);
+      alert("Failed to delete user. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -660,176 +673,188 @@ const Users = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="8" style={{ 
-                    padding: "40px", 
-                    textAlign: "center", 
-                    color: "#64748b",
-                    fontSize: "16px"
-                  }}>
+                  <td
+                    colSpan="8"
+                    style={{
+                      padding: "40px",
+                      textAlign: "center",
+                      color: "#64748b",
+                      fontSize: "16px",
+                    }}
+                  >
                     Loading users...
                   </td>
                 </tr>
               ) : error ? (
                 <tr>
-                  <td colSpan="8" style={{ 
-                    padding: "40px", 
-                    textAlign: "center", 
-                    color: "#ef4444",
-                    fontSize: "16px"
-                  }}>
+                  <td
+                    colSpan="8"
+                    style={{
+                      padding: "40px",
+                      textAlign: "center",
+                      color: "#ef4444",
+                      fontSize: "16px",
+                    }}
+                  >
                     {error}
                   </td>
                 </tr>
               ) : currentUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="8" style={{ 
-                    padding: "40px", 
-                    textAlign: "center", 
-                    color: "#64748b",
-                    fontSize: "16px"
-                  }}>
+                  <td
+                    colSpan="8"
+                    style={{
+                      padding: "40px",
+                      textAlign: "center",
+                      color: "#64748b",
+                      fontSize: "16px",
+                    }}
+                  >
                     No users found
                   </td>
                 </tr>
               ) : (
                 currentUsers.map((user) => (
-                <tr
-                  key={user._id}
-                  style={{
-                    borderBottom: "1px solid #f1f5f9",
-                    transition: "background-color 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#f8fafc";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                >
-                  <td style={{ padding: "16px 12px" }}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <div
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          borderRadius: "50%",
-                          backgroundColor: "#e0f2fe",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginRight: "12px",
-                        }}
-                      >
-                        <FaUser size={14} color="#0ea5e9" />
+                  <tr
+                    key={user._id}
+                    style={{
+                      borderBottom: "1px solid #f1f5f9",
+                      transition: "background-color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#f8fafc";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <td style={{ padding: "16px 12px" }}>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                          style={{
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "50%",
+                            backgroundColor: "#e0f2fe",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginRight: "12px",
+                          }}
+                        >
+                          <FaUser size={14} color="#0ea5e9" />
+                        </div>
+                        <span
+                          style={{
+                            color: "#1e293b",
+                            fontSize: "14px",
+                            fontWeight: "500",
+                          }}
+                        >
+                          {user.name}
+                        </span>
                       </div>
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
+                      <span style={{ color: "#64748b", fontSize: "14px" }}>
+                        {user.email}
+                      </span>
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
+                      <span style={{ color: "#64748b", fontSize: "14px" }}>
+                        {user.designation || "-"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
+                      <span style={{ color: "#64748b", fontSize: "14px" }}>
+                        {user.techStack || "-"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
+                      <span style={{ color: "#64748b", fontSize: "14px" }}>
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </span>
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
+                      <span style={{ color: "#64748b", fontSize: "14px" }}>
+                        {user.role}
+                      </span>
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
                       <span
                         style={{
-                          color: "#1e293b",
+                          color: user.isActive ? "#10b981" : "#ef4444",
                           fontSize: "14px",
                           fontWeight: "500",
+                          padding: "4px 8px",
+                          borderRadius: "4px",
+                          backgroundColor: user.isActive
+                            ? "#ecfdf5"
+                            : "#fef2f2",
                         }}
                       >
-                        {user.name}
+                        {user.isActive ? "Active" : "Inactive"}
                       </span>
-                    </div>
-                  </td>
-                  <td style={{ padding: "16px 12px" }}>
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      {user.email}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 12px" }}>
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      {user.designation || "-"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 12px" }}>
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      {user.techStack || "-"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 12px" }}>
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 12px" }}>
-                    <span style={{ color: "#64748b", fontSize: "14px" }}>
-                      {user.role}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 12px" }}>
-                    <span
-                      style={{
-                        color: user.isActive ? "#10b981" : "#ef4444",
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        padding: "4px 8px",
-                        borderRadius: "4px",
-                        backgroundColor: user.isActive ? "#ecfdf5" : "#fef2f2",
-                      }}
-                    >
-                      {user.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "16px 12px" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <button
-                        onClick={() => handleEditUser(user)}
+                    </td>
+                    <td style={{ padding: "16px 12px" }}>
+                      <div
                         style={{
-                          backgroundColor: "#3b82f6",
-                          color: "#ffffff",
-                          border: "none",
-                          borderRadius: "6px",
-                          padding: "6px 8px",
-                          cursor: "pointer",
                           display: "flex",
-                          alignItems: "center",
-                          transition: "background-color 0.2s ease",
+                          justifyContent: "center",
+                          gap: "8px",
                         }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#2563eb";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "#3b82f6";
-                        }}
-                        title="Edit user"
                       >
-                        <FaEdit size={12} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteUser(user._id, user.name)}
-                        style={{
-                          backgroundColor: "#ef4444",
-                          color: "#ffffff",
-                          border: "none",
-                          borderRadius: "6px",
-                          padding: "6px 8px",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          transition: "background-color 0.2s ease",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = "#dc2626";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = "#ef4444";
-                        }}
-                        title="Delete user"
-                      >
-                        <FaTrash size={12} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )))}
+                        <button
+                          onClick={() => handleEditUser(user)}
+                          style={{
+                            backgroundColor: "#3b82f6",
+                            color: "#ffffff",
+                            border: "none",
+                            borderRadius: "6px",
+                            padding: "6px 8px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            transition: "background-color 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#2563eb";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "#3b82f6";
+                          }}
+                          title="Edit user"
+                        >
+                          <FaEdit size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user._id, user.name)}
+                          style={{
+                            backgroundColor: "#ef4444",
+                            color: "#ffffff",
+                            border: "none",
+                            borderRadius: "6px",
+                            padding: "6px 8px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            transition: "background-color 0.2s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "#dc2626";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "#ef4444";
+                          }}
+                          title="Delete user"
+                        >
+                          <FaTrash size={12} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
           {showModal && (
@@ -895,7 +920,11 @@ const Users = () => {
                 <input
                   name="password"
                   type="password"
-                  placeholder={isEditing ? "Password (leave blank to keep current)" : "Password *"}
+                  placeholder={
+                    isEditing
+                      ? "Password (leave blank to keep current)"
+                      : "Password *"
+                  }
                   value={newUser.password}
                   onChange={handleInputChange}
                   style={{
@@ -946,11 +975,82 @@ const Users = () => {
                   <option value="">Select Designation</option>
                   <option value="Project Manager">Project Manager</option>
                   <option value="Sales Manager">Sales Manager</option>
-                  <option value="Client Relationship Manager">Client Relationship Manager</option>
+                  <option value="Client Relationship Manager">
+                    Client Relationship Manager
+                  </option>
                   <option value="Developer">Developer</option>
                   <option value="Intern">Intern</option>
                 </select>
+                {newUser.role === "MANAGER" && (
+                  <select
+                    name="managerType"
+                    value={newUser.managerType}
+                    onChange={handleInputChange}
+                    style={{
+                      width: "100%",
+                      marginBottom: "12px",
+                      padding: "10px",
+                      border: "1px solid #e2e8f0",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                      backgroundColor: "#ffffff",
+                    }}
+                  >
+                    <option value="">Select Manager Type</option>
+                    <option value="MANAGER">Manager</option>
+                    <option value="PROJECT_MANAGER">Project Manager</option>
+                  </select>
+                )}
+                {newUser.managerType === "PROJECT_MANAGER" && (
+  <>
+    {/* Tech Field */}
+    <select
+      name="techStack"
+      value={newUser.techStack}
+      onChange={handleInputChange}
+      style={{
+        width: "100%",
+        marginBottom: "12px",
+        padding: "10px",
+        border: "1px solid #e2e8f0",
+        borderRadius: "6px",
+      }}
+    >
+      <option value="">Select Domain</option>
+      <option value="TECH">Tech</option>
+      <option value="BDE">BDE</option>
+      <option value="AIML">AI/ML</option>
+    </select>
 
+    {/* Team Members Multi Select */}
+    <select
+      multiple
+      value={newUser.teamMembers}
+      onChange={(e) => {
+        const selected = Array.from(
+          e.target.selectedOptions,
+          (opt) => opt.value
+        );
+        setNewUser({ ...newUser, teamMembers: selected });
+      }}
+      style={{
+        width: "100%",
+        marginBottom: "12px",
+        padding: "10px",
+        border: "1px solid #e2e8f0",
+        borderRadius: "6px",
+      }}
+    >
+      {users
+        .filter((u) => u.role === "EMPLOYEE")
+        .map((emp) => (
+          <option key={emp._id} value={emp._id}>
+            {emp.name}
+          </option>
+        ))}
+    </select>
+  </>
+)}
                 <select
                   name="techStack"
                   value={newUser.techStack}
@@ -1001,7 +1101,13 @@ const Users = () => {
                       fontWeight: "500",
                     }}
                   >
-                    {loading ? (isEditing ? "Updating..." : "Creating...") : (isEditing ? "Update User" : "Create User")}
+                    {loading
+                      ? isEditing
+                        ? "Updating..."
+                        : "Creating..."
+                      : isEditing
+                        ? "Update User"
+                        : "Create User"}
                   </button>
                 </div>
               </div>
@@ -1162,8 +1268,12 @@ const Users = () => {
               ✓
             </div>
             <div>
-              <div style={{ fontWeight: "600", marginBottom: "2px" }}>Success!</div>
-              <div style={{ fontSize: "14px", opacity: 0.9 }}>{successMessage}</div>
+              <div style={{ fontWeight: "600", marginBottom: "2px" }}>
+                Success!
+              </div>
+              <div style={{ fontSize: "14px", opacity: 0.9 }}>
+                {successMessage}
+              </div>
             </div>
           </div>
         )}

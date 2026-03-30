@@ -131,6 +131,7 @@ const handleEditSubmit = async () => {
   if (error) {
     return (
       <DashboardLayout>
+      
         <div
           style={{ padding: "20px", background: "#f4f6f9", minHeight: "100vh" }}
         >
@@ -241,6 +242,10 @@ const handleEditSubmit = async () => {
               label="Department"
               value={basicInfo?.department || "N/A"}
             />
+             <InfoRow
+  label="Project Manager"
+  value={basicInfo?.projectManager || "N/A"}
+/>
             <InfoRow
               label="Status"
               value={basicInfo?.isActive ? "Active" : "Inactive"}
@@ -500,7 +505,7 @@ const dangerBtn = {
   borderRadius: "6px",
   cursor: "pointer",
 };
-const inputStyle = {
+const inputStyle = { 
   width: "100%",
   padding: "8px",
   marginBottom: "10px",
@@ -509,3 +514,4 @@ const inputStyle = {
 };
 
 export default EmployeeProfile;
+

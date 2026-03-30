@@ -27,6 +27,7 @@ import EmployeeDashboard from "./components/EmployeeDashboard/EmployeeDashboard"
 import HRDashboard from "./components/HRDashboard/HRDashboard"
 import BDEDashboard from "./components/SalesDashboard/SalesDashboard";
 import UserList from "./components/UserList"
+import ProjectManagers from "./components/HRMSComponents/ProjectManagers"
 import "./App.css";
 
 function App() {
@@ -104,6 +105,14 @@ path="/dashboard"
     </PrivateRoutes>
   }
 />
+<Route
+ path="/hrms/project-managers" 
+ element={
+  <PrivateRoutes>
+ <ProjectManagers />
+ </PrivateRoutes>
+ } 
+ />
 <Route
   path="/sales-dashboard"
   element={
