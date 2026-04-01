@@ -2,12 +2,28 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 import { FaUsers, FaProjectDiagram } from "react-icons/fa";
 import { projectService } from "../../services/projectService";
+import { FaUserPlus } from "react-icons/fa";
 
 const ProjectManagers = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [userRole, setUserRole] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [assignModal, setAssignModal] = useState(false);
+const [selectedProject, setSelectedProject] = useState(null);
+const [employees, setEmployees] = useState([]);
+const [selectedEmployees, setSelectedEmployees] = useState([]);
+const [formData, setFormData] = useState({
+  title: "",
+  description: "",
+  projectManager: ""
+});
+const openAssignModal = (projectId) => {
+  setSelectedProject(projectId);
+  setAssignModal(true);
+  fetchEmployees(); // API call
+};
 
   // Get user role and fetch data
   useEffect(() => {
@@ -50,6 +66,39 @@ const ProjectManagers = () => {
       setLoading(false);
     }
   };
+  const handleCreateProject = async () => {
+  try {
+    await projectService.createProject(formData);
+
+    setShowModal(false);
+    fetchAllProjects(); // refresh list
+  } catch (err) {
+    console.error("Error creating project:", err);
+  }
+};
+const handleAssignTeam = async () => {
+  try {
+    for (let empId of selectedEmployees) {
+      await projectService.assignTeam({
+        projectId: selectedProject,
+        employeeId: empId
+      });
+    }
+
+    setAssignModal(false);
+    fetchAllProjects();
+  } catch (err) {
+    console.error(err);
+  }
+};
+const fetchEmployees = async () => {
+  try {
+    const res = await projectService.getAllEmployees(); // backend API
+    setEmployees(res || []);
+  } catch (err) {
+    console.error("Error fetching employees:", err);
+  }
+};
 
   return (
     <DashboardLayout>
@@ -60,6 +109,23 @@ const ProjectManagers = () => {
           borderRadius: "12px",
         }}
       >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+  <h2>All Projects</h2>
+
+  <button
+    onClick={() => setShowModal(true)}
+    style={{
+      background: "#0ea5e9",
+      color: "#fff",
+      padding: "8px 16px",
+      border: "none",
+      borderRadius: "6px",
+      cursor: "pointer"
+    }}
+  >
+    + Create Project
+  </button>
+</div>
         <h2 style={{ marginBottom: "20px" }}>
           {userRole === 'MANAGER' ? (
             <>
@@ -320,12 +386,13 @@ const ProjectManagers = () => {
                     <div
                       key={project._id}
                       style={{
-                        background: "#f8fafc",
-                        borderRadius: "12px",
-                        padding: "20px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                        border: "1px solid #e2e8f0",
-                        transition: "all 0.2s ease",
+                       background: "#f8fafc",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+    border: "1px solid #e2e8f0",
+    transition: "all 0.2s ease",
+    position: "relative" // 👈 important
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = "translateY(-2px)";
@@ -385,12 +452,31 @@ const ProjectManagers = () => {
                           Team: {project.team?.length || 0} members
                         </span>
                       </div>
+                      
 
                       {/* Created Date */}
                       <div style={{ textAlign: "center", fontSize: "12px", color: "#94a3b8" }}>
                         Created: {project.createdAt ? new Date(project.createdAt).toLocaleDateString() : 'Unknown'}
                       </div>
+                     <button
+  onClick={() => openAssignModal(project._id)}
+  style={{
+    position: "absolute",
+    top: "12px",
+    right: "12px",
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
+    padding: "5px",
+    borderRadius: "50%"
+  }}
+  onMouseEnter={(e) => e.currentTarget.style.background = "#eef2ff"}
+  onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+>
+  <FaUserPlus size={22} color="#6366f1" />
+</button>
                     </div>
+                    
                   ))
                 )}
               </div>
@@ -398,8 +484,210 @@ const ProjectManagers = () => {
           </>
         )}
       </div>
+     {showModal && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000
+    }}
+    onClick={() => setShowModal(false)}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: "24px",
+        borderRadius: "12px",
+        width: "400px",
+        maxWidth: "90%",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h3 style={{ marginBottom: "16px", textAlign: "center" }}>
+        Create Project
+      </h3>
+
+      <input
+        placeholder="Project Title"
+        value={formData.title}
+        onChange={(e) =>
+          setFormData({ ...formData, title: e.target.value })
+        }
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "12px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+          outline: "none"
+        }}
+      />
+
+      <textarea
+        placeholder="Description"
+        value={formData.description}
+        onChange={(e) =>
+          setFormData({ ...formData, description: e.target.value })
+        }
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "12px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+          outline: "none"
+        }}
+      />
+
+      <input
+        placeholder="Project Manager ID"
+        value={formData.projectManager}
+        onChange={(e) =>
+          setFormData({
+            ...formData,
+            projectManager: e.target.value
+          })
+        }
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "16px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+          outline: "none"
+        }}
+      />
+
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <button
+          onClick={handleCreateProject}
+          style={{
+            background: "#0ea5e9",
+            color: "#fff",
+            padding: "10px",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+            width: "48%"
+          }}
+        >
+          Create
+        </button>
+
+        <button
+          onClick={() => setShowModal(false)}
+          style={{
+            background: "#e5e7eb",
+            color: "#111",
+            padding: "10px",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer",
+            width: "48%"
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+{assignModal && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000
+    }}
+    onClick={() => setAssignModal(false)}
+  >
+    <div
+      style={{
+        background: "#fff",
+        padding: "20px",
+        borderRadius: "12px",
+        width: "400px",
+        maxHeight: "80vh",
+        overflowY: "auto",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <h3 style={{ textAlign: "center", marginBottom: "15px" }}>
+        Select Team Members
+      </h3>
+
+      {employees.length === 0 ? (
+        <p style={{ textAlign: "center" }}>No employees found</p>
+      ) : (
+        employees.map(emp => (
+          <div key={emp._id} style={{ marginBottom: "8px" }}>
+            <input
+              type="checkbox"
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedEmployees([...selectedEmployees, emp._id]);
+                } else {
+                  setSelectedEmployees(
+                    selectedEmployees.filter(id => id !== emp._id)
+                  );
+                }
+              }}
+            />
+            <span style={{ marginLeft: "8px" }}>{emp.name}</span>
+          </div>
+        ))
+      )}
+
+      <div style={{ marginTop: "15px", display: "flex", gap: "10px" }}>
+        <button
+          onClick={handleAssignTeam}
+          style={{
+            flex: 1,
+            padding: "10px",
+            background: "#6366f1",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px"
+          }}
+        >
+          Assign
+        </button>
+
+        <button
+          onClick={() => setAssignModal(false)}
+          style={{
+            flex: 1,
+            padding: "10px",
+            background: "#e5e7eb",
+            border: "none",
+            borderRadius: "6px"
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </DashboardLayout>
   );
 };
 
 export default ProjectManagers;
+
