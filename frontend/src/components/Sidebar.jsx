@@ -30,8 +30,8 @@ const Sidebar = () => {
   const role = user?.role?.toUpperCase();
 
   const handleDashboardClick = () => {
-  navigate("/dashboard");
-};
+    navigate("/dashboard");
+  };
 
   const menuNavigate = (path) => {
     navigate(path);
@@ -121,36 +121,36 @@ const Sidebar = () => {
               )}
             </li>
 
-           {isUserManagementOpen && (
-  <>
-    <li
-      onClick={() => menuNavigate("/users")}
-      style={{
-        paddingLeft: "45px",
-        fontSize: "14px",
-        cursor: "pointer",
-      }}
-    >
-      Users 
-    </li>
+            {isUserManagementOpen && (
+              <>
+                <li
+                  onClick={() => menuNavigate("/users")}
+                  style={{
+                    paddingLeft: "45px",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Users
+                </li>
 
-    <li
-      onClick={() => menuNavigate("/userlist")}
-      style={{
-        paddingLeft: "45px",
-        fontSize: "14px",
-        cursor: "pointer",
-      }}
-    >
-      User List 
-    </li>
-  </>
-)}
+                <li
+                  onClick={() => menuNavigate("/userlist")}
+                  style={{
+                    paddingLeft: "45px",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  User List
+                </li>
+              </>
+            )}
           </>
         )}
 
         {/* CRM */}
-        {(role === "ADMIN" || role === "MANAGER" || role === "BDE") &&(
+        {(role === "ADMIN" || role === "MANAGER" || role === "BDE") && (
           <>
             <li
               onClick={toggleCrm}
@@ -232,44 +232,68 @@ const Sidebar = () => {
         </li>
 
         {isHrmsOpen && (
-  <>
-    {/* ✅ COMMON (sab ke liye) */}
-    <li onClick={() => menuNavigate("/hrms/attendance")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-      Attendance Management
-    </li>
+          <>
+            {/*  COMMON (sab ke liye) */}
+            <li
+              onClick={() => menuNavigate("/hrms/attendance")}
+              style={{ paddingLeft: "45px", cursor: "pointer" }}
+            >
+              Attendance Management
+            </li>
 
-    <li onClick={() => menuNavigate("/hrms/employee-profile")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-      Employee Profile
-    </li>
+            <li
+              onClick={() => menuNavigate("/hrms/employee-profile")}
+              style={{ paddingLeft: "45px", cursor: "pointer" }}
+            >
+              Employee Profile
+            </li>
 
-    <li onClick={() => menuNavigate("/hrms/leave-management")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-      Leave Management
-    </li>
-     <li onClick={() => navigate("/hrms/project-managers")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-  Project Managers
-</li>
+            <li
+              onClick={() => menuNavigate("/hrms/leave-management")}
+              style={{ paddingLeft: "45px", cursor: "pointer" }}
+            >
+              Leave Management
+            </li>
+            <li
+              onClick={() => navigate("/hrms/project-managers")}
+              style={{ paddingLeft: "45px", cursor: "pointer" }}
+            >
+              Project Managers
+            </li>
 
-    {/* ✅ EXTRA (sirf ADMIN + HR + MANAGER) */}
-    {(role === "ADMIN" || role === "HR" || role === "MANAGER") && (
-      <>
-        <li onClick={() => menuNavigate("/hrms/employees-onboarding")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-          Employees Onboarding
-        </li>
+            {/* EXTRA (sirf ADMIN + HR + MANAGER) */}
+            {(role === "ADMIN" || role === "HR" || role === "MANAGER") && (
+              <>
+                <li
+                  onClick={() => menuNavigate("/hrms/employees-onboarding")}
+                  style={{ paddingLeft: "45px", cursor: "pointer" }}
+                >
+                  Employees Onboarding
+                </li>
 
-        <li onClick={() => menuNavigate("/hrms/payroll-management")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-          Payroll Management
-        </li>
+                <li
+                  onClick={() => menuNavigate("/hrms/payroll-management")}
+                  style={{ paddingLeft: "45px", cursor: "pointer" }}
+                >
+                  Payroll Management
+                </li>
 
-        <li onClick={() => menuNavigate("/hrms/performance-appraisal")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-          Performance Appraisal
-        </li>
-        <li onClick={() => navigate("/hrms/project-managers")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-  Project Managers
-</li>
-      </>
-    )}
-  </>
-)}
+                <li
+                  onClick={() => menuNavigate("/hrms/performance-appraisal")}
+                  style={{ paddingLeft: "45px", cursor: "pointer" }}
+                >
+                  Performance Appraisal
+                </li>
+                <li
+                  onClick={() => navigate("/hrms/project-managers")}
+                  style={{ paddingLeft: "45px", cursor: "pointer" }}
+                >
+                  Project Managers
+                </li>
+              </>
+            )}
+          </>
+        )}
         {/* AI CENTER */}
         <li>
           <RiRobot2Fill size={16} color="#ffffff" /> AI Center
