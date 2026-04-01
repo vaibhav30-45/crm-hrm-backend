@@ -263,9 +263,7 @@ const Sidebar = () => {
         <li onClick={() => menuNavigate("/hrms/performance-appraisal")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
           Performance Appraisal
         </li>
-        <li onClick={() => navigate("/hrms/project-managers")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
-  Project Managers
-</li>
+        
       </>
     )}
   </>
