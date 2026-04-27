@@ -20,7 +20,7 @@ export const userService = {
   // Update employee profile
   updateProfile: async (id, userData) => {
     console.log('Updating profile for ID:', id, 'with data:', userData);
-    const response = await api.put(`/hrm/update/${id}`, userData);
+    const response = await api.put(`/hrm/profile/update/${id}`, userData);
     return response;
   },
   

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 import { userService } from "../../services/userService";
-
+import profileImg from "../../assets/profileimg.png"
 const EmployeeProfile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const id = user?.id;
@@ -50,14 +50,21 @@ const EmployeeProfile = () => {
 const handleEditSubmit = async () => {
   try {
     setLoading(true);
+
+    console.log("Sending Data:", formData);
+
     const res = await userService.updateProfile(id, formData);
-    
+
+    console.log("Response:", res);
+
     if (res.success) {
-      setProfileData(res.profile || res.data);
+      setProfileData((prev) => ({
+        ...prev,
+        basicInfo: res.profile || res.data,
+      }));
+
       setShowEditModal(false);
       alert("Profile updated successfully!");
-      // Refresh the profile data
-      await fetchEmployeeProfile();
     } else {
       alert(res.message || "Failed to update profile");
     }
@@ -74,13 +81,13 @@ const handleEditSubmit = async () => {
       setLoading(true);
       const response = await userService.updateProfile(id, updatedData);
 
-      if (response.success) {
-        setProfileData(response.profile || response.data);
-        setEditing(false);
-        alert("Profile updated successfully!");
-        // Refresh the profile data
-        await fetchEmployeeProfile();
-      } else {
+      if (res.success) {
+  setProfileData({
+    ...profileData,
+    basicInfo: res.profile || res.data
+  });
+  setShowEditModal(false);
+} else {
         alert(response.message || "Failed to update profile");
       }
     } catch (error) {
@@ -193,11 +200,21 @@ const handleEditSubmit = async () => {
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-              <img
+              {/* <img
                 src={`https://i.pravatar.cc/100?u=${basicInfo?._id}`}
                 alt="profile"
                 style={{ width: "90px", height: "90px", borderRadius: "50%" }}
-              />
+              /> */}
+              <img
+  src={basicInfo?.profileImage || profileImg}
+  alt="profile"
+  style={{
+    width: "90px",
+    height: "90px",
+    borderRadius: "50%",
+    objectFit: "cover"
+  }}
+/>
               <div>
                 <h3 style={{ margin: 0 }}>{basicInfo?.name || "N/A"}</h3>
                 <p style={{ margin: "4px 0", color: "#777" }}>
@@ -212,9 +229,9 @@ const handleEditSubmit = async () => {
 
             <button
               onClick={() => {
-                setFormData(basicInfo);
-                setShowEditModal(true);
-              }}
+  setFormData({ ...basicInfo }); // important change
+  setShowEditModal(true);
+}}
               style={primaryBtn}
             >
               {editing ? "Cancel" : "Edit Profile"}

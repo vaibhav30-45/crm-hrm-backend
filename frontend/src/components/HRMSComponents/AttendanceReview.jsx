@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import DashboardLayout from "../DashboardComponents/DashboardLayout";
 import { attendanceService } from "../../services/attendanceService";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 
 const AttendanceManagement = () => {
   // State for attendance data
@@ -24,8 +22,14 @@ const AttendanceManagement = () => {
 
   // Fetch all employees attendance on component mount
   useEffect(() => {
+    // 👇 EMPLOYEE + MANAGER + HR → apna data
     if (["EMPLOYEE", "MANAGER", "HR"].includes(role)) {
       fetchMyAttendance();
+    }
+
+    // 👇 ADMIN + MANAGER + HR → sabka data
+    if (["ADMIN", "MANAGER", "HR"].includes(role)) {
+      fetchAllAttendance();
     }
   }, [role]);
 
@@ -48,31 +52,6 @@ const AttendanceManagement = () => {
       setLoading(false);
     }
   };
-  const TOTAL_LEAVES = 4;
-
-  const data = ["EMPLOYEE", "MANAGER", "HR"].includes(role)
-    ? myLogs
-    : attendanceData;
-
-  // sirf current month ka data
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-
-  const monthlyData = data.filter((att) => {
-    const d = new Date(att.date || att.checkIn);
-    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-  });
-
-  // leaves count
-  const leavesTaken = monthlyData.filter(
-    (att) => att.status === "Absent",
-  ).length;
-
-  const remainingLeaves = TOTAL_LEAVES - leavesTaken;
-
-  // extra leaves (negative case)
-  const extraLeaves =
-    leavesTaken > TOTAL_LEAVES ? leavesTaken - TOTAL_LEAVES : 0;
   const fetchMyAttendance = async () => {
     try {
       const res = await attendanceService.getMyAttendance();
@@ -94,16 +73,6 @@ const AttendanceManagement = () => {
     officeTime.setHours(9, 30, 0, 0); // 9:30 AM
 
     return checkIn > officeTime;
-  };
-  const isToday = (date) => {
-    const today = new Date();
-    const d = new Date(date);
-
-    return (
-      d.getDate() === today.getDate() &&
-      d.getMonth() === today.getMonth() &&
-      d.getFullYear() === today.getFullYear()
-    );
   };
   const handlePunchIn = async () => {
     try {
@@ -156,15 +125,14 @@ const AttendanceManagement = () => {
   const stats = calculateStats();
 
   // Pagination calculations
- const totalPages = Math.ceil(myLogs.length / rowsPerPage);
-const indexOfLastRow = currentPage * rowsPerPage;
-const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-
-const currentRows = myLogs.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(attendanceData.length / rowsPerPage);
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = attendanceData.slice(indexOfFirstRow, indexOfLastRow);
 
   const topData = ["EMPLOYEE", "MANAGER", "HR"].includes(role)
-    ? myLogs.filter((log) => isToday(log.checkIn))
-    : attendanceData.filter((att) => isToday(att.date));
+    ? myLogs
+    : attendanceData;
 
   const totalPagesTop = Math.ceil(topData.length / rowsPerPageTop);
   console.log("rowsPerPage 👉", rowsPerPage);
@@ -267,308 +235,51 @@ const currentRows = myLogs.slice(indexOfFirstRow, indexOfLastRow);
               </span>
             </div>
 
-            <div style={cardStyle}>
-              <h4 style={{ margin: 0, color: "#555", marginBottom: "15px" }}>
-                Today's Status
-              </h4>
-              <p style={{ margin: "10px 0", fontSize: "14px", color: "#666" }}>
-                Use Punch In/Out buttons to mark attendance
-              </p>
-
-              {["EMPLOYEE", "MANAGER", "HR"].includes(role) && (
-                <div
-                  style={{ marginTop: "15px", display: "flex", gap: "10px" }}
-                >
-                  <button
-                    onClick={handlePunchIn}
-                    disabled={punchingIn}
-                    style={{
-                      padding: "8px 16px",
-                      borderRadius: "6px",
-                      border: "none",
-                      background: punchingIn ? "#ccc" : "#4caf50",
-                      color: "white",
-                      cursor: punchingIn ? "not-allowed" : "pointer",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {punchingIn ? "Punching In..." : "Punch In"}
-                  </button>
-
-                  <button
-                    onClick={handlePunchOut}
-                    disabled={punchingOut}
-                    style={{
-                      padding: "8px 16px",
-                      borderRadius: "6px",
-                      border: "none",
-                      background: punchingOut ? "#ccc" : "#f44336",
-                      color: "white",
-                      cursor: punchingOut ? "not-allowed" : "pointer",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {punchingOut ? "Punching Out..." : "Punch Out"}
-                  </button>
-                </div>
-              )}
-            </div>
+           
           </div>
 
-          <div style={cardStyleFlex}>
-            {/* <h4 style={{ marginBottom: "15px" }}>Anomalies detected</h4> */}
-            <h4 style={{ marginBottom: "15px" }}>
-              {["EMPLOYEE", "MANAGER", "HR"].includes(role)
-                ? "Today's Activity"
-                : "Anomalies detected"}
-            </h4>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              {/* <thead>
-                <tr style={{ background: "#f8f9fb", textAlign: "left" }}>
-                  <th style={thStyle}>Employee</th>
-                  <th style={thStyle}>Date</th>
-                  <th style={thStyle}>Type</th>
-                  <th style={thStyle}>Description</th>
-                </tr>
-              </thead> */}
-              <thead>
-                {["EMPLOYEE", "MANAGER", "HR"].includes(role) ? (
-                  <tr style={{ background: "#f8f9fb", textAlign: "left" }}>
-                    <th style={thStyle}>Name</th>
-                    <th style={thStyle}>Punch In</th>
-                    <th style={thStyle}>Punch Out</th>
-                    <th style={thStyle}>Task</th>
-                    <th style={thStyle}>Submit Report</th>
-                  </tr>
-                ) : (
-                  <tr>
-                    <th style={thStyle}>Employee</th>
-                    <th style={thStyle}>Date</th>
-                    <th style={thStyle}>Type</th>
-                    <th style={thStyle}>Description</th>
-                  </tr>
-                )}
-              </thead>
-              <tbody>
-                {["EMPLOYEE", "MANAGER", "HR"].includes(role) ? (
-                  currentTopRows.length > 0 ? (
-                    currentTopRows.map((log, index) => (
-                      <tr key={index}>
-                        <td style={tdStyle}>{log.employee?.name || "You"}</td>
+         <div style={cardStyleFlex}>
+  <h4 style={{ marginBottom: "20px" }}>Employee Overview</h4>
 
-                        <td style={tdStyle}>
-                          {log.checkIn
-                            ? new Date(log.checkIn).toLocaleTimeString()
-                            : "—"}
-                        </td>
+  <div
+    style={{
+      display: "flex",
+      gap: "20px",
+      flexWrap: "wrap",
+    }}
+  >
+    {/* Total Employees */}
+    <div style={{ ...cardStyle, flex: "1", minWidth: "180px" }}>
+      <h4 style={{ margin: 0, color: "#555" }}>Total Employees</h4>
+      <h2 style={{ margin: "10px 0", color: "#000" }}>25</h2>
+      <span style={{ color: "#888", fontSize: "13px" }}>
+        Overall workforce
+      </span>
+    </div>
 
-                        <td style={tdStyle}>
-                          {log.checkOut
-                            ? new Date(log.checkOut).toLocaleTimeString()
-                            : "—"}
-                        </td>
+    {/* Active Employees */}
+    <div style={{ ...cardStyle, flex: "1", minWidth: "180px" }}>
+      <h4 style={{ margin: 0, color: "#555" }}>Active Employees</h4>
+      <h2 style={{ margin: "10px 0", color: "green" }}>18</h2>
+      <span style={{ color: "green", fontSize: "13px" }}>
+        Currently working
+      </span>
+    </div>
 
-                        <td style={tdStyle}>
-                          <button
-                            style={reviewBtn}
-                            onClick={() => setShowTaskModal(true)}
-                          >
-                            Task
-                          </button>
-                        </td>
-                        <td style={tdStyle}>
-                          <input
-                            type="file"
-                            accept="application/pdf"
-                            onChange={(e) => handleFileUpload(e, log)}
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="4" style={{ textAlign: "center" }}>
-                        No activity yet
-                      </td>
-                    </tr>
-                  )
-                ) : currentTopRows.length > 0 ? (
-                  currentTopRows.map((item) => (
-                    <tr key={item._id}>
-                      <td style={tdStyle}>{item.employee?.name}</td>
-                      <td style={tdStyle}>{formatDate(item.date)}</td>
-                      <td style={tdStyle}>{item.status}</td>
-                      <td style={tdStyle}>
-                        <button style={reviewBtn}>Review</button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="4" style={{ textAlign: "center" }}>
-                      No data found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            {totalPagesTop > 1 && (
-              <div
-                style={{
-                  marginTop: "15px",
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: "8px",
-                }}
-              >
-                {Array.from({ length: totalPagesTop }, (_, i) => i + 1).map(
-                  (num) => (
-                    <button
-                      key={num}
-                      onClick={() => setCurrentPageTop(num)}
-                      style={{
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        border: "1px solid #ddd",
-                        background: currentPageTop === num ? "#00bcd4" : "#fff",
-                        color: currentPageTop === num ? "#fff" : "#000",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {num}
-                    </button>
-                  ),
-                )}
-              </div>
-            )}
-            <div style={{ marginTop: "30px" }}>
-              {/* ✅ Inline CSS (JSX ke andar hi) */}
-              <style>
-                {`
-      .present-day {
-        background: #4caf50 !important;
-        color: white !important;
-        border-radius: 50%;
-      }
-
-      .absent-day {
-        background: #f44336 !important;
-        color: white !important;
-        border-radius: 50%;
-      }
-
-      .late-day {
-        background: #ff9800 !important;
-        color: white !important;
-        border-radius: 50%;
-      }
-
-      .weekend {
-        background: #e0e0e0 !important;
-        color: #555 !important;
-        border-radius: 50%;
-      }
-    `}
-              </style>
-
-              <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
-                {/* 📅 Calendar */}
-                <div style={{ flex: 2 }}>
-                  <style>
-                    {`
- 
- 
-    /* sirf shape fix */
-.react-calendar__tile {
-width: 20px !important;
-  height: 35px !important;
-  border-radius: 250% !important;
-  aspect-ratio: 2 / 2;
-}
-  .react-calendar__tile {
-  padding: 6px !important;
-}
-  
-  .present-day { background: #4caf50 !important; }
-.absent-day { background: #f44336 !important; }
-.late-day { background: #ff9800 !important; }
-.weekend { background: #e0e0e0 !important; }
-`}
-                  </style>
-                  <Calendar
-                    tileClassName={({ date, view }) => {
-                      if (view === "month") {
-                        const data = ["EMPLOYEE", "MANAGER", "HR"].includes(
-                          role,
-                        )
-                          ? myLogs
-                          : attendanceData;
-
-                        const record = data.find(
-                          (att) =>
-                            att.checkIn &&
-                            new Date(att.checkIn).toDateString() ===
-                              date.toDateString(),
-                        );
-                        if (record?.status === "Present") return "present-day";
-                        if (record?.status === "Absent") return "absent-day";
-                        if (record?.status === "Late") return "late-day";
-
-                        if (date.getDay() === 0 || date.getDay() === 6) {
-                          return "weekend";
-                        }
-                      }
-                    }}
-                  />
-
-                  {/* Legend */}
-                  <div style={{ marginTop: "10px", fontSize: "14px" }}>
-                    🟢 Present &nbsp; 🔴 Absent &nbsp; 🟠 Late &nbsp; ⚪ Weekend
-                  </div>
-                </div>
-
-                {/* 📊 Leave Cards */}
-                <div
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "15px",
-                  }}
-                >
-                  <div style={cardStyle}>
-                    <h4>Total Leaves</h4>
-                    <h2>{TOTAL_LEAVES}</h2>
-                  </div>
-
-                  <div style={cardStyle}>
-                    <h4>Leaves Taken</h4>
-                    <h2 style={{ color: "red" }}>{leavesTaken}</h2>
-                  </div>
-
-                  <div style={cardStyle}>
-                    <h4>Remaining</h4>
-                    <h2
-                      style={{ color: remainingLeaves < 0 ? "red" : "green" }}
-                    >
-                      {remainingLeaves}
-                    </h2>
-                  </div>
-
-                  {extraLeaves > 0 && (
-                    <div style={cardStyle}>
-                      <h4>Extra Leaves</h4>
-                      <h2 style={{ color: "orange" }}>{extraLeaves}</h2>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+    {/* Bench Employees */}
+    <div style={{ ...cardStyle, flex: "1", minWidth: "180px" }}>
+      <h4 style={{ margin: 0, color: "#555" }}>On Bench</h4>
+      <h2 style={{ margin: "10px 0", color: "orange" }}>7</h2>
+      <span style={{ color: "orange", fontSize: "13px" }}>
+        No active project
+      </span>
+    </div>
+  </div>
+</div>
         </div>
 
         {/* Attendance Table Section */}
-        {["EMPLOYEE", "HR", "MANAGER"].includes(role) && (
+        {["ADMIN", "HR", "MANAGER"].includes(role) && (
           // ye pura table
           <div style={cardStyle}>
             {/* Table Header with Controls */}
@@ -580,10 +291,12 @@ width: 20px !important;
                 marginBottom: "20px",
               }}
             >
-              <h4 style={{ margin: 0, color: "#333" }}>My Attendance</h4>
+              <h4 style={{ margin: 0, color: "#333" }}>
+                All Employees Attendance
+              </h4>
               <div style={{ display: "flex", gap: "10px" }}>
                 <button
-                  onClick={fetchMyAttendance}
+                  onClick={fetchAllAttendance}
                   disabled={loading}
                   style={{
                     padding: "8px 16px",
@@ -610,7 +323,7 @@ width: 20px !important;
                     fontWeight: "500",
                   }}
                 >
-                  {myLogs.length} Records
+                  {attendanceData.length} Records
                 </span>
               </div>
             </div>
@@ -641,7 +354,7 @@ width: 20px !important;
                   {error}
                 </div>
                 <button
-                  onClick={fetchMyAttendance}
+                  onClick={fetchAllAttendance}
                   style={{
                     padding: "8px 16px",
                     borderRadius: "6px",
@@ -660,7 +373,7 @@ width: 20px !important;
             {!loading && !error && (
               <>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  {/* <thead>
+                  <thead>
                     <tr style={{ background: "#f8f9fb", textAlign: "left" }}>
                       <th style={thStyle}>Employee ID</th>
                       <th style={thStyle}>Name</th>
@@ -708,42 +421,6 @@ width: 20px !important;
                           }}
                         >
                           No attendance records found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody> */}
-                  <thead>
-                    <tr style={{ background: "#f8f9fb", textAlign: "left" }}>
-                      <th style={thStyle}>Date</th>
-                      <th style={thStyle}>Check-in</th>
-                      <th style={thStyle}>Check-out</th>
-                      <th style={thStyle}>Status</th>
-                      <th style={thStyle}>Remark</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentRows.length > 0 ? (
-                     currentRows.map((attendance) => (
-                        <tr key={attendance._id}>
-                          <td style={tdStyle}>{formatDate(attendance.date)}</td>
-                          <td style={tdStyle}>
-                            {formatTime(attendance.checkIn)}
-                          </td>
-                          <td style={tdStyle}>
-                            {formatTime(attendance.checkOut)}
-                          </td>
-                          <td style={tdStyle}>
-                            <span style={getStatusBadge(attendance.status)}>
-                              {attendance.status}
-                            </span>
-                          </td>
-                          <td style={tdStyle}>{attendance.remark || "-"}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="5" style={{ textAlign: "center" }}>
-                          No attendance found
                         </td>
                       </tr>
                     )}

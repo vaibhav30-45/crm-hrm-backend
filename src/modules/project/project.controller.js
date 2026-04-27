@@ -93,3 +93,85 @@ exports.getALLProjects = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+// ✅ GET PROJECTS ROLE-WISE
+// exports.getProjectsByRole = async (req, res) => {
+//   try {
+//     const user = req.user;
+
+//     let projects;
+
+//     // 🟢 ADMIN / HR → all projects
+//     if (user.role === "ADMIN" || user.role === "HR") {
+//       projects = await Project.find({ tenantId: user.tenantId })
+//         .populate("projectManager", "name email")
+//         .populate("team", "name email role");
+//     }
+
+//     // 🔵 MANAGER → only his projects
+//     else if (user.role === "MANAGER") {
+//       projects = await Project.find({
+//         projectManager: user._id,
+//         tenantId: user.tenantId
+//       })
+//         .populate("projectManager", "name email")
+//         .populate("team", "name email role");
+//     }
+
+//     // 🟡 EMPLOYEE → only assigned projects
+//     else if (user.role === "EMPLOYEE") {
+//       projects = await Project.find({
+//         team: user._id,
+//         tenantId: user.tenantId
+//       })
+//         .populate("projectManager", "name email")
+//         .populate("team", "name email role");
+//     }
+
+//     res.json({
+//       success: true,
+//       data: projects
+//     });
+
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+exports.getProjectsByRole = async (req, res) => {
+  try {
+    const user = req.user;
+
+    let projects;
+
+    // ADMIN / HR / MANAGER
+    if (
+      user.role === "ADMIN" ||
+      user.role === "HR" ||
+      user.role === "MANAGER"
+    ) {
+      projects = await Project.find({ tenantId: user.tenantId })
+        .populate("projectManager", "name email")
+        .populate("team", "name email role");
+    }
+
+    // EMPLOYEE
+    else if (user.role === "EMPLOYEE") {
+      projects = await Project.find({
+        team: user._id,
+        tenantId: user.tenantId
+      })
+        .populate("projectManager", "name email")
+        .populate("team", "name email role");
+    }
+
+    res.status(200).json({
+      success: true,
+      data: projects
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

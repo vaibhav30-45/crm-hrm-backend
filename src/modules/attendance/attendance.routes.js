@@ -10,15 +10,12 @@ const {
 
 const { protect, authorizeRoles } = require("../../middleware/auth.middleware");
 
-// Employee Punch In
-router.post("/punch-in", protect, authorizeRoles("EMPLOYEE"), punchIn);
-// Employee Punch Out
-router.post("/punch-out", protect, authorizeRoles("EMPLOYEE"), punchOut);
+router.post("/punch-in", protect, authorizeRoles("EMPLOYEE", "MANAGER", "HR"), punchIn);
+router.post("/punch-out", protect, authorizeRoles("EMPLOYEE", "MANAGER", "HR"), punchOut);
 
-// Employee - View Own Attendance
-router.get("/my-attendance", protect, authorizeRoles("EMPLOYEE"), getMyAttendance);
+// Employee + Manager + HR → own attendance dekh sakte hain
+router.get("/my", protect, authorizeRoles("EMPLOYEE", "MANAGER", "HR"), getMyAttendance);
 
-// HR - View All Employees Attendance
-router.get("/all", protect, authorizeRoles("HR", "ADMIN"), getAllAttendance);
-
+// HR + ADMIN + MANAGER → sabka data dekh sakte hain
+router.get("/all", protect, authorizeRoles("HR", "ADMIN", "MANAGER"), getAllAttendance);
 module.exports = router;
