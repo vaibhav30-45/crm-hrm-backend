@@ -64,6 +64,7 @@ const Sidebar = () => {
       "/hrms/payroll-management",
       "/hrms/performance-appraisal",
       "/hrms/project-managers",
+      "/hrms/attendance-review",
     ];
 
     if (hrmsPages.includes(location.pathname)) {
@@ -234,12 +235,14 @@ const Sidebar = () => {
         {isHrmsOpen && (
           <>
             {/*  COMMON (sab ke liye) */}
-            <li
-              onClick={() => menuNavigate("/hrms/attendance")}
-              style={{ paddingLeft: "45px", cursor: "pointer" }}
-            >
-              Attendance Management
-            </li>
+            {role !== "ADMIN" && (
+  <li
+    onClick={() => menuNavigate("/hrms/attendance")}
+    style={{ paddingLeft: "45px", cursor: "pointer" }}
+  >
+    Attendance Management
+  </li>
+)}
 
             <li
               onClick={() => menuNavigate("/hrms/employee-profile")}
@@ -280,6 +283,9 @@ const Sidebar = () => {
 
         <li onClick={() => menuNavigate("/hrms/performance-appraisal")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
           Performance Appraisal
+        </li>
+         <li onClick={() => menuNavigate("/hrms/attendance-review")} style={{ paddingLeft: "45px", cursor: "pointer" }}>
+         Attendance Review
         </li>
         
       </>

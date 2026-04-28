@@ -20,16 +20,16 @@ export const attendanceService = {
   },
 
   // Get My Attendance (Employee only)
-  getMyAttendance: async (params = {}) => {
-    const response = await api.get('/hrm/attendance/my-attendance', { params });
-    return response.data;
-  },
+  // getMyAttendance: async (params = {}) => {
+  //   const response = await api.get('/hrm/attendance/my-attendance', { params });
+  //   return response.data;
+  // },
 
   // Get Attendance Records (if needed for future)
-  getAttendance: async (params = {}) => {
-    const response = await api.get('/hrm/attendance', { params });
-    return response.data;
-  },
-
+ 
+  getMyAttendance: async () => {
+  const response = await api.get("/hrm/attendance/my");
+  return response.data; // 👈 pura object return karo
+}
   
 };

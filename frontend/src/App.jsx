@@ -28,6 +28,7 @@ import HRDashboard from "./components/HRDashboard/HRDashboard"
 import BDEDashboard from "./components/SalesDashboard/SalesDashboard";
 import UserList from "./components/UserList"
 import ProjectManagers from "./components/HRMSComponents/ProjectManagers"
+import AttendanceReview from "./components/HRMSComponents/AttendanceReview"
 import "./App.css";
 
 function App() {
@@ -189,6 +190,14 @@ element={
             element={
               <PrivateRoutes>
                 <AttendanceManagement />
+              </PrivateRoutes>
+            }
+          />
+          <Route
+            path="/hrms/attendance-review"
+            element={
+              <PrivateRoutes>
+                <AttendanceReview />
               </PrivateRoutes>
             }
           />
