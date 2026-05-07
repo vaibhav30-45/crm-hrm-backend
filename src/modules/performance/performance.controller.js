@@ -12,6 +12,7 @@ exports.createReview = async (req, res) => {
     else if (score < 50) rating = "Below Average";
 
     const review = await Review.create({
+      tenantId: req.user.tenantId,
       employee: employeeId,
       score,
       rating,
@@ -37,7 +38,7 @@ exports.createReview = async (req, res) => {
 exports.getAllReviews = async (req, res) => {
   try {
 
-    const reviews = await Review.find()
+    const reviews = await Review.find({ tenantId: req.user.tenantId })
       .populate("employee", "name email role");
 
     res.status(200).json({
