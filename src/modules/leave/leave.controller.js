@@ -11,11 +11,10 @@ exports.applyLeave = async (req, res) => {
       leaveType,
       fromDate,
       toDate,
-      reason
+      reason,
     });
 
     res.status(201).json({ success: true, leave });
-
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -23,17 +22,19 @@ exports.applyLeave = async (req, res) => {
 
 // Get My Leaves
 exports.getMyLeaves = async (req, res) => {
-  const leaves = await Leave.find({ 
+  const leaves = await Leave.find({
     employee: req.user.id,
-    tenantId: req.user.tenantId
+    tenantId: req.user.tenantId,
   });
   res.json(leaves);
 };
 
 // Get All Leaves (Admin/HR)
 exports.getAllLeaves = async (req, res) => {
-  const filter = req.user.role === "ADMIN" ? {} : { tenantId: req.user.tenantId };
-  const leaves = await Leave.find(filter).populate("employee", "name email");
+  const leaves = await Leave.find({ tenantId: req.user.tenantId }).populate(
+    "employee",
+    "name email",
+  );
   res.json(leaves);
 };
 
@@ -41,7 +42,7 @@ exports.getAllLeaves = async (req, res) => {
 exports.updateLeaveStatus = async (req, res) => {
   const leave = await Leave.findOne({
     _id: req.params.id,
-    tenantId: req.user.tenantId
+    tenantId: req.user.tenantId,
   });
 
   if (!leave) {

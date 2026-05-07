@@ -1,4 +1,4 @@
-const Customer =  require("../models/Customer");
+const Customer = require("../models/Customer");
 /**
  * CREATE CUSTOMER
  */
@@ -7,6 +7,7 @@ const createCustomer = async (req, res) => {
     const { name, email, phone, company, status, assignedTo } = req.body;
 
     const customer = await Customer.create({
+      tenantId: req.user.tenantId,
       name,
       email,
       phone,
@@ -35,7 +36,7 @@ const createCustomer = async (req, res) => {
  */
 const getCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find()
+    const customers = await Customer.find({ tenantId: req.user.tenantId })
       .populate("assignedTo", "name email")
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
@@ -59,7 +60,10 @@ const getCustomers = async (req, res) => {
  */
 const getSingleCustomer = async (req, res) => {
   try {
-    const customer = await Customer.findById(req.params.id)
+    const customer = await Customer.findOne({
+      _id: req.params.id,
+      tenantId: req.user.tenantId,
+    })
       .populate("assignedTo", "name email")
       .populate("createdBy", "name email");
 
@@ -88,10 +92,10 @@ const getSingleCustomer = async (req, res) => {
  */
 const updateCustomer = async (req, res) => {
   try {
-    const customer = await Customer.findByIdAndUpdate(
-      req.params.id,
+    const customer = await Customer.findOneAndUpdate(
+      { _id: req.params.id, tenantId: req.user.tenantId },
       req.body,
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!customer) {
@@ -120,7 +124,10 @@ const updateCustomer = async (req, res) => {
  */
 const deleteCustomer = async (req, res) => {
   try {
-    const customer = await Customer.findByIdAndDelete(req.params.id);
+    const customer = await Customer.findOneAndDelete({
+      _id: req.params.id,
+      tenantId: req.user.tenantId,
+    });
 
     if (!customer) {
       return res.status(404).json({
