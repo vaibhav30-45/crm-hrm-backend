@@ -77,20 +77,17 @@ exports.createUser = async (req, res) => {
 
     const creatorRole = req.user.role;
 
-    // ADMIN → Only HR
-    if (creatorRole === "ADMIN" && role !== "HR") {
-      return res.status(403).json({
-        message: "Admin can only create HR",
-      });
-    }
-
-    // HR → Manager / Employee / BDE
-    if (
+    // ADMIN can create any role
+    if (creatorRole === "ADMIN") {
+      // No additional restrictions for ADMIN
+    } 
+    // HR → Can create HR, Manager, Employee or BDE
+    else if (
       creatorRole === "HR" &&
-      !["MANAGER", "EMPLOYEE", "BDE"].includes(role)
+      !["HR", "MANAGER", "EMPLOYEE", "BDE"].includes(role)
     ) {
       return res.status(403).json({
-        message: "HR can only create Manager, Employee or BDE",
+        message: "HR can only create HR, Manager, Employee or BDE",
       });
     }
 

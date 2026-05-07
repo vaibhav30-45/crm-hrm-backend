@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { FaUser, FaEdit, FaTrash, FaPlus, FaSearch, FaUserCircle } from "react-icons/fa";
+import {
+  FaUser,
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaSearch,
+  FaUserCircle,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "./DashboardComponents/DashboardLayout";
 import { userService } from "../services/userService";
@@ -273,7 +280,6 @@ const Users = () => {
     }
   };
 
- 
   return (
     <DashboardLayout>
       <style>{`
@@ -984,7 +990,6 @@ const Users = () => {
                   <option value="Developer">Developer</option>
                   <option value="Intern">Intern</option>
                 </select>
-              
 
                 <div
                   style={{
@@ -1025,7 +1030,8 @@ const Users = () => {
                 </div>
               </div>
             </div>
-          )}</div>
+          )}
+        </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
