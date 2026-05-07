@@ -9,21 +9,21 @@ exports.login = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        message: "Email and password required"
+        message: "Email and password required",
       });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(400).json({
-        message: "Invalid credentials"
+        message: "Invalid credentials",
       });
     }
 
@@ -31,12 +31,12 @@ exports.login = async (req, res) => {
       {
         id: user._id,
         role: user.role,
-        tenantId: user.tenantId
+        tenantId: user.tenantId,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_EXPIRES || "7d"
-      }
+        expiresIn: process.env.JWT_EXPIRES || "7d",
+      },
     );
 
     const userData = user.toObject();
@@ -45,21 +45,18 @@ exports.login = async (req, res) => {
     res.status(200).json({
       success: true,
       token,
-      user: userData
+      user: userData,
     });
-
   } catch (error) {
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };
 
-
 // ================= CREATE USER =================
 exports.createUser = async (req, res) => {
   try {
-
     const {
       name,
       email,
@@ -69,31 +66,28 @@ exports.createUser = async (req, res) => {
       department,
       designation,
       techStack,
-      reportingTo
+      reportingTo,
     } = req.body;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({
-        message: "Name, email, password and role are required"
+        message: "Name, email, password and role are required",
       });
     }
 
     const creatorRole = req.user.role;
 
-    // ADMIN → Only HR
-    if (creatorRole === "ADMIN" && role !== "HR") {
-      return res.status(403).json({
-        message: "Admin can only create HR"
-      });
-    }
-
-    // HR → Manager / Employee / BDE
-    if (
+    // ADMIN can create any role
+    if (creatorRole === "ADMIN") {
+      // No additional restrictions for ADMIN
+    } 
+    // HR → Can create HR, Manager, Employee or BDE
+    else if (
       creatorRole === "HR" &&
-      !["MANAGER", "EMPLOYEE", "BDE"].includes(role)
+      !["HR", "MANAGER", "EMPLOYEE", "BDE"].includes(role)
     ) {
       return res.status(403).json({
-        message: "HR can only create Manager, Employee or BDE"
+        message: "HR can only create HR, Manager, Employee or BDE",
       });
     }
 
@@ -102,7 +96,7 @@ exports.createUser = async (req, res) => {
 
     if (existingUser) {
       return res.status(400).json({
-        message: "Email already exists"
+        message: "Email already exists",
       });
     }
 
@@ -118,11 +112,8 @@ exports.createUser = async (req, res) => {
       department,
       designation,
       techStack,
-      reportingTo:
-        role === "EMPLOYEE" || role === "BDE"
-          ? reportingTo
-          : null,
-      createdByRole: creatorRole
+      reportingTo: role === "EMPLOYEE" || role === "BDE" ? reportingTo : null,
+      createdByRole: creatorRole,
     });
 
     const userData = user.toObject();
@@ -131,92 +122,75 @@ exports.createUser = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User created successfully",
-      data: userData
+      data: userData,
     });
-
   } catch (err) {
     res.status(400).json({
-      message: err.message
+      message: err.message,
     });
   }
 };
 
-
 // ================= GET USERS =================
 exports.getAllUsers = async (req, res) => {
   try {
-
     let users;
 
-    // ADMIN → All users
+    // ADMIN → All users across all tenants
     if (req.user.role === "ADMIN") {
-
-      users = await User.find()
-        .select("-password");
-
+      users = await User.find().select("-password");
     }
 
     // HR → Only tenant users
     else if (req.user.role === "HR") {
-
       users = await User.find({
-        tenantId: req.user.tenantId
+        tenantId: req.user.tenantId,
       }).select("-password");
-
     }
 
-    // MANAGER → Only their team
+    // MANAGER → Only their team (within same tenant)
     else if (req.user.role === "MANAGER") {
-
       users = await User.find({
-        reportingTo: req.user.id
+        tenantId: req.user.tenantId,
+        reportingTo: req.user.id,
       }).select("-password");
-
-    }
-
-    else {
-
+    } else {
       return res.status(403).json({
-        message: "Access denied"
+        message: "Access denied",
       });
-
     }
 
     res.status(200).json({
       success: true,
       count: users.length,
-      data: users
+      data: users,
     });
-
   } catch (error) {
-
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
-
   }
 };
 // ================= DELETE USER =================
 exports.deleteUser = async (req, res) => {
   try {
-
     const { id } = req.params;
 
     const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     // HR can only delete their tenant users
     if (
       req.user.role === "HR" &&
-      user.tenantId.toString() !== req.user.tenantId
+      user.tenantId.toString() !== req.user.tenantId.toString()
     ) {
       return res.status(403).json({
-        message: "Access denied"
+        message: "Access denied. Cannot delete user from another tenant",
       });
     }
 
@@ -224,18 +198,16 @@ exports.deleteUser = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "User deleted successfully"
+      message: "User deleted successfully",
     });
-
   } catch (error) {
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 }; // ================= UPDATE USER =================
 exports.updateUser = async (req, res) => {
   try {
-
     const { id } = req.params;
 
     const {
@@ -245,24 +217,24 @@ exports.updateUser = async (req, res) => {
       department,
       designation,
       techStack,
-      reportingTo
+      reportingTo,
     } = req.body;
 
     const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({
-        message: "User not found"
+        message: "User not found",
       });
     }
 
     // HR can only update users of same tenant
     if (
       req.user.role === "HR" &&
-      user.tenantId.toString() !== req.user.tenantId
+      user.tenantId.toString() !== req.user.tenantId.toString()
     ) {
       return res.status(403).json({
-        message: "Access denied"
+        message: "Access denied. Cannot update user from another tenant",
       });
     }
 
@@ -282,12 +254,11 @@ exports.updateUser = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User updated successfully",
-      data: userData
+      data: userData,
     });
-
   } catch (error) {
     res.status(500).json({
-      message: error.message
+      message: error.message,
     });
   }
 };

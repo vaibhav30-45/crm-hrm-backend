@@ -1,19 +1,19 @@
 // API Configuration
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = "http://localhost:5000/api";
 
 // Get auth token from localStorage
 const getAuthToken = () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   return token ? `Bearer ${token}` : null;
 };
 
 // Generic fetch wrapper with error handling
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const config = {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...options.headers,
     },
     ...options,
@@ -27,49 +27,49 @@ const apiRequest = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(url, config);
-    
+
     // Handle 401 Unauthorized
     if (response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
       return;
     }
 
     const data = await response.json();
-    
+
     if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong');
+      throw new Error(data.message || "Something went wrong");
     }
-    
+
     return data;
   } catch (error) {
-    console.error('API Error:', error);
+    console.error("API Error:", error);
     throw error;
   }
 };
 
 // HTTP Methods
 export const api = {
-  get: (endpoint, options = {}) => 
-    apiRequest(endpoint, { method: 'GET', ...options }),
-    
-  post: (endpoint, data, options = {}) => 
+  get: (endpoint, options = {}) =>
+    apiRequest(endpoint, { method: "GET", ...options }),
+
+  post: (endpoint, data, options = {}) =>
     apiRequest(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(data),
       ...options,
     }),
-    
-  put: (endpoint, data, options = {}) => 
+
+  put: (endpoint, data, options = {}) =>
     apiRequest(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
       ...options,
     }),
-    
-  delete: (endpoint, options = {}) => 
-    apiRequest(endpoint, { method: 'DELETE', ...options }),
+
+  delete: (endpoint, options = {}) =>
+    apiRequest(endpoint, { method: "DELETE", ...options }),
 };
 
 export default api;

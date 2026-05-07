@@ -137,7 +137,7 @@ const ProjectManagers = () => {
     try {
       await projectService.createProject(formData);
       setShowModal(false);
-      fetchAllProjects(); // refresh list
+      fetchProjects(); // refresh list
       setFormData({
         title: "",
         description: "",
@@ -186,7 +186,7 @@ const ProjectManagers = () => {
       alert("Team members assigned successfully!");
       setAssignModal(false);
       setSelectedEmployees([]);
-      fetchAllProjects(); // Refresh projects list
+      fetchProjects(); // Refresh projects list
     } catch (error) {
       console.error("Error assigning team:", error);
       alert("Failed to assign team members");

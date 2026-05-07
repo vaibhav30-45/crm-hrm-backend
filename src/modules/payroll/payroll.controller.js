@@ -9,6 +9,7 @@ exports.runPayroll = async (req, res) => {
     const netSalary = baseSalary - deductions;
 
     const payroll = await Payroll.create({
+      tenantId: req.user.tenantId,
       employee: employeeId,
       baseSalary,
       deductions,
@@ -34,7 +35,10 @@ exports.runPayroll = async (req, res) => {
 exports.markPaid = async (req, res) => {
   try {
 
-    const payroll = await Payroll.findById(req.params.id);
+    const payroll = await Payroll.findOne({
+      _id: req.params.id,
+      tenantId: req.user.tenantId
+    });
 
     if (!payroll) {
       return res.status(404).json({
@@ -66,7 +70,7 @@ exports.markPaid = async (req, res) => {
 exports.getAllPayroll = async (req, res) => {
   try {
 
-    const payrolls = await Payroll.find()
+    const payrolls = await Payroll.find({ tenantId: req.user.tenantId })
       .populate("employee", "name email role");
 
     res.status(200).json({
@@ -88,7 +92,10 @@ exports.getAllPayroll = async (req, res) => {
 exports.downloadPayslip = async (req, res) => {
   try {
 
-    const payroll = await Payroll.findById(req.params.id)
+    const payroll = await Payroll.findOne({
+      _id: req.params.id,
+      tenantId: req.user.tenantId
+    })
       .populate("employee", "name email designation");
 
     if (!payroll) {

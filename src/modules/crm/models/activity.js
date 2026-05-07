@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const activitySchema = new mongoose.Schema(
   {
+    tenantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tenant",
+      required: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -21,7 +26,7 @@ const activitySchema = new mongoose.Schema(
     },
     ipAddress: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Activity", activitySchema);

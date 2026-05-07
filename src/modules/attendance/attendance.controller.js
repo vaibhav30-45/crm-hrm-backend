@@ -44,6 +44,7 @@ exports.punchIn = async (req, res) => {
     today.setHours(0, 0, 0, 0);
 
     const existing = await Attendance.findOne({
+      tenantId: req.user.tenantId,
       employee: req.user.id,
       date: { $gte: today },
     });
@@ -70,9 +71,10 @@ exports.punchIn = async (req, res) => {
 }
 
     const attendance = await Attendance.create({
+      tenantId: req.user.tenantId,
       employee: req.user.id,
       checkIn: now,
-      status, // 👈 IMPORTANT
+      status,
     });
 
     res.status(201).json({
@@ -92,6 +94,7 @@ exports.punchIn = async (req, res) => {
 exports.punchOut = async (req, res) => {
   try {
     const attendance = await Attendance.findOne({
+      tenantId: req.user.tenantId,
       employee: req.user.id,
       checkOut: null,
     });
@@ -123,6 +126,7 @@ exports.punchOut = async (req, res) => {
 exports.getMyAttendance = async (req, res) => {
   try {
     const records = await Attendance.find({
+      tenantId: req.user.tenantId,
       employee: req.user.id,
     })
     .populate("employee", "name email") 
@@ -159,7 +163,7 @@ exports.getMyAttendance = async (req, res) => {
 // };
 exports.getAllAttendance = async (req, res) => {
   try {
-    const records = await Attendance.find()
+    const records = await Attendance.find({ tenantId: req.user.tenantId })
       .populate("employee", "name email role")
       .sort({ date: -1 });
 
