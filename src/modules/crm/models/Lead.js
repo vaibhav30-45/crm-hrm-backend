@@ -9,6 +9,21 @@ const leadSchema = new mongoose.Schema({
     type: String,
     enum: ["New", "Contacted", "Qualified", "Lost"],
     default: "New"
+  },
+  // Professional details for AI Prediction
+  role_position: { type: String, default: "Not Specified" },
+  highest_education: String,
+  years_of_experience: { type: Number, default: 0 },
+  skills: String,
+  location: String,
+  expected_salary: { type: Number, default: 0 },
+  
+  // AI ML Prediction Results
+  ml_prediction: {
+    predicted_temperature: { type: String, enum: ["Hot", "Warm", "Cold", "Unknown"], default: "Unknown" },
+    confidence: Number,
+    probabilities: Object,
+    last_prediction_at: Date
   }
 }, { timestamps: true });
 

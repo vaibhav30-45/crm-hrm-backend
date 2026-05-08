@@ -1,10 +1,20 @@
 // src/modules/leads/lead.controller.js
 const Lead = require("../models/Lead");
+const aiService = require("../../../utils/aiService");
 
 
 exports.createLead = async (req, res) => {
   try {
     const lead = await Lead.create(req.body);
+
+    // AI Integration: Predict Lead Temperature (Asynchronous)
+    aiService.predictLeadTemperature(req.body).then(async (prediction) => {
+      if (prediction && prediction.success && prediction.prediction) {
+        lead.ml_prediction = prediction.prediction;
+        await lead.save();
+      }
+    }).catch(err => console.error("AI Prediction Error:", err));
+
     res.status(201).json({ message: "Lead created", data: lead });
   } catch (error) {
     console.error("Lead creation error:", error);
@@ -41,6 +51,15 @@ exports.updateLead = async (req, res) => {
     if (!lead) {
       return res.status(404).json({ message: "Lead not found" });
     }
+
+    // AI Integration: Re-evaluate Lead Temperature on Update
+    aiService.predictLeadTemperature(lead.toObject()).then(async (prediction) => {
+      if (prediction && prediction.success && prediction.prediction) {
+        lead.ml_prediction = prediction.prediction;
+        await lead.save();
+      }
+    }).catch(err => console.error("AI Update Prediction Error:", err));
+
     res.status(200).json({ message: "Lead updated", data: lead });
   } catch (error) {
     console.error("Update lead error:", error);
