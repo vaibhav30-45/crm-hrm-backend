@@ -6,7 +6,8 @@ const {
   getLeads,
   getSingleLead,
   updateLead,
-  deleteLead
+  deleteLead,
+  getLeadInsights
 } = require("../controllers/leadController");
 
 const { protect } = require("../../../middleware/auth.middleware");
@@ -29,5 +30,7 @@ router.put("/:id", protect, updateLead);
 // Delete Lead
 router.delete("/:id", protect, authorizeRoles("ADMIN"), deleteLead);
 
-module.exports = router;
+// Get AI Insights for Lead
+router.get("/:id/insights", protect, getLeadInsights);
 
+module.exports = router;

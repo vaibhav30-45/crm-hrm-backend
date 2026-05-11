@@ -79,3 +79,35 @@ exports.deleteLead = async (req, res) => {
     res.status(500).json({ message: "Error deleting lead", error: error.message });
   }
 };
+
+exports.getLeadInsights = async (req, res) => {
+  try {
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ success: false, message: "Lead not found" });
+    }
+
+    // Call AI Service to generate insights for this lead
+    const insights = await aiService.generateInsights(req.params.id, { leadData: lead });
+    
+    if (!insights || !insights.success) {
+      return res.status(503).json({ 
+        success: false, 
+        message: "AI Insights service unavailable or failed." 
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "AI Insights generated successfully",
+      data: insights.insights,
+    });
+  } catch (error) {
+    console.error("Get Lead Insights error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching lead insights",
+      error: error.message,
+    });
+  }
+};
