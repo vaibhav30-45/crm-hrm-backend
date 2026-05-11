@@ -23,7 +23,8 @@ const leadSchema = new mongoose.Schema({
     predicted_temperature: { type: String, enum: ["Hot", "Warm", "Cold", "Unknown"], default: "Unknown" },
     confidence: Number,
     probabilities: Object,
-    last_prediction_at: Date
+    model_version: String,
+    prediction_timestamp: Date
   }
 }, { timestamps: true });
 
