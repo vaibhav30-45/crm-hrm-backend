@@ -67,7 +67,7 @@ class AiService {
   async generateEmail(emailContext) {
     if (!AI_SERVICE_ENABLED) return null;
     try {
-      const response = await this.client.post('/email/generate', emailContext);
+      const response = await this.client.post('/email/generate-followup', emailContext);
       return response.data;
     } catch (error) {
       console.error('AI Email Generation Failed:', error.message);

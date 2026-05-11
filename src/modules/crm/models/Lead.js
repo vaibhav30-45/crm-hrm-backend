@@ -18,6 +18,9 @@ const leadSchema = new mongoose.Schema({
   location: String,
   expected_salary: { type: Number, default: 0 },
   
+  // Link to AI service's unique ID
+  ai_unique_id: String,
+
   // AI ML Prediction Results
   ml_prediction: {
     predicted_temperature: { type: String, enum: ["Hot", "Warm", "Cold", "Unknown"], default: "Unknown" },
