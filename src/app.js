@@ -10,6 +10,8 @@ const customerRoutes = require("./modules/crm/routes/customerRoutes");
 const activityRoutes = require("./modules/crm/routes/activityRoutes");
 const dealRoutes = require("./modules/crm/routes/dealRoutes");
 const reportRoutes = require("./modules/crm/routes/reportRoutes");
+const chatbotRoutes = require("./modules/crm/routes/chatbotRoutes");
+const leadGenerationRoutes = require("./modules/crm/routes/leadGenerationRoutes");
 const leaveRoutes = require("./modules/leave/leave.routes");
 const attendanceRoutes = require("./modules/attendance/attendance.routes");
 const payrollRoutes = require("./modules/payroll/payroll.routes");
@@ -55,6 +57,8 @@ app.use("/api/crm/customers", customerRoutes);
 app.use("/api/crm/activities", activityRoutes);
 app.use("/api/crm/deals", dealRoutes);
 app.use("/api/crm/reports", reportRoutes);
+app.use("/api/crm/chatbot", chatbotRoutes);
+app.use("/api/crm/lead-generation", leadGenerationRoutes);
 
 // ========================================
 // 🏢 HRM MODULE

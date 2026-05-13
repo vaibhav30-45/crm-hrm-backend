@@ -74,6 +74,63 @@ class AiService {
       return null;
     }
   }
+
+  async chatbotChat(chatContext) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.post('/chatbot/chat', chatContext);
+      return response.data;
+    } catch (error) {
+      console.error('AI Chatbot Chat Failed:', error.message);
+      return null;
+    }
+  }
+
+  async getSalesForecast(months = 3) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.get('/sales-forecast', {
+        params: { months }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('AI Sales Forecast Failed:', error.message);
+      return null;
+    }
+  }
+
+  async generateLeadsFromQuery(queryData) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.post('/lead-generation/search-query', queryData);
+      return response.data;
+    } catch (error) {
+      console.error('AI Lead Gen Search Failed:', error.message);
+      return null;
+    }
+  }
+
+  async qualifySearchResults(qualifyData) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.post('/lead-generation/qualify-search-results', qualifyData);
+      return response.data;
+    } catch (error) {
+      console.error('AI Lead Gen Qualify Failed:', error.message);
+      return null;
+    }
+  }
+
+  async getLeadGenerationDashboard(params) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.get('/lead-generation/dashboard', { params });
+      return response.data;
+    } catch (error) {
+      console.error('AI Lead Gen Dashboard Failed:', error.message);
+      return null;
+    }
+  }
 }
 
 module.exports = new AiService();
