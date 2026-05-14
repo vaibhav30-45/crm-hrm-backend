@@ -131,6 +131,61 @@ class AiService {
       return null;
     }
   }
+  async predictClv(clvData) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.post('/clv/predict', clvData);
+      return response.data;
+    } catch (error) {
+      console.error('AI CLV Prediction Failed:', error.message);
+      return null;
+    }
+  }
+
+  async optimizeFollowup(followupData) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.post('/followup/optimize', followupData);
+      return response.data;
+    } catch (error) {
+      console.error('AI Followup Optimization Failed:', error.message);
+      return null;
+    }
+  }
+  async analyzeConversation(conversationData) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.post('/conversation-intelligence/analyze', conversationData);
+      return response.data;
+    } catch (error) {
+      console.error('AI Conversation Analysis Failed:', error.message);
+      return null;
+    }
+  }
+
+  async getLeadConversationIntelligence(leadId) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.get(`/conversation-intelligence/lead/${leadId}`);
+      return response.data;
+    } catch (error) {
+      console.error('AI Fetch Lead Intelligence Failed:', error.message);
+      return null;
+    }
+  }
+
+  async getConversationIntelligenceOverview(limit = 200) {
+    if (!AI_SERVICE_ENABLED) return null;
+    try {
+      const response = await this.client.get('/conversation-intelligence/overview', {
+        params: { limit }
+      });
+      return response.data;
+    } catch (error) {
+      console.error('AI Fetch Intelligence Overview Failed:', error.message);
+      return null;
+    }
+  }
 }
 
 module.exports = new AiService();
